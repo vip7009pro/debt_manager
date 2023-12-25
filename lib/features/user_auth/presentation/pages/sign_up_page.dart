@@ -1,5 +1,7 @@
 import 'package:debt_manager/controller/firebase_auth_services.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
+import 'package:debt_manager/features/user_auth/presentation/pages/verification_page.dart';
+import 'package:debt_manager/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,6 +22,8 @@ class _SignUpPageState extends State<SignUpPage> {
     User? user = await _auth.signUpWithEmailAndPassword(_user, _pass);
     if(user != null) {
       Get.snackbar('Thông báo', 'Đăng ký thành công');
+      user.sendEmailVerification();
+      Get.off(()=>const VerificationPage());
     }
     else {
       Get.snackbar('Thông báo', 'Đăng ký thật bại');

@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "171888820198-u42pe3qt1gnv71ur5j1518jebddtmo8d.apps.googleusercontent.com",
+          "client_id": "171888820198-gbr4f9uudnvt8427sm6cfg2l4b9eptak.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "hnp.app.debtmanager",
-            "certificate_hash": "3c77a8f4024da7cf0540f56fa1a22b552c83b6fd"
+            "certificate_hash": "5cd4bc243cd763b17632e394a968da5871b4aa5e"
           }
         },
         {

@@ -1,6 +1,10 @@
+import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/firebase_auth_services.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/sign_up_page.dart';
+import 'package:debt_manager/features/user_auth/presentation/pages/verification_page.dart';
+import 'package:debt_manager/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -11,43 +15,48 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 class _LoginPageState extends State<LoginPage> {
+  final GlobalController c = Get.put(GlobalController());
   final FirebaseAuthService _auth = FirebaseAuthService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  TextEditingController _textFieldUserController = TextEditingController();
-  TextEditingController _textFieldPassController = TextEditingController();
+  final TextEditingController _textFieldUserController = TextEditingController();
+  final TextEditingController _textFieldPassController = TextEditingController();
   String _user = '';
   String _pass = '';
   bool _saveAccount = true;
-
-    void _signIn() async {
+  void _signIn() async {
     User? user = await _auth.signInWithEmailAndPassword(_user, _pass);
-    if(user != null) {
-      Get.snackbar('Thông báo', 'Đăng nhập thành công');
-    }
-    else {
+    if (user != null) {
+      if(user.emailVerified) {
+        Get.snackbar('Thông báo', 'Đăng nhập thành công cho : ${user.uid}');      
+        Get.off(() => const HomePage());
+      }
+      else {
+        Get.to(()=> VerificationPage());
+      }
+    } else {
       //Get.snackbar('Thông báo', 'Đăng nhập thật bại');
     }
   }
-
-void _signInWithGoogle() async {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  try {
-    final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
-    if(googleSignInAccount!= null) {
-      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        idToken: googleSignInAuthentication.idToken,
-        accessToken: googleSignInAuthentication.accessToken
-      );
-      await _firebaseAuth.signInWithCredential(credential);
+  void _signInWithGoogle() async { 
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await c.googleSignIn().signIn();
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;            
+        final AuthCredential credential = GoogleAuthProvider.credential(
+            idToken: googleSignInAuthentication.idToken,
+            accessToken: googleSignInAuthentication.accessToken);
+        final userDt = await _firebaseAuth.signInWithCredential(credential);      
+        Get.snackbar('Thông báo', "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}");
+        Get.off(() => const HomePage()); 
+      }
+    } catch (e) {
+      Get.snackbar('Thông báo', "Lỗi: ${e.toString()}");
+      if (kDebugMode) {
+        print('Thông báo ' "Lỗi: ${e.toString()}");
+      }
     }
   }
-  catch(e) {
-    Get.snackbar('Thông báo', "Lỗi: ${e.toString()}");
-    print('Thông báo '+ "Lỗi: ${e.toString()}");
-  }
-}
-
   @override
   Widget build(BuildContext context) {
     final logo = Image.asset(
@@ -157,11 +166,20 @@ void _signInWithGoogle() async {
     final signup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-      Text("Chưa có tài khoản ?", style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal, color: Colors.black),),
-      TextButton(onPressed: (){
-        Get.to(()=>const SignUpPage());
-      }, child: Text("Đăng ký", style: TextStyle(fontSize: 15 , color: Color.fromARGB(255, 82, 113, 255))))
-    ],);
+        Text(
+          "Chưa có tài khoản ?",
+          style: TextStyle(
+              fontSize: 15, fontWeight: FontWeight.normal, color: Colors.black),
+        ),
+        TextButton(
+            onPressed: () {
+              Get.to(() => const SignUpPage());
+            },
+            child: Text("Đăng ký",
+                style: TextStyle(
+                    fontSize: 15, color: Color.fromARGB(255, 82, 113, 255))))
+      ],
+    );
     return SafeArea(
         child: Scaffold(
             backgroundColor: Colors.white,
@@ -189,7 +207,9 @@ void _signInWithGoogle() async {
                   password,
                   const SizedBox(height: 15.0),
                   loginButton,
-                  const SizedBox(height: 10,),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   googleLoginButton,
                   saveID,
                   signup
