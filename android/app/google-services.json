@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "171888820198",
+    "project_id": "fbapptest1-e43aa",
+    "storage_bucket": "fbapptest1-e43aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:171888820198:android:14f845ef6585cb20062027",
+        "android_client_info": {
+          "package_name": "hnp.app.debtmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "171888820198-u42pe3qt1gnv71ur5j1518jebddtmo8d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hnp.app.debtmanager",
+            "certificate_hash": "3c77a8f4024da7cf0540f56fa1a22b552c83b6fd"
+          }
+        },
+        {
+          "client_id": "171888820198-tuvr6vp6p9s0gdu2jmn1a33h5i3ket5i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTu-5AnoASrVxh2NONjOPcvP5Q7hhg1x8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "171888820198-gbldreh0e7v9upe8j1134jlhf74lfvjh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
