@@ -1,3 +1,4 @@
+import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,4 +42,22 @@ static String MyDate(String format, String datetimedata) {
   return "";
   return DateFormat(format).format(DateTime.parse(datetimedata));
 }
+
+static Future<bool> signUpServer(String uid, String email, String pwd) async {
+    bool check = true;
+    await API_Request.api_query('signup', {
+      'EMAIL': email,
+      'UID': uid,
+      'PWD': pwd
+    }).then((value) {     
+      if (value['tk_status'] == 'OK') {
+        check = true;       
+      } else {
+        check = false;
+      }
+    });
+    return check;
+  }
+
+  
 }

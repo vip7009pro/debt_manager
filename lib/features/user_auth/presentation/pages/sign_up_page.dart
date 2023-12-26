@@ -1,7 +1,8 @@
+import 'package:debt_manager/controller/APIRequest.dart';
+import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/controller/firebase_auth_services.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/verification_page.dart';
-import 'package:debt_manager/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,21 +12,23 @@ class SignUpPage extends StatefulWidget {
   _SignUpPageState createState() => _SignUpPageState();
 }
 class _SignUpPageState extends State<SignUpPage> {
-  TextEditingController _textFieldUserController = TextEditingController();
-  TextEditingController _textFieldPassController = TextEditingController();
+  final TextEditingController _textFieldUserController =
+      TextEditingController();
+  final TextEditingController _textFieldPassController =
+      TextEditingController();
   String _user = '';
   String _pass = '';
   bool _saveAccount = true;
-
   final FirebaseAuthService _auth = FirebaseAuthService();
+  
   void _signUp() async {
     User? user = await _auth.signUpWithEmailAndPassword(_user, _pass);
-    if(user != null) {
+    if (user != null) {
       Get.snackbar('Thông báo', 'Đăng ký thành công');
+      GlobalFunction.signUpServer(user.uid, user.email!,_pass);
       user.sendEmailVerification();
-      Get.off(()=>const VerificationPage());
-    }
-    else {
+      Get.off(() => const VerificationPage());
+    } else {
       Get.snackbar('Thông báo', 'Đăng ký thật bại');
     }
   }
@@ -69,7 +72,6 @@ class _SignUpPageState extends State<SignUpPage> {
             backgroundColor: Color.fromARGB(255, 27, 199, 4)),
         onPressed: () {
           _signUp();
-
         },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -109,11 +111,20 @@ class _SignUpPageState extends State<SignUpPage> {
     final signup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-      Text("Đã có tài khoản ?", style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal, color: Colors.black),),
-      TextButton(onPressed: (){
-        Get.off(()=>const LoginPage());
-      }, child: Text("Đăng nhập", style: TextStyle(fontSize: 15 , color: Color.fromARGB(255, 82, 113, 255))))
-    ],);
+        Text(
+          "Đã có tài khoản ?",
+          style: TextStyle(
+              fontSize: 15, fontWeight: FontWeight.normal, color: Colors.black),
+        ),
+        TextButton(
+            onPressed: () {
+              Get.off(() => const LoginPage());
+            },
+            child: Text("Đăng nhập",
+                style: TextStyle(
+                    fontSize: 15, color: Color.fromARGB(255, 82, 113, 255))))
+      ],
+    );
     return SafeArea(
         child: Scaffold(
             backgroundColor: Colors.white,
@@ -140,7 +151,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(height: 10.0),
                   password,
                   const SizedBox(height: 15.0),
-                  loginButton,                
+                  loginButton,
                   signup
                 ],
               ),

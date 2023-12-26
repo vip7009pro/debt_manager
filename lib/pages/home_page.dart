@@ -1,6 +1,8 @@
-
+import 'dart:convert';
+import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/GlobalFunction.dart';
+import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   @override
@@ -18,25 +19,38 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 class _HomePageState extends State<HomePage> {
-  
   int _selectedBottomIndex = 0;
-
   final GlobalController c = Get.put(GlobalController());
   void _onBottomItemTapped(int index) {
     setState(() {
       _selectedBottomIndex = index;
     });
   }
-  final logo = Image.asset('assets/images/app_logo.png', width: 120, fit: BoxFit.cover); 
-  int mobileVer =4; 
+  final logo =
+      Image.asset('assets/images/app_logo.png', width: 120, fit: BoxFit.cover);
+  int mobileVer = 4;
   late Timer _timer;
-
-@override
+  Future<bool> _checkLogin(String uid, String email) async {
+    bool check = true;
+    await API_Request.api_query('login', {'EMAIL': email, 'UID': uid})
+        .then((value) {
+      if (value['tk_status'] == 'OK') {
+        check = true;
+        LocalDataAccess.saveVariable('token', value['token_content']);
+        LocalDataAccess.saveVariable('userData', jsonEncode(value['data'][0]));
+        var response = value['data'][0];
+        print(response);
+        setState(() {});
+      } else {
+        check = false;
+      }
+    });
+    return check;
+  }
+  @override
   void initState() {
     super.initState();
   }
-    
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,8 +61,11 @@ class _HomePageState extends State<HomePage> {
             children: [
               const Text(
                 "Home",
-              ),              
-              Text("Ver: ${mobileVer}", style: TextStyle(fontSize: 10),)
+              ),
+              Text(
+                "Ver: ${mobileVer}",
+                style: TextStyle(fontSize: 10),
+              )
             ],
           ),
           backgroundColor: Colors.transparent,
@@ -105,12 +122,11 @@ class _HomePageState extends State<HomePage> {
                     //action on press
                     //Get.to(() => const DiemDanhNhom());
                   },
-                ),               
-                
+                ),
                 //more child menu
               ],
             ),
-                       ListTile(
+            ListTile(
               visualDensity: const VisualDensity(vertical: -3),
               leading: const Icon(
                 Icons.logout,
@@ -125,16 +141,16 @@ class _HomePageState extends State<HomePage> {
                   title: 'Cảnh báo',
                   desc: 'Bạn muốn logout? / Logout 하시겠습니까?',
                   btnCancelOnPress: () {},
-                  btnOkOnPress: () async{     
+                  btnOkOnPress: () async {
                     try {
                       GlobalFunction.logout();
                       await FirebaseAuth.instance.signOut();
                       c.googleSignIn().disconnect();
+                      GlobalFunction.logout();
                       Get.off(() => const LoginPage());
                     } catch (e) {
                       Get.snackbar("Thông báo", "Lỗi: ${e.toString()}");
-                    }              
-                    
+                    }
                   },
                 ).show();
               },
@@ -152,34 +168,51 @@ class _HomePageState extends State<HomePage> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         )),
-        child: Center(child: Column(
+        child: Center(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [ElevatedButton(
-              onPressed: () async {
-                final user = FirebaseAuth.instance.currentUser;
-                if (user != null) {
-                  debugPrint('password has been changed');                  
-                  await user.updatePassword("147258369");
-                } else {
-                  debugPrint("password hasnt been changed");
-                  // No user is signed in.
-                }
-              },
-              child: Text("Change Password")),
-              ElevatedButton(
-              onPressed: () async {
-                var user = FirebaseAuth.instance.currentUser;
-                if (user != null) {
-                  await user.reload();
-                  user = FirebaseAuth.instance.currentUser;
-                 Get.snackbar("Thông báo", "user verified status: ${user?.emailVerified}");
+          children: [
+            ElevatedButton(
+                onPressed: () async {
+                  try {
+                    var user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      debugPrint('password has been changed');
+                      await user.reload();
+                      user = FirebaseAuth.instance.currentUser;
+                      await user?.updatePassword("147258369");
+                    } else {
+                      debugPrint("password hasnt been changed");
+                      // No user is signed in.
+                    }
+                  }
+                  catch(e) {
+                    Get.snackbar("Thông báo", e.toString());
+                  }
                   
-                } else {
-                  
-                }
-              },
-              child: Text("Check email verified")),
-              ],
+                },
+                child: const Text("Change Password")),
+            ElevatedButton(
+                onPressed: () async {
+                  var user = FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    await user.reload();
+                    user = FirebaseAuth.instance.currentUser;
+                    Get.snackbar("Thông báo",
+                        "user verified status: ${user?.emailVerified}");
+                  } else {}
+                },
+                child: const Text("Check email")),
+            ElevatedButton(
+                onPressed: () async {
+                  var user = FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    await user.reload();
+                    _checkLogin(user.uid, user.email!);
+                  } else {}
+                },
+                child: const Text("Login test")),
+          ],
         )),
         /* child: Obx(() =>  Container(
           height: double.infinity,
@@ -216,13 +249,12 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: Builder(builder: (context) {
         return FloatingActionButton(
-          backgroundColor: Color.fromARGB(255, 207, 217, 236),
-          child: Icon(Icons.menu),
-          onPressed: () {
-             //tryOtaUpdate();
-            Scaffold.of(context).openDrawer(); // <-- Opens drawer.
-          }
-        );
+            backgroundColor: Color.fromARGB(255, 207, 217, 236),
+            child: Icon(Icons.menu),
+            onPressed: () {
+              //tryOtaUpdate();
+              Scaffold.of(context).openDrawer(); // <-- Opens drawer.
+            });
       }),
     );
   }

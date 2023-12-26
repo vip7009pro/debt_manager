@@ -8,14 +8,8 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 class API_Request {
   static Future<Map<String,dynamic>> api_query(String command, Map<String, dynamic> data) async {
     String url = '';
-    url = await LocalDataAccess.getVariable('serverIP');
-    if (url == '' || url == 'MAIN_SERVER') {
-      url = 'http://14.160.33.94:5013/api';
-    } else if (url == 'TEST_SERVER') {
-      url = 'http://localhost:3007/api';
-    } else {
-      url = 'http://14.160.33.94:3007/api';
-    }
+    url = await LocalDataAccess.getVariable('serverIP');    
+    url = 'http://14.160.33.94:3003/api';
     var dio = Dio(BaseOptions(
         connectTimeout: const Duration(milliseconds: 10000), // in ms
         receiveTimeout: const Duration(milliseconds: 10000),

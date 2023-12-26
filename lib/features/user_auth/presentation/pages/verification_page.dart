@@ -22,7 +22,7 @@ class _VerificationPageState extends State<VerificationPage> {
     if (user != null) {
       await user.reload();
       user = FirebaseAuth.instance.currentUser;
-      if(user!.emailVerified) {
+      if(user!.emailVerified) {        
         Get.off(()=> HomePage());
       }
       else {
