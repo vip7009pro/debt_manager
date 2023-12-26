@@ -42,7 +42,8 @@ Future<void> _loadAccount() async{
     await API_Request.api_query('login', {
       'EMAIL': email,
       'UID': uid
-    }).then((value) {     
+    }).then((value) {    
+      print(value); 
       if (value['tk_status'] == 'OK') {
         check = true;
         LocalDataAccess.saveVariable('token', value['token_content']); 

@@ -30,88 +30,34 @@ class _SplashScreenState extends State<SplashScreen> {
   String _user = '';
   String _pass = '';
   bool _saveAccount = true;
-Future<void> _loadAccount() async{
-  String savedUser = await LocalDataAccess.getVariable("user");
-  String savedPass = await LocalDataAccess.getVariable("pass");  
-  setState(() {
-    _user = savedUser;
-    _pass = savedPass;
-    _textFieldUserController.text = savedUser;
-    _textFieldPassController.text = savedPass;
-  });
-}
-  Future<bool> _checkLogin(String uid, String email) async {
+
+  Future<bool> _checkLogin() async {
     bool check = true;
-    await API_Request.api_query('login', {
-      'EMAIL': email,
-      'UID': uid
+    await API_Request.api_query('checklogin', {
+      
     }).then((value) {     
+      print(value);
       if (value['tk_status'] == 'OK') {
-        check = true;
-        LocalDataAccess.saveVariable('token', value['token_content']); 
-        LocalDataAccess.saveVariable('userData',jsonEncode(value['data'][0]) ); 
+        check = true;        
+        LocalDataAccess.saveVariable('userData',jsonEncode(value['data']) ); 
       } else {
         check = false;
       }
     });
     return check;
   }
-  void _signIn() async {
-    User? user = await _auth.signInWithEmailAndPassword(_user, _pass);
-    if (user != null) {
-      bool checkserverLogin = await _checkLogin(user.uid, user.email!);
-      if (checkserverLogin) {
-        if (user.emailVerified) {
-          //Get.snackbar('Thông báo', 'Đăng nhập thành công cho : ${user.uid}');
-          if (_saveAccount) {
-            LocalDataAccess.saveVariable('user', _user);
-            LocalDataAccess.saveVariable('pass', _pass);
-          } else {
-            LocalDataAccess.saveVariable('user', '');
-            LocalDataAccess.saveVariable('pass', '');
-          }
-          Get.off(() => const HomePage());
-        } else {
-          Get.to(() => const VerificationPage());
-        }
-      } else {
-        Get.snackbar("Thông báo",
-            'Tài khoản chưa đồng bộ, hãy thử đăng nhập với google nếu bạn dùng gmail');
-        Get.off(() => const LoginPage());
-      }
-    } else {}
+
+  void _signIn() async {   
+      bool checkserverLogin = await _checkLogin();
+      print('check login bool = ${checkserverLogin}');
+    if (checkserverLogin) {
+      Get.off(() => const HomePage());
+    } else {
+      Get.off(() => const LoginPage());
+    }    
   }
   
-  void _signInWithGoogle() async { 
-    try {
-      final GoogleSignInAccount? googleSignInAccount =
-          await c.googleSignIn().signIn();
-      if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;            
-        final AuthCredential credential = GoogleAuthProvider.credential(
-            idToken: googleSignInAuthentication.idToken,
-            accessToken: googleSignInAuthentication.accessToken);
-        final userDt = await _firebaseAuth.signInWithCredential(credential);
-        bool checkserverLogin = await _checkLogin(userDt.user!.uid,userDt.user!.email!);
-        if(checkserverLogin) {
-          Get.snackbar('Thông báo', "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}");
-          Get.off(() => const HomePage()); 
-        }
-        else {
-          GlobalFunction.signUpServer(userDt.user!.uid, userDt.user!.email!,'----------');
-          Get.off(() => const HomePage()); 
-          //Get.snackbar("Thông báo", 'Tài khoản chưa đồng bộ đăng ký');
-        }
-      }
-    } catch (e) {
-      Get.snackbar('Thông báo', "Lỗi: ${e.toString()}");
-      if (kDebugMode) {
-        print('Thông báo ' "Lỗi: ${e.toString()}");
-      }
-    }
-  }
-  Future<void> initFunction() async {
-     await _loadAccount();
+  Future<void> initFunction() async {     
      String savedToken = await LocalDataAccess.getVariable("token");    
      if(savedToken !='reset') {
       _signIn();

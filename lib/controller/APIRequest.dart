@@ -6,6 +6,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 // ignore: camel_case_types
 class API_Request {
+  // ignore: non_constant_identifier_names
   static Future<Map<String,dynamic>> api_query(String command, Map<String, dynamic> data) async {
     String url = '';
     url = await LocalDataAccess.getVariable('serverIP');    
@@ -22,6 +23,7 @@ class API_Request {
     var cookieJar = CookieJar();
     dio.interceptors.add(CookieManager(cookieJar));
     String savedToken = await LocalDataAccess.getVariable("token");    
+    print(savedToken);
     data['token_string'] = savedToken;
     final body = {'command': command, 'DATA': data};    
     try {
