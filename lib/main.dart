@@ -41,6 +41,6 @@ class _MyAppState extends State<MyApp> {
     return const GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Shop Pro App',
-      home: LoginPage());
+      home: SplashScreen());
   }
 }
