@@ -32,9 +32,7 @@ class GlobalFunction {
     'ư': 'u', 'ứ': 'u', 'ừ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
     'ý': 'y', 'ỳ': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
   };
-
   return input.split('').map((char) => vietnameseCharacters[char] ?? char).join();
-
 }
 
 static String MyDate(String format, String datetimedata) {

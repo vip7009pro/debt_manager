@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/GlobalFunction.dart';
@@ -28,7 +27,6 @@ class _LoginPageState extends State<LoginPage> {
   String _user = '';
   String _pass = '';
   bool _saveAccount = true;
-
 Future<void> _loadAccount() async{
   String savedUser = await LocalDataAccess.getVariable("user");
   String savedPass = await LocalDataAccess.getVariable("pass");  
@@ -38,9 +36,7 @@ Future<void> _loadAccount() async{
     _textFieldUserController.text = savedUser;
     _textFieldPassController.text = savedPass;
   });
-
 }
-
   Future<bool> _checkLogin(String uid, String email) async {
     bool check = true;
     await API_Request.api_query('login', {
@@ -57,7 +53,6 @@ Future<void> _loadAccount() async{
     });
     return check;
   }
-  
   void _signIn() async {
     User? user = await _auth.signInWithEmailAndPassword(_user, _pass);
     if (user != null) {
@@ -65,7 +60,7 @@ Future<void> _loadAccount() async{
       if (checkserverLogin) {
         if (user.emailVerified) {
           //Get.snackbar('Thông báo', 'Đăng nhập thành công cho : ${user.uid}');
-           if (_saveAccount) {
+          if (_saveAccount) {
             LocalDataAccess.saveVariable('user', _user);
             LocalDataAccess.saveVariable('pass', _pass);
           } else {
@@ -77,12 +72,12 @@ Future<void> _loadAccount() async{
           Get.to(() => const VerificationPage());
         }
       } else {
-        Get.snackbar("Thông báo", 'Tài khoản chưa đồng bộ, hãy thử đăng nhập với google nếu bạn dùng gmail');
+        Get.snackbar("Thông báo",
+            'Tài khoản chưa đồng bộ, hãy thử đăng nhập với google nếu bạn dùng gmail');
       }
-    } else {
-
-    }
+    } else {}
   }
+  
   void _signInWithGoogle() async { 
     try {
       final GoogleSignInAccount? googleSignInAccount =
@@ -96,7 +91,6 @@ Future<void> _loadAccount() async{
         bool checkserverLogin = await _checkLogin(userDt.user!.uid,userDt.user!.email!);
         if(checkserverLogin) {
           Get.snackbar('Thông báo', "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}");
-          
           Get.off(() => const HomePage()); 
         }
         else {
@@ -112,7 +106,6 @@ Future<void> _loadAccount() async{
       }
     }
   }
-
   Future<void> initFunction() async {
      await _loadAccount();
      String savedToken = await LocalDataAccess.getVariable("token");    
