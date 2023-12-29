@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/controller/firebase_auth_services.dart';
@@ -21,6 +22,49 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _saveAccount = true;
   final FirebaseAuthService _auth = FirebaseAuthService();
   
+  Future<bool> _signUpServer(String email, String password) async {
+    bool check = true;
+    await API_Request.api_query('signup', {
+      'UID': email,
+      'EMAIL': email,
+      'PWD': password,
+      'USERNAME': email
+    }).then((value) {
+      
+      if (value['tk_status'] == 'OK') {
+        check = true;
+        
+      } else {
+        check = false;
+      }
+    });
+    return check;
+  }
+
+  void _signUpServer1() async {
+    bool register = await _signUpServer(_user, _pass);
+    if (register) {
+      // ignore: use_build_context_synchronously
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        animType: AnimType.rightSlide,
+        title: 'thông báo',
+        desc: 'Đăng ký thành công',
+        btnOkOnPress: () async {},
+      ).show();
+    } else {
+      // ignore: use_build_context_synchronously
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.rightSlide,
+        title: 'thông báo',
+        desc: 'Đăng ký thất bại',
+        btnOkOnPress: () async {},
+      ).show();
+    }
+  }
   void _signUp() async {
     User? user = await _auth.signUpWithEmailAndPassword(_user, _pass);
     if (user != null) {
@@ -71,7 +115,7 @@ class _SignUpPageState extends State<SignUpPage> {
         style: TextButton.styleFrom(
             backgroundColor: Color.fromARGB(255, 27, 199, 4)),
         onPressed: () {
-          _signUp();
+          _signUpServer1();
         },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,

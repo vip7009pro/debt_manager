@@ -139,13 +139,12 @@ class _HomePageState extends State<HomePage> {
                   dialogType: DialogType.question,
                   animType: AnimType.rightSlide,
                   title: 'Cảnh báo',
-                  desc: 'Bạn muốn logout? / Logout 하시겠습니까?',
+                  desc: 'Bạn muốn logout?',
                   btnCancelOnPress: () {},
                   btnOkOnPress: () async {
-                    try {
-                      GlobalFunction.logout();
-                      await FirebaseAuth.instance.signOut();
-                      c.googleSignIn().disconnect();
+                    try {                      
+                      /* await FirebaseAuth.instance.signOut();
+                      c.googleSignIn().disconnect(); */
                       GlobalFunction.logout();
                       Get.off(() => const LoginPage());
                     } catch (e) {

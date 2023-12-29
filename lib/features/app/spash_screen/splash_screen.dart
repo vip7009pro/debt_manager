@@ -33,15 +33,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<bool> _checkLogin() async {
     bool check = true;
-    await API_Request.api_query('checklogin', {
-      
-    }).then((value) {     
+    await API_Request.api_query('checklogin', {}).then((value) {
       print(value);
       if (value['tk_status'] == 'OK') {
-        check = true;        
-        LocalDataAccess.saveVariable('userData',jsonEncode(value['data']) ); 
+        check = true;
+
+        Get.off(() => const LoginPage());
+        LocalDataAccess.saveVariable('userData', jsonEncode(value['data']));
       } else {
         check = false;
+        Get.off(() => const LoginPage());
       }
     });
     return check;
@@ -59,19 +60,12 @@ class _SplashScreenState extends State<SplashScreen> {
   
   Future<void> initFunction() async {     
      String savedToken = await LocalDataAccess.getVariable("token");    
-     if(savedToken !='reset') {
-      _signIn();
-      print('co token');
-     }
-     else {
-      Get.off(()=>const LoginPage());
-      print('khong co token');
-     }
+     
   }
   @override
   void initState() {
     // TODO: implement initState
-    initFunction();
+    _checkLogin();
     super.initState();
   }
 

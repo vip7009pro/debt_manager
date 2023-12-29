@@ -37,11 +37,11 @@ Future<void> _loadAccount() async{
     _textFieldPassController.text = savedPass;
   });
 }
-  Future<bool> _checkLogin(String uid, String email) async {
+  Future<bool> _login(String email, String password) async {
     bool check = true;
     await API_Request.api_query('login', {
       'EMAIL': email,
-      'UID': uid
+      'PWD': password
     }).then((value) {    
       print(value); 
       if (value['tk_status'] == 'OK') {
@@ -54,10 +54,24 @@ Future<void> _loadAccount() async{
     });
     return check;
   }
+  void _signInServer() async {   
+      bool checkserverLogin = await _login(_user, _pass);
+      if (checkserverLogin) {     
+          //Get.snackbar('Thông báo', 'Đăng nhập thành công cho : ${user.uid}');
+          if (_saveAccount) {
+            LocalDataAccess.saveVariable('user', _user);
+            LocalDataAccess.saveVariable('pass', _pass);
+          } else {
+            LocalDataAccess.saveVariable('user', '');
+            LocalDataAccess.saveVariable('pass', '');
+          }
+          Get.off(() => const HomePage());
+  }
+  }
   void _signIn() async {
     User? user = await _auth.signInWithEmailAndPassword(_user, _pass);
     if (user != null) {
-      bool checkserverLogin = await _checkLogin(user.uid, user.email!);
+      bool checkserverLogin = await _login(user.uid, user.email!);
       if (checkserverLogin) {
         if (user.emailVerified) {
           //Get.snackbar('Thông báo', 'Đăng nhập thành công cho : ${user.uid}');
@@ -89,7 +103,7 @@ Future<void> _loadAccount() async{
             idToken: googleSignInAuthentication.idToken,
             accessToken: googleSignInAuthentication.accessToken);
         final userDt = await _firebaseAuth.signInWithCredential(credential);
-        bool checkserverLogin = await _checkLogin(userDt.user!.uid,userDt.user!.email!);
+        bool checkserverLogin = await _login(userDt.user!.uid,userDt.user!.email!);
         if(checkserverLogin) {
           Get.snackbar('Thông báo', "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}");
           Get.off(() => const HomePage()); 
@@ -111,7 +125,7 @@ Future<void> _loadAccount() async{
      await _loadAccount();
      String savedToken = await LocalDataAccess.getVariable("token");    
      if(savedToken !='reset') {
-      _signIn();
+      _signInServer();
      }
   }
   @override
@@ -159,7 +173,7 @@ Future<void> _loadAccount() async{
         style: TextButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 82, 113, 255)),
         onPressed: () {
-          _signIn();
+          _signInServer();
         },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -273,7 +287,7 @@ Future<void> _loadAccount() async{
                   const SizedBox(
                     height: 10,
                   ),
-                  googleLoginButton,
+                  /* googleLoginButton, */
                   saveID,
                   signup
                 ],
