@@ -13,7 +13,7 @@ class GlobalController extends GetxController {
     count--;
   }
 
-  String serverIP = 'http:/14.160.33.94:3007/api';
+  String serverIP = 'http:/14.160.33.94:3009/api';
   void changeServerIP(String newIP) {
     serverIP = newIP;
   }

@@ -21,7 +21,6 @@ class _SignUpPageState extends State<SignUpPage> {
   String _pass = '';
   bool _saveAccount = true;
   final FirebaseAuthService _auth = FirebaseAuthService();
-  
   Future<bool> _signUpServer(String email, String password) async {
     bool check = true;
     await API_Request.api_query('signup', {
@@ -30,17 +29,14 @@ class _SignUpPageState extends State<SignUpPage> {
       'PWD': password,
       'USERNAME': email
     }).then((value) {
-      
       if (value['tk_status'] == 'OK') {
         check = true;
-        
       } else {
         check = false;
       }
     });
     return check;
   }
-
   void _signUpServer1() async {
     bool register = await _signUpServer(_user, _pass);
     if (register) {
@@ -51,7 +47,9 @@ class _SignUpPageState extends State<SignUpPage> {
         animType: AnimType.rightSlide,
         title: 'thông báo',
         desc: 'Đăng ký thành công',
-        btnOkOnPress: () async {},
+        btnOkOnPress: () async {
+          Get.off(() => const LoginPage());
+        },
       ).show();
     } else {
       // ignore: use_build_context_synchronously
@@ -65,11 +63,11 @@ class _SignUpPageState extends State<SignUpPage> {
       ).show();
     }
   }
-  void _signUp() async {
+  Future<void> _signUp() async {
     User? user = await _auth.signUpWithEmailAndPassword(_user, _pass);
     if (user != null) {
       Get.snackbar('Thông báo', 'Đăng ký thành công');
-      GlobalFunction.signUpServer(user.uid, user.email!,_pass);
+      GlobalFunction.signUpServer(user.uid, user.email!, _pass);
       user.sendEmailVerification();
       Get.off(() => const VerificationPage());
     } else {

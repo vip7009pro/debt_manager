@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                   desc: 'Bạn muốn logout?',
                   btnCancelOnPress: () {},
                   btnOkOnPress: () async {
-                    try {                      
+                    try {
                       /* await FirebaseAuth.instance.signOut();
                       c.googleSignIn().disconnect(); */
                       GlobalFunction.logout();
@@ -184,11 +184,9 @@ class _HomePageState extends State<HomePage> {
                       debugPrint("password hasnt been changed");
                       // No user is signed in.
                     }
-                  }
-                  catch(e) {
+                  } catch (e) {
                     Get.snackbar("Thông báo", e.toString());
                   }
-                  
                 },
                 child: const Text("Change Password")),
             ElevatedButton(
@@ -249,7 +247,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: Builder(builder: (context) {
         return FloatingActionButton(
             backgroundColor: Color.fromARGB(255, 207, 217, 236),
-            child: Icon(Icons.menu),
+            child: Icon(Icons.add),
             onPressed: () {
               //tryOtaUpdate();
               Scaffold.of(context).openDrawer(); // <-- Opens drawer.
