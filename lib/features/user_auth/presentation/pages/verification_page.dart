@@ -23,7 +23,7 @@ class _VerificationPageState extends State<VerificationPage> {
       await user.reload();
       user = FirebaseAuth.instance.currentUser;
       if(user!.emailVerified) {        
-        Get.off(()=> HomePage());
+        Get.off(()=> const HomePage());
       }
       else {
 
@@ -35,7 +35,7 @@ class _VerificationPageState extends State<VerificationPage> {
    @override
   void initState() {     
     checkVerification();
-    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       checkVerification();     
     });
    

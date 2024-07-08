@@ -15,7 +15,7 @@ class _DrawerHeaderTabState extends State<DrawerHeaderTab> {
       backgroundImage:
           NetworkImage('http://14.160.33.94/Picture_NS/NS_NHU1903.jpg', scale: 0.5),
     );
-    return Container(
+    return const SizedBox(
       width: 100,
       height: 100,
       child: emplImage,
