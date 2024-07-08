@@ -33,38 +33,21 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<bool> _checkLogin() async {
     bool check = true;
-    await API_Request.api_query('checklogin', {}).then((value) {
-      print(value);
+    await API_Request.api_query('checklogin', {}).then((value) {      
       if (value['tk_status'] == 'OK') {
         check = true;
-
-        Get.off(() => const LoginPage());
         LocalDataAccess.saveVariable('userData', jsonEncode(value['data']));
+        Get.off(() => const HomePage());        
       } else {
         check = false;
         Get.off(() => const LoginPage());
       }
     });
     return check;
-  }
+  }  
 
-  void _signIn() async {   
-      bool checkserverLogin = await _checkLogin();
-      print('check login bool = ${checkserverLogin}');
-    if (checkserverLogin) {
-      Get.off(() => const HomePage());
-    } else {
-      Get.off(() => const LoginPage());
-    }    
-  }
-  
-  Future<void> initFunction() async {     
-     String savedToken = await LocalDataAccess.getVariable("token");    
-     
-  }
   @override
-  void initState() {
-    // TODO: implement initState
+  void initState() {  
     _checkLogin();
     super.initState();
   }

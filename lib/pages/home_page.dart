@@ -4,6 +4,7 @@ import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
+import 'package:debt_manager/pages/drawer_header.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -101,12 +102,12 @@ class _HomePageState extends State<HomePage> {
                 ),
                 margin: EdgeInsets.all(0),
                 padding: EdgeInsets.all(0),
-                child: Text("Drawer header")),
+                child: DrawerHeaderTab()),
             ExpansionTile(
-              title: const Text("Nhân Sự"),
+              title: const Text("Quản lý cửa hàng"),
               leading: const Icon(
-                Icons.person,
-                color: Colors.red,
+                Icons.shopping_bag,
+                color: Color.fromARGB(255, 59, 130, 236),
               ), //add icon
               childrenPadding:
                   const EdgeInsets.only(left: 10), //children padding
@@ -114,10 +115,10 @@ class _HomePageState extends State<HomePage> {
                 ListTile(
                   visualDensity: const VisualDensity(vertical: -3),
                   leading: const FaIcon(
-                    FontAwesomeIcons.check,
+                    FontAwesomeIcons.list,
                     color: Colors.green,
                   ),
-                  title: const Text("Điểm danh-điều chuyển"),
+                  title: const Text("Danh sách cửa hàng"),
                   onTap: () {
                     //action on press
                     //Get.to(() => const DiemDanhNhom());

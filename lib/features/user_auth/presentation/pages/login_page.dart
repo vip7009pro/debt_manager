@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/GlobalFunction.dart';
@@ -22,50 +23,61 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalController c = Get.put(GlobalController());
   final FirebaseAuthService _auth = FirebaseAuthService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final TextEditingController _textFieldUserController = TextEditingController();
-  final TextEditingController _textFieldPassController = TextEditingController();
+  final TextEditingController _textFieldUserController =
+      TextEditingController();
+  final TextEditingController _textFieldPassController =
+      TextEditingController();
   String _user = '';
   String _pass = '';
   bool _saveAccount = true;
-Future<void> _loadAccount() async{
-  String savedUser = await LocalDataAccess.getVariable("user");
-  String savedPass = await LocalDataAccess.getVariable("pass");  
-  setState(() {
-    _user = savedUser;
-    _pass = savedPass;
-    _textFieldUserController.text = savedUser;
-    _textFieldPassController.text = savedPass;
-  });
-}
+  Future<void> _loadAccount() async {
+    String savedUser = await LocalDataAccess.getVariable("user");
+    String savedPass = await LocalDataAccess.getVariable("pass");
+    setState(() {
+      _user = savedUser;
+      _pass = savedPass;
+      _textFieldUserController.text = savedUser;
+      _textFieldPassController.text = savedPass;
+    });
+  }
   Future<bool> _login(String email, String password) async {
     bool check = true;
-    await API_Request.api_query('login', {
-      'EMAIL': email,
-      'PWD': password
-    }).then((value) {
+    await API_Request.api_query('login', {'EMAIL': email, 'PWD': password})
+        .then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;
-        LocalDataAccess.saveVariable('token', value['token_content']); 
-        LocalDataAccess.saveVariable('userData',jsonEncode(value['data'][0]) ); 
+        LocalDataAccess.saveVariable('token', value['token_content']);
+        LocalDataAccess.saveVariable('userData', jsonEncode(value['data'][0]));
       } else {
         check = false;
       }
     });
     return check;
   }
-  void _signInServer() async {   
-      bool checkserverLogin = await _login(_user, _pass);
-      if (checkserverLogin) {     
-          //Get.snackbar('Thông báo', 'Đăng nhập thành công cho : ${user.uid}');
-          if (_saveAccount) {
-            LocalDataAccess.saveVariable('user', _user);
-            LocalDataAccess.saveVariable('pass', _pass);
-          } else {
-            LocalDataAccess.saveVariable('user', '');
-            LocalDataAccess.saveVariable('pass', '');
-          }
-          Get.off(() => const HomePage());
-  }
+  void _signInServer() async {
+    bool checkserverLogin = await _login(_user, _pass);
+    if (checkserverLogin) {
+      //Get.snackbar('Thông báo', 'Đăng nhập thành công cho : ${user.uid}');
+      if (_saveAccount) {
+        LocalDataAccess.saveVariable('user', _user);
+        LocalDataAccess.saveVariable('pass', _pass);
+      } else {
+        LocalDataAccess.saveVariable('user', '');
+        LocalDataAccess.saveVariable('pass', '');
+      }
+      Get.off(() => const HomePage());
+    } else {
+      // ignore: use_build_context_synchronously
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.rightSlide,
+        title: 'Cảnh báo',
+        desc: 'Tên đăng nhập hoặc mật khẩu sai',
+        btnCancelOnPress: () {},
+        /* btnOkOnPress: () async {}, */
+      ).show();
+    }
   }
   void _signIn() async {
     User? user = await _auth.signInWithEmailAndPassword(_user, _pass);
@@ -91,25 +103,27 @@ Future<void> _loadAccount() async{
       }
     } else {}
   }
-  
-  void _signInWithGoogle() async { 
+  void _signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await c.googleSignIn().signIn();
       if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;            
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
         final AuthCredential credential = GoogleAuthProvider.credential(
             idToken: googleSignInAuthentication.idToken,
             accessToken: googleSignInAuthentication.accessToken);
         final userDt = await _firebaseAuth.signInWithCredential(credential);
-        bool checkserverLogin = await _login(userDt.user!.uid,userDt.user!.email!);
-        if(checkserverLogin) {
-          Get.snackbar('Thông báo', "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}");
-          Get.off(() => const HomePage()); 
-        }
-        else {
-          GlobalFunction.signUpServer(userDt.user!.uid, userDt.user!.email!,'----------');
-          Get.off(() => const HomePage()); 
+        bool checkserverLogin =
+            await _login(userDt.user!.uid, userDt.user!.email!);
+        if (checkserverLogin) {
+          Get.snackbar('Thông báo',
+              "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}");
+          Get.off(() => const HomePage());
+        } else {
+          GlobalFunction.signUpServer(
+              userDt.user!.uid, userDt.user!.email!, '----------');
+          Get.off(() => const HomePage());
           //Get.snackbar("Thông báo", 'Tài khoản chưa đồng bộ đăng ký');
         }
       }
@@ -121,11 +135,7 @@ Future<void> _loadAccount() async{
     }
   }
   Future<void> initFunction() async {
-     await _loadAccount();
-     String savedToken = await LocalDataAccess.getVariable("token");    
-     if(savedToken !='reset') {
-      _signInServer();
-     }
+    await _loadAccount();
   }
   @override
   void initState() {
