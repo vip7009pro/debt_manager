@@ -4,14 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:debt_manager/controller/APIRequest.dart';
-import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/controller/firebase_auth_services.dart';
-import 'package:debt_manager/features/user_auth/presentation/pages/verification_page.dart';
 import 'package:debt_manager/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class SplashScreen extends StatefulWidget {
   
@@ -27,9 +23,9 @@ class _SplashScreenState extends State<SplashScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final TextEditingController _textFieldUserController = TextEditingController();
   final TextEditingController _textFieldPassController = TextEditingController();
-  String _user = '';
-  String _pass = '';
-  bool _saveAccount = true;
+  final String _user = '';
+  final String _pass = '';
+  final bool _saveAccount = true;
 
   Future<bool> _checkLogin() async {
     bool check = true;

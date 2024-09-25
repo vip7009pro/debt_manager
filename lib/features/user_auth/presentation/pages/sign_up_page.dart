@@ -111,7 +111,7 @@ class _SignUpPageState extends State<SignUpPage> {
       width: 150,
       child: TextButton(
         style: TextButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 27, 199, 4)),
+            backgroundColor: const Color.fromARGB(255, 27, 199, 4)),
         onPressed: () {
           _signUpServer1();
         },
@@ -147,13 +147,13 @@ class _SignUpPageState extends State<SignUpPage> {
                 _saveAccount = value!;
               });
             }),
-        Text("Nhớ tài khoản")
+        const Text("Nhớ tài khoản")
       ],
     );
     final signup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           "Đã có tài khoản ?",
           style: TextStyle(
               fontSize: 15, fontWeight: FontWeight.normal, color: Colors.black),
@@ -162,7 +162,7 @@ class _SignUpPageState extends State<SignUpPage> {
             onPressed: () {
               Get.off(() => const LoginPage());
             },
-            child: Text("Đăng nhập",
+            child: const Text("Đăng nhập",
                 style: TextStyle(
                     fontSize: 15, color: Color.fromARGB(255, 82, 113, 255))))
       ],

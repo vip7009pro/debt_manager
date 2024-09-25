@@ -7,12 +7,10 @@ import 'package:debt_manager/features/user_auth/presentation/pages/login_page.da
 import 'package:debt_manager/pages/drawer_header.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   @override
@@ -64,8 +62,8 @@ class _HomePageState extends State<HomePage> {
                 "Home",
               ),
               Text(
-                "Ver: ${mobileVer}",
-                style: TextStyle(fontSize: 10),
+                "Ver: $mobileVer",
+                style: const TextStyle(fontSize: 10),
               )
             ],
           ),
@@ -242,13 +240,13 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedBottomIndex,
-        selectedItemColor: Color.fromARGB(255, 252, 238, 34),
+        selectedItemColor: const Color.fromARGB(255, 252, 238, 34),
         onTap: _onBottomItemTapped,
       ),
       floatingActionButton: Builder(builder: (context) {
         return FloatingActionButton(
-            backgroundColor: Color.fromARGB(255, 207, 217, 236),
-            child: Icon(Icons.add),
+            backgroundColor: const Color.fromARGB(255, 207, 217, 236),
+            child: const Icon(Icons.add),
             onPressed: () {
               //tryOtaUpdate();
               Scaffold.of(context).openDrawer(); // <-- Opens drawer.
