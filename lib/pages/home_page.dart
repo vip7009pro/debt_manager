@@ -5,6 +5,7 @@ import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
 import 'package:debt_manager/pages/drawer_header.dart';
+import 'package:debt_manager/pages/shop_list_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -119,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                   title: const Text("Danh sách cửa hàng"),
                   onTap: () {
                     //action on press
-                    //Get.to(() => const DiemDanhNhom());
+                    Get.to(() => const ShopListScreen());
                   },
                 ),
                 //more child menu

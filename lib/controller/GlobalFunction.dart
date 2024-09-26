@@ -1,4 +1,5 @@
 import 'package:debt_manager/controller/APIRequest.dart';
+import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,3 +58,5 @@ static Future<bool> signUpServer(String uid, String email, String pwd) async {
 
   
 }
+
+

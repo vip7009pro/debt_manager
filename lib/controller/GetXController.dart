@@ -3,8 +3,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class GlobalController extends GetxController {
   var googleSignIn = GoogleSignIn(signInOption: SignInOption.standard).obs;
-
   var count = 0.obs;
+  var shopID = ''.obs;
   increment() {
     count++;
   }
