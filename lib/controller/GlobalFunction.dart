@@ -54,9 +54,7 @@ static Future<bool> signUpServer(String uid, String email, String pwd) async {
       }
     });
     return check;
-  }
-
-  
+  }  
 }
 
 

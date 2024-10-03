@@ -53,7 +53,7 @@ class _ShopListScreenState extends State<ShopListScreen> {
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Text('No data');
+              return const Text('No data');
             } else {
               return ListView.builder(
                 itemCount: snapshot.data!.length,
