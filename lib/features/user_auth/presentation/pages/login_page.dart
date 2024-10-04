@@ -11,6 +11,7 @@ import 'package:debt_manager/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -42,7 +43,21 @@ class _LoginPageState extends State<LoginPage> {
   }
   Future<bool> _login(String email, String password) async {
     bool check = true;
-    await API_Request.api_query('login', {'EMAIL': email, 'PWD': password})
+    await API_Request.api_query('login', {'EMAIL': email, 'PWD': GlobalFunction.generateMd5(password)})
+        .then((value) {
+      if (value['tk_status'] == 'OK') {
+        check = true;
+        LocalDataAccess.saveVariable('token', value['token_content']);
+        LocalDataAccess.saveVariable('userData', jsonEncode(value['data'][0]));
+      } else {
+        check = false;
+      }
+    });
+    return check;
+  }
+  Future<bool> _login_after_google(String uid, String email) async {
+    bool check = true;
+    await API_Request.api_query('login_after_google', {'UID': uid, 'EMAIL': email})
         .then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;
@@ -98,12 +113,15 @@ class _LoginPageState extends State<LoginPage> {
           Get.to(() => const VerificationPage());
         }
       } else {
-        Get.snackbar("Thông báo",
-            'Tài khoản chưa đồng bộ, hãy thử đăng nhập với google nếu bạn dùng gmail');
+        Get.snackbar('Thông báo', 'Tài khoản chưa đồng bộ đăng ký',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 5));
       }
     } else {}
   }
-  void _signInWithGoogle() async {
+ /*  void _signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await c.googleSignIn().signIn();
@@ -133,7 +151,53 @@ class _LoginPageState extends State<LoginPage> {
         print('Thông báo ' "Lỗi: ${e.toString()}");
       }
     }
+  } */
+
+   void _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount = await c.googleSignIn().signIn();
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+            idToken: googleSignInAuthentication.idToken,
+            accessToken: googleSignInAuthentication.accessToken);
+        final userDt = await _firebaseAuth.signInWithCredential(credential);
+        bool checkserverLogin = await _login_after_google(userDt.user!.uid, userDt.user!.email!);
+        if (checkserverLogin) {
+          Get.snackbar('Thông báo', "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color.fromARGB(255, 173, 228, 168),
+          colorText: const Color.fromARGB(255, 6, 16, 49),
+          duration: const Duration(seconds: 5));
+          Get.off(() => const HomePage());
+        } else {
+          GlobalFunction.signUpServer(
+              userDt.user!.uid, userDt.user!.email!, GlobalFunction.generateMd5('----------'));
+          Get.off(() => const HomePage());
+        }
+      }
+    } catch (e) {
+      String errorMessage = "Đã xảy ra lỗi khi đăng nhập bằng Google";
+      if (e is PlatformException) {
+        if (e.code == 'sign_in_failed') {
+          errorMessage = "Đăng nhập thất bại. Vui lòng kiểm tra kết nối mạng và thử lại.";
+        } else if (e.code == 'network_error') {
+          errorMessage = "Lỗi kết nối mạng. Vui lòng kiểm tra kết nối internet của bạn.";
+        }
+      }
+      Get.snackbar('Thông báo', errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 5));
+      if (kDebugMode) {
+        print('Lỗi đăng nhập Google: ${e.toString()}');
+      }
+    }
   }
+
+  
   Future<void> initFunction() async {
     await _loadAccount();
   }
@@ -183,6 +247,8 @@ class _LoginPageState extends State<LoginPage> {
             backgroundColor: const Color.fromARGB(255, 82, 113, 255)),
         onPressed: () {
           _signInServer();
+          //_signIn();
+          //_signInWithGoogle();
         },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -296,7 +362,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  /* googleLoginButton, */
+                  googleLoginButton,
                   saveID,
                   signup
                 ],

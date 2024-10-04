@@ -1,5 +1,6 @@
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
+import 'package:debt_manager/pages/add_shop_page.dart';
 import 'package:debt_manager/pages/home_page.dart';
 import 'package:debt_manager/pages/shop_home_page.dart';
 import 'package:debt_manager/pages/shop_list_screen.dart';
@@ -81,7 +82,14 @@ class _ShopListScreenState extends State<ShopListScreen> {
           },
         ),
       ),
-    )
+    ),
+    floatingActionButton: FloatingActionButton(
+      onPressed: () {
+        Get.to(() => const AddShopPage());
+      },
+      child: const Icon(Icons.add),
+    ),  
     );
   }
 }
+

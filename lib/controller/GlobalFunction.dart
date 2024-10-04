@@ -3,6 +3,8 @@ import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';  // Thư viện này cung cấp hàm utf8.encode
+import 'package:crypto/crypto.dart';  // Thư viện crypto cung cấp thuật toán MD5
 
 class GlobalFunction {  
 
@@ -55,6 +57,9 @@ static Future<bool> signUpServer(String uid, String email, String pwd) async {
     });
     return check;
   }  
+  
+  static String generateMd5(String input) {
+    return md5.convert(utf8.encode(input)).toString();
+  }
 }
-
 

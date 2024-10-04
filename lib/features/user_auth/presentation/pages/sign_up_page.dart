@@ -26,7 +26,7 @@ class _SignUpPageState extends State<SignUpPage> {
     await API_Request.api_query('signup', {
       'UID': email,
       'EMAIL': email,
-      'PWD': password,
+      'PWD': GlobalFunction.generateMd5(password),
       'USERNAME': email
     }).then((value) {
       if (value['tk_status'] == 'OK') {
@@ -113,7 +113,8 @@ class _SignUpPageState extends State<SignUpPage> {
         style: TextButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 27, 199, 4)),
         onPressed: () {
-          _signUpServer1();
+          _signUp();
+          //_signUpServer1();
         },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
