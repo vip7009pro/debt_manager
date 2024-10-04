@@ -16,7 +16,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -121,37 +121,6 @@ class _LoginPageState extends State<LoginPage> {
       }
     } else {}
   }
- /*  void _signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleSignInAccount =
-          await c.googleSignIn().signIn();
-      if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication =
-            await googleSignInAccount.authentication;
-        final AuthCredential credential = GoogleAuthProvider.credential(
-            idToken: googleSignInAuthentication.idToken,
-            accessToken: googleSignInAuthentication.accessToken);
-        final userDt = await _firebaseAuth.signInWithCredential(credential);
-        bool checkserverLogin =
-            await _login(userDt.user!.uid, userDt.user!.email!);
-        if (checkserverLogin) {
-          Get.snackbar('Thông báo',
-              "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}");
-          Get.off(() => const HomePage());
-        } else {
-          GlobalFunction.signUpServer(
-              userDt.user!.uid, userDt.user!.email!, '----------');
-          Get.off(() => const HomePage());
-          //Get.snackbar("Thông báo", 'Tài khoản chưa đồng bộ đăng ký');
-        }
-      }
-    } catch (e) {
-      Get.snackbar('Thông báo', "Lỗi: ${e.toString()}");
-      if (kDebugMode) {
-        print('Thông báo ' "Lỗi: ${e.toString()}");
-      }
-    }
-  } */
 
    void _signInWithGoogle() async {
     try {
@@ -171,14 +140,14 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: const Color.fromARGB(255, 173, 228, 168),
           colorText: const Color.fromARGB(255, 6, 16, 49),
           duration: const Duration(seconds: 5));
-          Get.off(() => const HomePage());
-        } else {
+          await GlobalFunction.checkLogin(); 
+          print("login success");          
+        } else {  
+          print("login fail, sign up");
           String newPass = GlobalFunction.generateMd5('----------');
           await GlobalFunction.signUpServer(userDt.user!.uid, userDt.user!.email!, newPass);
           await _login(userDt.user!.uid, '----------');
-          await GlobalFunction.checkLogin();
-              
-          Get.off(() => const HomePage());
+          await GlobalFunction.checkLogin(); 
         }
       }
     } catch (e) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DrawerHeaderTab extends StatefulWidget {
-  const DrawerHeaderTab({Key? key}) : super(key: key);
+  const DrawerHeaderTab({super.key});
 
   @override
   _DrawerHeaderTabState createState() => _DrawerHeaderTabState();

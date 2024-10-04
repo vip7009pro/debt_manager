@@ -1,7 +1,6 @@
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
-import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:debt_manager/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 class AddShopPage extends StatefulWidget {
-  const AddShopPage({ Key? key }) : super(key: key);
+  const AddShopPage({ super.key });
   @override
   State<AddShopPage> createState() => _AddShopPageState();
 }

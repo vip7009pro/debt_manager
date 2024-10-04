@@ -47,7 +47,7 @@ class _ShopListScreenState extends State<ShopListScreen> {
           },
           child: FutureBuilder<List<Shop>>(
           future: _getShopList(),
-          initialData: [],
+          initialData: const [],
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();

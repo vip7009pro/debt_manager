@@ -23,7 +23,7 @@ class _ShopHomePageState extends State<ShopHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Shop Home Page ' + shopid.toString()),
+        title: Text('Shop Home Page $shopid'),
       ),
       body: Center(
         child: Text(shopid.toString()),
