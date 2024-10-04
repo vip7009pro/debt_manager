@@ -155,6 +155,7 @@ class _LoginPageState extends State<LoginPage> {
 
    void _signInWithGoogle() async {
     try {
+      await c.googleSignIn().signOut();
       final GoogleSignInAccount? googleSignInAccount = await c.googleSignIn().signIn();
       if (googleSignInAccount != null) {
         final GoogleSignInAuthentication googleSignInAuthentication =
@@ -172,8 +173,11 @@ class _LoginPageState extends State<LoginPage> {
           duration: const Duration(seconds: 5));
           Get.off(() => const HomePage());
         } else {
-          GlobalFunction.signUpServer(
-              userDt.user!.uid, userDt.user!.email!, GlobalFunction.generateMd5('----------'));
+          String newPass = GlobalFunction.generateMd5('----------');
+          await GlobalFunction.signUpServer(userDt.user!.uid, userDt.user!.email!, newPass);
+          await _login(userDt.user!.uid, '----------');
+          await GlobalFunction.checkLogin();
+              
           Get.off(() => const HomePage());
         }
       }

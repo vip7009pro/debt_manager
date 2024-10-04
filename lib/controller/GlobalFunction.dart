@@ -1,6 +1,10 @@
 import 'package:debt_manager/controller/APIRequest.dart';
+import 'package:debt_manager/controller/LocalDataAccess.dart';
+import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
+import 'package:debt_manager/pages/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';  // Thư viện này cung cấp hàm utf8.encode
@@ -61,5 +65,23 @@ static Future<bool> signUpServer(String uid, String email, String pwd) async {
   static String generateMd5(String input) {
     return md5.convert(utf8.encode(input)).toString();
   }
+
+
+  static  Future<bool> checkLogin() async {
+    bool check = true;
+    await API_Request.api_query('checklogin', {}).then((value) {      
+      if (value['tk_status'] == 'OK') {
+        check = true;
+        LocalDataAccess.saveVariable('userData', jsonEncode(value['data']));
+        Get.off(() => const HomePage());        
+      } else {
+        check = false;
+        Get.off(() => const LoginPage());
+      }
+    });
+    return check;
+  }  
+
+  
 }
 
