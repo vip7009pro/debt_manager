@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/GetXController.dart';
@@ -5,6 +7,7 @@ import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ShopInfoScreen extends StatefulWidget {
   const ShopInfoScreen({ Key? key }) : super(key: key);
@@ -65,7 +68,7 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
       'SHOP_ADD': shopAddController.text,
       'SHOP_AVATAR': shopAvatarController.text
     }).then((value) {
-      if (value['tk_status'] == 'OK') {
+      if (value['tk_status'] == 'OK') {        
         AwesomeDialog(  
           context: context,
           dialogType: DialogType.success,
@@ -88,6 +91,42 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
       }
     });
   }
+  void _uploadImage() async {
+    if (shopAvatarController.text.isNotEmpty) {
+      try {
+        final result = await API_Request.uploadQuery(
+          file: File(shopAvatarController.text),
+          filename: 'shop_avatar.jpg',
+          uploadfoldername: 'shop_avatars',
+        );
+        if (result['tk_status'] == 'OK') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Image uploaded successfully')),
+          );
+          // Update the shopAvatarController with the new URL if provided in the result
+          if (result['url'] != null) {
+            setState(() {
+              shopAvatarController.text = result['url'];
+            });
+          } 
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to upload image: ${result['message']}')),
+          );
+        }
+      } catch (e) {
+        print('Error uploading image: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('An error occurred while uploading the image')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please choose an image first')),
+      );
+    }
+  } 
+
 
   @override
   void initState() {
@@ -127,12 +166,42 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
               },
               decoration: const InputDecoration(labelText: 'Shop Address'),
             ),
-            TextFormField(
-              controller: shopAvatarController,
-              onChanged: (value) {
-                shopAvatarController.text = value;
-              },
-              decoration: const InputDecoration(labelText: 'Shop Avatar URL'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,  
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () async {
+                    final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+                    if (pickedImage != null) {
+                      setState(() {
+                        shopAvatarController.text = pickedImage.path;
+                      });
+                    }
+                  },
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: shopAvatarController.text.isNotEmpty
+                            ? FileImage(File(shopAvatarController.text))
+                            : AssetImage('assets/images/empty_avatar.png') as ImageProvider,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                   _uploadImage();
+                  },
+                  child: const Text('Upload Image'),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             ElevatedButton(
