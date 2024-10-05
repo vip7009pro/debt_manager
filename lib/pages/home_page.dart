@@ -4,7 +4,9 @@ import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
+import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:debt_manager/pages/drawer_header.dart';
+import 'package:debt_manager/pages/shop_info_screen.dart';
 import 'package:debt_manager/pages/shop_list_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedBottomIndex = 0;
   final GlobalController c = Get.put(GlobalController());
+  Shop shop = Shop(
+      shopId: 0,
+      uid: '',
+      shopName: '',
+      shopDescr: '',
+      shopAdd: '',
+      insDate: DateTime.now(),
+      insUid: '',
+      updDate: DateTime.now(),
+      updUid: '',
+      shopAvatar: '');
   void _onBottomItemTapped(int index) {
     setState(() {
       _selectedBottomIndex = index;
@@ -47,8 +60,24 @@ class _HomePageState extends State<HomePage> {
     });
     return check;
   }
+  Future<void> _getShopInfo() async {
+    List<dynamic> shopList = [];
+    await API_Request.api_query('getShopInfo', {
+      'SHOP_ID': c.shopID.value == ''
+          ? await LocalDataAccess.getVariable('shopid')
+          : c.shopID.value
+    }).then((value) {
+      shopList = value['data'] ?? [];
+      setState(() {
+        if (shopList.isNotEmpty) {
+          shop = Shop.fromJson(shopList[0]);
+        }
+      });
+    });
+  }
   @override
   void initState() {
+    _getShopInfo();
     super.initState();
   }
   @override
@@ -57,16 +86,41 @@ class _HomePageState extends State<HomePage> {
       drawerEnableOpenDragGesture: true,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-          title: Row(
-            children: [
-              const Text(
-                "Home",
-              ),
-              Text(
-                "Ver: $mobileVer",
-                style: const TextStyle(fontSize: 10),
-              )
-            ],
+          title: GestureDetector(
+            onTap: () {
+              Get.to(() => const ShopInfoScreen());
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(25),
+                  child: Image.network(
+                    "http://192.168.1.192/Picture_NS/NS_NHU1903.jpg",
+                    width: 30,
+                    height: 30,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      shop.shopName,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      shop.shopDescr,
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           backgroundColor: Colors.transparent,
           flexibleSpace: Container(
@@ -161,7 +215,7 @@ class _HomePageState extends State<HomePage> {
         decoration: const BoxDecoration(
             gradient: LinearGradient(
           colors: [
-            Color.fromARGB(255, 93, 192, 231),
+            Color.fromARGB(255, 109, 230, 129),
             Color.fromARGB(255, 241, 241, 241),
           ],
           begin: Alignment.topCenter,
@@ -209,6 +263,11 @@ class _HomePageState extends State<HomePage> {
                   } else {}
                 },
                 child: const Text("Login test")),
+            ElevatedButton(
+                onPressed: () async {
+                  await _getShopInfo();
+                },
+                child: const Text("Get shop info")),
           ],
         )),
         /* child: Obx(() =>  Container(

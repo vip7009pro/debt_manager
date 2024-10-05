@@ -25,11 +25,6 @@ class _AddShopPageState extends State<AddShopPage> {
     });
     return check;    
   }
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

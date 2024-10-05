@@ -15,11 +15,13 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
   @override
   _LoginPageState createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<LoginPage> {
   final GlobalController c = Get.put(GlobalController());
   final FirebaseAuthService _auth = FirebaseAuthService();
@@ -41,24 +43,32 @@ class _LoginPageState extends State<LoginPage> {
       _textFieldPassController.text = savedPass;
     });
   }
+
   Future<bool> _login(String email, String password) async {
     bool check = true;
-    await API_Request.api_query('login', {'EMAIL': email, 'PWD': GlobalFunction.generateMd5(password)})
-        .then((value) {
+    await API_Request.api_query('login', {
+      'EMAIL': email,
+      'PWD': GlobalFunction.generateMd5(password)
+    }).then((value) {
+      print("login");
+      print(value);
       if (value['tk_status'] == 'OK') {
+        print("login true");
         check = true;
         LocalDataAccess.saveVariable('token', value['token_content']);
         LocalDataAccess.saveVariable('userData', jsonEncode(value['data'][0]));
       } else {
+        print("login false");
         check = false;
       }
     });
     return check;
   }
+
   Future<bool> _login_after_google(String uid, String email) async {
     bool check = true;
-    await API_Request.api_query('login_after_google', {'UID': uid, 'EMAIL': email})
-        .then((value) {
+    await API_Request.api_query(
+        'login_after_google', {'UID': uid, 'EMAIL': email}).then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;
         LocalDataAccess.saveVariable('token', value['token_content']);
@@ -69,6 +79,7 @@ class _LoginPageState extends State<LoginPage> {
     });
     return check;
   }
+
   void _signInServer() async {
     bool checkserverLogin = await _login(_user, _pass);
     if (checkserverLogin) {
@@ -94,6 +105,7 @@ class _LoginPageState extends State<LoginPage> {
       ).show();
     }
   }
+
   void _signIn() async {
     User? user = await _auth.signInWithEmailAndPassword(_user, _pass);
     if (user != null) {
@@ -114,18 +126,19 @@ class _LoginPageState extends State<LoginPage> {
         }
       } else {
         Get.snackbar('Thông báo', 'Tài khoản chưa đồng bộ đăng ký',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 5));
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 5));
       }
     } else {}
   }
 
-   void _signInWithGoogle() async {
+  void _signInWithGoogle() async {
     try {
       await c.googleSignIn().signOut();
-      final GoogleSignInAccount? googleSignInAccount = await c.googleSignIn().signIn();
+      final GoogleSignInAccount? googleSignInAccount =
+          await c.googleSignIn().signIn();
       if (googleSignInAccount != null) {
         final GoogleSignInAuthentication googleSignInAuthentication =
             await googleSignInAccount.authentication;
@@ -133,30 +146,32 @@ class _LoginPageState extends State<LoginPage> {
             idToken: googleSignInAuthentication.idToken,
             accessToken: googleSignInAuthentication.accessToken);
         final userDt = await _firebaseAuth.signInWithCredential(credential);
-        bool checkserverLogin = await _login_after_google(userDt.user!.uid, userDt.user!.email!);
+        bool checkserverLogin =
+            await _login_after_google(userDt.user!.uid, userDt.user!.email!);
         if (checkserverLogin) {
-          Get.snackbar('Thông báo', "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}",
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: const Color.fromARGB(255, 173, 228, 168),
-          colorText: const Color.fromARGB(255, 6, 16, 49),
-          duration: const Duration(seconds: 5));
-          await GlobalFunction.checkLogin(); 
-          print("login success");          
-        } else {  
-          print("login fail, sign up");
+          Get.snackbar('Thông báo',
+              "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}",
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: const Color.fromARGB(255, 173, 228, 168),
+              colorText: const Color.fromARGB(255, 6, 16, 49),
+              duration: const Duration(seconds: 5));
+          await GlobalFunction.checkLogin();          
+        } else {          
           String newPass = GlobalFunction.generateMd5('----------');
           await GlobalFunction.signUpServer(userDt.user!.uid, userDt.user!.email!, newPass);
-          await _login(userDt.user!.uid, '----------');
-          await GlobalFunction.checkLogin(); 
+          await _login(userDt.user!.email!, '----------');          
+          await GlobalFunction.checkLogin();
         }
       }
     } catch (e) {
       String errorMessage = "Đã xảy ra lỗi khi đăng nhập bằng Google";
       if (e is PlatformException) {
         if (e.code == 'sign_in_failed') {
-          errorMessage = "Đăng nhập thất bại. Vui lòng kiểm tra kết nối mạng và thử lại.";
+          errorMessage =
+              "Đăng nhập thất bại. Vui lòng kiểm tra kết nối mạng và thử lại.";
         } else if (e.code == 'network_error') {
-          errorMessage = "Lỗi kết nối mạng. Vui lòng kiểm tra kết nối internet của bạn.";
+          errorMessage =
+              "Lỗi kết nối mạng. Vui lòng kiểm tra kết nối internet của bạn.";
         }
       }
       Get.snackbar('Thông báo', errorMessage,
@@ -170,16 +185,17 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  
   Future<void> initFunction() async {
     await _loadAccount();
   }
+
   @override
   void initState() {
     // TODO: implement initState
     initFunction();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     final logo = Image.asset(

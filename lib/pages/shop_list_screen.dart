@@ -1,4 +1,5 @@
 import 'package:debt_manager/controller/APIRequest.dart';
+import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/pages/add_shop_page.dart';
 import 'package:debt_manager/pages/home_page.dart';
@@ -17,6 +18,7 @@ class ShopListScreen extends StatefulWidget {
 }
 
 class _ShopListScreenState extends State<ShopListScreen> {
+  final GlobalController c = Get.put(GlobalController());
   Future<List<Shop>> _getShopList() async {
     List<dynamic> shopList = [];
     await API_Request.api_query('getShopList', {}).then((value) {
@@ -29,6 +31,7 @@ class _ShopListScreenState extends State<ShopListScreen> {
 
   @override
   void initState() {
+    _getShopList();
     super.initState();
   }
 
@@ -62,6 +65,7 @@ class _ShopListScreenState extends State<ShopListScreen> {
                   return ListTile(
                     onTap: () {
                       LocalDataAccess.saveVariable('shopid', snapshot.data![index].shopId.toString());
+                      c.shopID.value = snapshot.data![index].shopId.toString();
                       Get.off(() => const HomePage());
                     },
                     title: Text(snapshot.data![index].shopName),

@@ -1,14 +1,14 @@
 class Shop {
   final num shopId;
   final String uid;
-  final String shopName;
-  final String shopDescr;
-  final String shopAdd;
+  late final String shopName;
+  late final String shopDescr;
+  late final String shopAdd;
   final DateTime insDate;
   final String insUid;
   final DateTime updDate;
   final String updUid;
-  final String shopAvatar;
+  late final String shopAvatar;
 
   Shop({
     required this.shopId,
