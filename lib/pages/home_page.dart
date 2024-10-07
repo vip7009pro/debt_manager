@@ -236,7 +236,7 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (context, index) {
           return Container(            
             decoration: BoxDecoration(
-              color: Colors.teal[100 * (index + 1)],
+              color: Colors.teal[300],
               borderRadius: BorderRadius.circular(10),              
             ),
             child: Center(
