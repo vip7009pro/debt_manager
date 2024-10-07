@@ -66,7 +66,7 @@ class _ShopListScreenState extends State<ShopListScreen> {
                     onTap: () {
                       LocalDataAccess.saveVariable('shopid', snapshot.data![index].shopId.toString());
                       c.shopID.value = snapshot.data![index].shopId.toString();
-                      Get.off(() => const HomePage());
+                      Get.offAll(() => const HomePage());
                     },
                     title: Text(snapshot.data![index].shopName),
                     subtitle: Text(snapshot.data![index].shopDescr),

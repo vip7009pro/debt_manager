@@ -45,11 +45,7 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
       shopList = value['data'] ?? [];
       setState(() {
         if (shopList.isNotEmpty) {
-          shop = Shop.fromJson(shopList[0]);
-          print(shop.shopName);
-          print(shop.shopDescr);
-          print(shop.shopAdd);
-          print(shop.shopAvatar);
+          shop = Shop.fromJson(shopList[0]);          
           shopNameController.text = shop.shopName;
           shopDescrController.text = shop.shopDescr;
           shopAddController.text = shop.shopAdd;
@@ -59,6 +55,7 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
     });
   }
   Future<void> _updateShopInfo() async {
+    
     await API_Request.api_query('updateShopInfo', {
       'SHOP_ID': c.shopID.value == ''
           ? await LocalDataAccess.getVariable('shopid')
@@ -92,11 +89,13 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
     });
   }
   void _uploadImage() async {
-    if (shopAvatarController.text.isNotEmpty) {
+    print('shop ID Local: ${await LocalDataAccess.getVariable('shopid')}');
+    print('shop ID Global: ${c.shopID.value}');
+    if (shopAvatarController.text.isNotEmpty && File(shopAvatarController.text).existsSync()) {      
       try {
         final result = await API_Request.uploadQuery(
           file: File(shopAvatarController.text),
-          filename: 'shop_avatar.jpg',
+          filename: '${await LocalDataAccess.getVariable('shopid')}.jpg',
           uploadfoldername: 'shop_avatars',
         );
         if (result['tk_status'] == 'OK') {
@@ -180,19 +179,38 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
                       });
                     }
                   },
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: shopAvatarController.text.isNotEmpty
-                            ? FileImage(File(shopAvatarController.text))
-                            : AssetImage('assets/images/empty_avatar.png') as ImageProvider,
-                      ),
-                    ),
-                  ),
+                  child: ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child:shopAvatarController.text.isNotEmpty ?  Image.file(
+                      File(shopAvatarController.text),
+                      width: 30,
+                      height: 30,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 30,
+                          height: 30,
+                          color: Colors.grey[300],
+                          child: Icon(Icons.store, color: Colors.grey[600]),
+                        );
+                      },
+                    ):              
+               Image.network(
+                "http://192.168.1.136/shop_avatars/${shop.shopId}.jpg",
+                width: 30,
+                height: 30,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {                 
+                    return Container(
+                      width: 30,
+                      height: 30,
+                      color: Colors.grey[300],
+                      child: Icon(Icons.store, color: Colors.grey[600]),
+                    );
+                  
+                },
+              ),
+            )
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
