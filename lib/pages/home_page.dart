@@ -51,8 +51,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  final logo =
-      Image.asset('assets/images/app_logo.png', width: 120, fit: BoxFit.cover);
+  final logo = Image.asset('assets/images/app_logo.png', width: 120, fit: BoxFit.cover);
   int mobileVer = 4;
   late Timer _timer;
 
@@ -65,7 +64,6 @@ class _HomePageState extends State<HomePage> {
         LocalDataAccess.saveVariable('token', value['token_content']);
         LocalDataAccess.saveVariable('userData', jsonEncode(value['data'][0]));
         var response = value['data'][0];
-        print(response);
         setState(() {});
       } else {
         check = false;
@@ -108,7 +106,7 @@ class _HomePageState extends State<HomePage> {
         height: 80,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(5),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.3),
@@ -140,7 +138,7 @@ class _HomePageState extends State<HomePage> {
       height: 80,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(5),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.3),
@@ -155,7 +153,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Icon(icon, size: 30, color: Colors.teal),
+            child: Icon(icon, size: 30, color: const Color.fromARGB(255, 42, 97, 199)),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -163,12 +161,12 @@ class _HomePageState extends State<HomePage> {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.teal),
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 42, 97, 199)),
               ),
               const SizedBox(height: 4),
               Text(
                 amount,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.teal),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 42, 97, 199)),
               ),
             ],
           ),
@@ -189,7 +187,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(25),
+              borderRadius: BorderRadius.circular(10),
               child: Image.network(
                 "http://192.168.1.136/shop_avatars/${shop.shopId}.jpg",
                 width: 30,
@@ -224,33 +222,56 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      backgroundColor: Colors.teal,
-      flexibleSpace: Container(),
+      backgroundColor: Colors.lightBlue,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.lightBlue, Colors.lightBlueAccent],
+          ),
+        ),
+      ),
     );
     
     final bannerWidget = SizedBox(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery.of(context).size.width*0.9,
       height: 100,
       child: PageView.builder(        
         itemCount: 3,
         itemBuilder: (context, index) {
           return Container(            
             decoration: BoxDecoration(
-              color: Colors.teal[300],
+              color: const Color.fromARGB(255, 245, 250, 249),
               borderRadius: BorderRadius.circular(10),              
             ),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/images/banner_${index + 1}.png',
-                    height: 60,
-                    fit: BoxFit.contain,
+                  Image.network(
+                    'http://192.168.1.136/shop_avatars/banner.jpg',
+                    width: MediaQuery.of(context).size.width*0.9,
+                    height: MediaQuery.of(context).size.height*0.1,
+                    fit: BoxFit.fill,
+                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.error);
+                    },
                   ),
                   Text(
                     'Banner ${index + 1}',
-                    style: const TextStyle(fontSize: 20, color: Colors.white),
+                    style: const TextStyle(fontSize: 10, color: Color.fromARGB(255, 48, 44, 44)),
                   ),
                 ],
               ),
@@ -264,27 +285,30 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       child: ListView(
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.white, 
-                  Colors.tealAccent,
-                ],
-                begin: FractionalOffset(0.0, 0.0),
-                end: FractionalOffset(0.0, 1.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp),
+          const SizedBox(
+            height: 100, //fit child content height,
+            child: DrawerHeader(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFFE1F5FE),  // Light blue
+                    Color.fromARGB(255, 159, 222, 252),  // Darker blue
+                  ],
+                  begin: FractionalOffset(0.0, 0.0),
+                  end: FractionalOffset(0.0, 0.5),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp),
+              ),
+              margin: EdgeInsets.zero,
+              padding: EdgeInsets.zero, 
+              child: DrawerHeaderTab(),
             ),
-            margin: EdgeInsets.all(0),
-            padding: EdgeInsets.all(0), 
-            child: DrawerHeaderTab(),
           ),
           ExpansionTile(
-            title: const Text("Quản lý cửa hàng", style: TextStyle(color: Colors.teal)),
+            title: const Text("Quản lý cửa hàng", style: TextStyle(color: Colors.lightBlue)),
             leading: const Icon(
               Icons.shopping_bag,
-              color: Colors.teal,
+              color: Colors.lightBlue,
             ),  
             childrenPadding: const EdgeInsets.only(left: 10),
             children: [
@@ -292,9 +316,30 @@ class _HomePageState extends State<HomePage> {
                 visualDensity: const VisualDensity(vertical: -3),
                 leading: const FaIcon(
                   FontAwesomeIcons.list,
-                  color: Colors.teal,
+                  color: Colors.lightBlue,
                 ),
-                title: const Text("Danh sách cửa hàng", style: TextStyle(color: Colors.teal)),  
+                title: const Text("Danh sách cửa hàng", style: TextStyle(color: Colors.lightBlue)),  
+                onTap: () {
+                  Get.to(() => const ShopListScreen());
+                },
+              ),
+            ],
+          ),
+          ExpansionTile(
+            title: const Text("Quản lý nhân viên", style: TextStyle(color: Colors.lightBlue)),
+            leading: const Icon(
+              Icons.people,
+              color: Colors.lightBlue,
+            ),  
+            childrenPadding: const EdgeInsets.only(left: 10),
+            children: [
+              ListTile(
+                visualDensity: const VisualDensity(vertical: -3),
+                leading: const FaIcon(
+                  FontAwesomeIcons.list,
+                  color: Colors.lightBlue,
+                ),
+                title: const Text("Danh sách nhân viên", style: TextStyle(color: Colors.lightBlue)),  
                 onTap: () {
                   Get.to(() => const ShopListScreen());
                 },
@@ -336,11 +381,11 @@ class _HomePageState extends State<HomePage> {
         height: 200,
         width: MediaQuery.of(context).size.width,     
         decoration: BoxDecoration(
-          color: Colors.teal.withOpacity(0.1),       
+          color: const Color.fromARGB(255, 251, 255, 255).withOpacity(0.1),       
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.teal.withOpacity(0.3),
+              color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 2), 
@@ -378,11 +423,11 @@ class _HomePageState extends State<HomePage> {
       width: MediaQuery.of(context).size.width,
       height: 100,
       decoration: BoxDecoration(
-        color: Colors.teal.withOpacity(0.1),
+        color: const Color(0xFFE1F5FE).withOpacity(0.1),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.teal.withOpacity(0.3),
+            color: const Color(0xFF81D4FA).withOpacity(0.3),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 2),
@@ -402,11 +447,11 @@ class _HomePageState extends State<HomePage> {
     final orderStatusWidget = Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        color: const Color.fromARGB(124, 255, 255, 255),
+        borderRadius: BorderRadius.circular(5),
         boxShadow: [
           BoxShadow(
-            color: Colors.teal.withOpacity(0.3),
+            color: const Color.fromARGB(255, 241, 243, 243).withOpacity(0.3),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 2),
@@ -420,23 +465,23 @@ class _HomePageState extends State<HomePage> {
             children: [
               const Text(
                 "Order Status",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.teal),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.lightBlue),
               ),
               TextButton(
                 onPressed: () {
                   // TODO: Implement show detail functionality
                 },
-                child: const Text("Show Detail", style: TextStyle(color: Colors.teal)),
+                child: const Text("Show Detail", style: TextStyle(color: Colors.lightBlue)),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Column(
                 children: [
-                  Icon(Icons.hourglass_empty, size: 30, color: Colors.orange),
+                  Icon(Icons.hourglass_empty, size: 20, color: Colors.orange),
                    Text(
                     "Waiting",
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.orange),
@@ -449,14 +494,14 @@ class _HomePageState extends State<HomePage> {
               ),
               Column(
                 children: [
-                  Icon(Icons.sync, size: 30, color: Colors.teal),
+                  Icon(Icons.sync, size: 20, color: Colors.lightBlue),
                    Text(
                     "Processing",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.teal),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.lightBlue),
                   ),
                    Text(
                     "3",  // Replace with actual number
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.teal),
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.lightBlue),
                   ),
                 ],
               ),
@@ -479,40 +524,30 @@ class _HomePageState extends State<HomePage> {
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
                 colors: [
-                  Colors.teal,
-                  Colors.white,
+                  Color(0xFFE1F5FE),
+                  Color(0xFFB3E5FC),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               )),
-              child: Container(
+              child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
                   child: RefreshIndicator(
                     onRefresh: () async {
-                      // Add your refresh logic here
-                      // For example, you might want to reload data or update state
                       _getShopInfo();
-                      setState(() {
-                        // Update your state or reload data
-                      // Refresh network images
-                      setState(() {
-                        // Force rebuild of network images
-                        imageCache.clear();
-                        imageCache.clearLiveImages();
-                      });
-                      });
+                      imageCache.clear();
+                      imageCache.clearLiveImages();
                     },
-                    child: ListView(                    
+                    child: ListView(
                       children: [
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 5),
                         bannerWidget,
                         const SizedBox(height: 16),
                         statsWidget,
                         const SizedBox(height: 16),
                         functionWidget,
                         const SizedBox(height: 16),
-                        orderStatusWidget,
-                        const SizedBox(height: 16),                     
-                       
+                        
                       ],
                     ),
                   )),
@@ -525,22 +560,22 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: Colors.teal,
+            backgroundColor: Color(0xFF4FC3F7),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.business),
             label: 'Business',
-            backgroundColor: Colors.teal,
+            backgroundColor: Color(0xFF29B6F6),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
             label: 'School',
-            backgroundColor: Colors.teal,
+            backgroundColor: Color(0xFF03A9F4),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
-            backgroundColor: Colors.teal,
+            backgroundColor: Color(0xFF039BE5),
           ),
         ],
         currentIndex: _selectedBottomIndex,
@@ -549,10 +584,67 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: Builder(builder: (context) {
         return FloatingActionButton(
-            backgroundColor: Colors.teal,
-            child: const Icon(Icons.add, color: Colors.white),
+            backgroundColor: const Color(0xFF4FC3F7),
+            child: const Icon(Icons.add, color: Colors.white, size: 30),
+            mini: true,
             onPressed: () {
-              Scaffold.of(context).openDrawer();
+              //Scaffold.of(context).openDrawer();
+              final RenderBox button = context.findRenderObject() as RenderBox;
+              final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+              final RelativeRect position = RelativeRect.fromRect(
+                Rect.fromPoints(
+                  button.localToGlobal(Offset.zero, ancestor: overlay),
+                  button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+                ),
+                Offset.zero & overlay.size,
+              );
+
+              showMenu(
+                context: context,
+                position: position.shift(Offset(0, -button.size.height-150)),
+                items: <PopupMenuEntry>[
+                  PopupMenuItem(
+                    child: ListTile(
+                      leading: Icon(Icons.add_shopping_cart),
+                      title: Text('Tạo đơn hàng'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        // Add logic to create order
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    child: ListTile(
+                      leading: Icon(Icons.person_add),
+                      title: Text('Thêm khách hàng'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        // Add logic to add customer
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    child: ListTile(
+                      leading: Icon(Icons.business),
+                      title: Text('Thêm nhà cung cấp'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        // Add logic to add supplier
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    child: ListTile(
+                      leading: Icon(Icons.inventory),
+                      title: Text('Thêm sản phẩm'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        // Add logic to add product
+                      },
+                    ),
+                  ),
+                ],
+              );
             });
       }),
     );

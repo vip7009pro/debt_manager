@@ -72,11 +72,20 @@ class _ShopListScreenState extends State<ShopListScreen> {
                     subtitle: Text(snapshot.data![index].shopDescr),
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(25),
-                      child: Image.network(
-                        "http://192.168.1.192/Picture_NS/NS_NHU1903.jpg",
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/empty_avatar.png',
+                        image: "http://192.168.1.136/shop_avatars/${snapshot.data![index].shopId}.jpg",
                         width: 50,
                         height: 50,
                         fit: BoxFit.cover,
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 50,
+                            height: 50,
+                            color: Colors.grey[300],
+                            child: Icon(Icons.store, color: Colors.grey[600]),
+                          );
+                        },
                       ),
                     ),
                   );
