@@ -5,17 +5,21 @@ import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
-import 'package:debt_manager/pages/coupons_screen.dart';
-import 'package:debt_manager/pages/create_invoice_screen.dart';
+import 'package:debt_manager/pages/coupons/coupons_screen.dart';
+import 'package:debt_manager/pages/invoices/create_invoice_screen.dart';
+import 'package:debt_manager/pages/customers/add_customers_screen.dart';
 import 'package:debt_manager/pages/drawer_header.dart';
-import 'package:debt_manager/pages/invoice_screen.dart';
-import 'package:debt_manager/pages/more_options_screen.dart';
-import 'package:debt_manager/pages/products_screen.dart';
-import 'package:debt_manager/pages/report_screen.dart';
-import 'package:debt_manager/pages/shop_info_screen.dart';
-import 'package:debt_manager/pages/shop_list_screen.dart';
-import 'package:debt_manager/pages/stock_screen.dart';
-import 'package:debt_manager/pages/supplier_screen.dart';
+import 'package:debt_manager/pages/invoices/invoice_screen.dart';
+import 'package:debt_manager/pages/more_options/more_options_screen.dart';
+import 'package:debt_manager/pages/orders/add_orders_screen.dart';
+import 'package:debt_manager/pages/products/add_products_screen.dart';
+import 'package:debt_manager/pages/products/products_screen.dart';
+import 'package:debt_manager/pages/reports/report_screen.dart';
+import 'package:debt_manager/pages/shops/shop_info_screen.dart';
+import 'package:debt_manager/pages/shops/shop_list_screen.dart';
+import 'package:debt_manager/pages/stocks/stock_screen.dart';
+import 'package:debt_manager/pages/suppliers/supplier_screen.dart';
+import 'package:debt_manager/pages/suppliers/add_suppliers_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -547,7 +551,7 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(height: 16),
                         functionWidget,
                         const SizedBox(height: 16),
-                        
+                        orderStatusWidget,
                       ],
                     ),
                   )),
@@ -609,6 +613,7 @@ class _HomePageState extends State<HomePage> {
                       title: Text('Tạo đơn hàng'),
                       onTap: () {
                         Navigator.pop(context);
+                        Get.to(() => const AddOrdersScreen());
                         // Add logic to create order
                       },
                     ),
@@ -619,6 +624,7 @@ class _HomePageState extends State<HomePage> {
                       title: Text('Thêm khách hàng'),
                       onTap: () {
                         Navigator.pop(context);
+                        Get.to(() => const AddCustomersScreen());
                         // Add logic to add customer
                       },
                     ),
@@ -629,6 +635,7 @@ class _HomePageState extends State<HomePage> {
                       title: Text('Thêm nhà cung cấp'),
                       onTap: () {
                         Navigator.pop(context);
+                        Get.to(() => const AddSuppliersScreen());
                         // Add logic to add supplier
                       },
                     ),
@@ -639,6 +646,7 @@ class _HomePageState extends State<HomePage> {
                       title: Text('Thêm sản phẩm'),
                       onTap: () {
                         Navigator.pop(context);
+                        Get.to(() => const AddProductsScreen());
                         // Add logic to add product
                       },
                     ),

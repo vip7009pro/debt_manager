@@ -82,7 +82,7 @@ class _ShopListScreenState extends State<ShopListScreen> {
                           return Container(
                             width: 50,
                             height: 50,
-                            color: Colors.grey[300],
+                            color: const Color.fromARGB(255, 19, 3, 3),
                             child: Icon(Icons.store, color: Colors.grey[600]),
                           );
                         },

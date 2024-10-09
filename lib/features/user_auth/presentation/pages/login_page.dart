@@ -30,6 +30,11 @@ class _LoginPageState extends State<LoginPage> {
       TextEditingController();
   final TextEditingController _textFieldPassController =
       TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
+  String _verificationId = '';
+  String _errorMessage = '';
+  String _otp = ''; 
+
   String _user = '';
   String _pass = '';
   bool _saveAccount = true;
@@ -185,6 +190,52 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+ Future<void> _verifyPhoneNumber() async {
+    await _firebaseAuth.verifyPhoneNumber(
+      
+      phoneNumber: _textFieldUserController.text,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await _firebaseAuth.signInWithCredential(credential);
+        // Đăng nhập thành công
+        print("User logged in: ${_firebaseAuth.currentUser?.phoneNumber}");
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print('verification failed: ${e.message}');
+        setState(() {
+          _errorMessage = e.message!;
+        });
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        print('code sent: $verificationId');
+        setState(() {
+          _verificationId = verificationId;
+        });
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        print('code auto retrieval timeout: $verificationId');
+        setState(() {
+          _verificationId = verificationId;
+        });
+      },
+    );
+  }
+
+  Future<void> _signInWithOTP() async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId,
+        smsCode: _otpController.text,
+      );
+      await _firebaseAuth.signInWithCredential(credential);
+      // Đăng nhập thành công
+      print("User logged in: ${_firebaseAuth.currentUser?.phoneNumber}");
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message!;
+      });
+    }
+  }
+
   Future<void> initFunction() async {
     await _loadAccount();
   }
@@ -290,6 +341,65 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+
+    // Đăng nhập bằng số điện thoại
+    final phoneLoginButton = SizedBox(
+      height: 50,
+      width: 150,
+      child: TextButton(
+        style: TextButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 250, 0, 0)),
+        onPressed: () {
+          _verifyPhoneNumber();
+        },
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.phone, color: Colors.white, size: 30),
+            SizedBox(height: 100, width: 10),
+            Text(
+              'Gửi mã OTP',
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+          ],
+        ),
+      ),
+    );
+    final otpInput = TextFormField(
+      controller: _otpController,
+      textInputAction: TextInputAction.done,
+      onFieldSubmitted: (term) {},
+      onChanged: (value) => {_otp = value},
+      autofocus: false,
+      decoration: InputDecoration(
+        hintText: 'Mã OTP',
+        contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+      ),
+    );
+    // Đăng nhập bằng mã OTP  
+    final otpLoginButton = SizedBox(
+      height: 50,
+      width: 150,
+      child: TextButton(
+        style: TextButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 250, 0, 0)),
+        onPressed: () {
+          _signInWithOTP();
+        },
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.phone, color: Colors.white, size: 30),
+            SizedBox(height: 100, width: 10),
+            Text(
+              'Đăng nhập bằng OTP',
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+          ],
+        ),
+      ),
+    );
     final saveID = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -352,6 +462,13 @@ class _LoginPageState extends State<LoginPage> {
                     height: 10,
                   ),
                   googleLoginButton,
+                  const SizedBox(height: 10),
+                /*   phoneLoginButton,
+                  const SizedBox(height: 10),
+                  otpInput,
+                  const SizedBox(height: 10), 
+                  otpLoginButton,
+                  const SizedBox(height: 10),  */
                   saveID,
                   signup
                 ],

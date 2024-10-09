@@ -4,6 +4,8 @@ import 'package:debt_manager/features/app/spash_screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isAndroid) {
@@ -13,6 +15,9 @@ Future main() async {
             appId: "1:171888820198:android:14f845ef6585cb20062027",
             messagingSenderId: "171888820198",
             projectId: "fbapptest1-e43aa"));
+    await FirebaseAppCheck.instance.activate(      
+    androidProvider: AndroidProvider.playIntegrity,
+  );  
   } else {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
