@@ -19,6 +19,14 @@ class _AddCustomersScreenState extends State<AddCustomersScreen> {
         child: Form(
           child: ListView(
             children: [
+              //Mã khách hàng
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Mã khách hàng',
+                  hintText: 'Nhập mã khách hàng',
+                ),
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'Tên khách hàng',

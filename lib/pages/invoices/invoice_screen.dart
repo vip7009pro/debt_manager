@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import 'package:debt_manager/pages/invoices/create_invoice_screen.dart';
 class InvoiceScreen extends StatefulWidget {
   const InvoiceScreen({ Key? key }) : super(key: key);
 
@@ -13,6 +14,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Invoice'),
+        actions: [
+          IconButton(onPressed: () {
+            Get.to(() => CreateInvoiceScreen());
+          }, icon: Icon(Icons.add))
+        ],
       ),
       body: ListView.builder(
         itemCount: 10, // Replace with actual invoice count

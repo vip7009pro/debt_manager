@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../products/product_details.dart';
+import 'package:debt_manager/model/DataInterfaceClass.dart';
+
 
 class StockScreen extends StatefulWidget {
   const StockScreen({ Key? key }) : super(key: key);
@@ -26,7 +28,7 @@ class _StockScreenState extends State<StockScreen> {
             trailing: Text('Stock: ${(index + 1) * 5}'), // Example stock count
             onTap: () {
               // Add logic to view product stock details
-              Get.to(() => ProductDetails());
+              Get.to(() => ProductDetails(product: Product(prodId: 0, shopId: 0, prodName: '', prodDescr: '', prodPrice: 0, insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', catId: 0, prodCode: '', prodImg: '')));
             },
           );
         },

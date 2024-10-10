@@ -19,7 +19,7 @@ class _AddSuppliersScreenState extends State<AddSuppliersScreen> {
     // Add supplier logic here
     bool check = true;
     await API_Request.api_query('addvendor', {      
-      'SHOP_ID':'1',
+      'SHOP_ID':'23',
       'VENDOR_CODE': VENDOR_CODE, // Using supplierId as VENDOR_CODE, adjust if different
       'VENDOR_NAME': VENDOR_NAME,
       'VENDOR_ADD': VENDOR_ADD,
@@ -90,9 +90,10 @@ class _AddSuppliersScreenState extends State<AddSuppliersScreen> {
               ElevatedButton(
                 onPressed: () async {
                   // Add logic to save the new supplier
-                  bool check = await _addSupplier( '1', _supplierCodeController.text, _supplierNameController.text, _supplierAddressController.text, _supplierPhoneController.text);  
+                  bool check = await _addSupplier( '23', _supplierCodeController.text, _supplierNameController.text, _supplierAddressController.text, _supplierPhoneController.text);  
                   if (check) {
                     AwesomeDialog(
+                      // ignore: use_build_context_synchronously
                       context: context,
                       dialogType: DialogType.success,
                       title: 'Thêm nhà cung cấp thành công',
@@ -103,6 +104,7 @@ class _AddSuppliersScreenState extends State<AddSuppliersScreen> {
                   }
                   else {
                     AwesomeDialog(
+                      // ignore: use_build_context_synchronously
                       context: context,
                       dialogType: DialogType.error,
                       title: 'Thêm nhà cung cấp thất bại',
