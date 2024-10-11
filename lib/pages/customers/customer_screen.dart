@@ -1,5 +1,8 @@
+import 'package:debt_manager/controller/APIRequest.dart';
+import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/pages/customers/add_customers_screen.dart';  
 
 class CustomerScreen extends StatefulWidget {
@@ -10,6 +13,34 @@ class CustomerScreen extends StatefulWidget {
 }
 
 class _CustomerScreenState extends State<CustomerScreen> {
+
+  final GlobalController c = Get.put(GlobalController());
+
+  List<Customer> customers = [];
+  
+  Future<List<Customer>> _getCustomers() async {
+    List<dynamic> customerList = [];
+    await API_Request.api_query('getCustomerList', {'SHOP_ID': c.shopID.value}).then((value) {
+      customerList = value['data'] ?? [];
+    });
+    return customerList.map((dynamic item) {
+      return Customer.fromJson(item);
+    }).toList();
+  }
+  void _getCustomerList() async {
+    await _getCustomers().then((value) {
+      setState(() {
+        customers = value;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    _getCustomerList();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +52,27 @@ class _CustomerScreenState extends State<CustomerScreen> {
           }, icon: Icon(Icons.add))
         ],
       ),
-      
+      body: RefreshIndicator(
+        onRefresh: () async {
+           _getCustomerList();
+        },
+        child: ListView.builder(
+          itemCount: customers.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              leading: CircleAvatar(
+                child: Text('${index + 1}'),
+              ),
+              title: Text(customers[index].cusName ?? ''),
+              subtitle: Text(customers[index].cusPhone ?? ''),
+              trailing: Icon(Icons.chevron_right),
+              onTap: () {
+                // Add logic to view customer details
+              },
+            );
+          },
+        ),
+      ),      
     );
   }
 }

@@ -20,6 +20,7 @@ import 'package:debt_manager/pages/reports/report_screen.dart';
 import 'package:debt_manager/pages/shops/shop_info_screen.dart';
 import 'package:debt_manager/pages/shops/shop_list_screen.dart';
 import 'package:debt_manager/pages/stocks/stock_screen.dart';
+import 'package:debt_manager/pages/stocks/warehouse_screen.dart';
 import 'package:debt_manager/pages/suppliers/supplier_screen.dart';
 import 'package:debt_manager/pages/suppliers/add_suppliers_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -426,8 +427,8 @@ class _HomePageState extends State<HomePage> {
               children: [
                 _buildFunctionWidget(Icons.storage, "Stock",
                     () => Get.to(() => const StockScreen())),
-                _buildFunctionWidget(Icons.bar_chart, "Report",
-                    () => Get.to(() => const ReportScreen())),
+                _buildFunctionWidget(Icons.warehouse, "Warehouse",
+                    () => Get.to(() => const WarehouseScreen())),
                 _buildFunctionWidget(Icons.people, "Supplier",
                     () => Get.to(() => const SupplierScreen())),
                 _buildFunctionWidget(Icons.person, "Customers",
@@ -587,8 +588,8 @@ class _HomePageState extends State<HomePage> {
                     },
                     child: ListView(
                       children: [
-                        const SizedBox(height: 5),
-                        bannerWidget,
+                        /* const SizedBox(height: 5),
+                        bannerWidget, */
                         const SizedBox(height: 16),
                         statsWidget,
                         const SizedBox(height: 16),
@@ -669,7 +670,7 @@ class _HomePageState extends State<HomePage> {
                       title: Text('Tạo invoice'),
                       onTap: () {
                         Navigator.pop(context);
-                        Get.to(() => const CreateInvoiceScreen());
+                        Get.to(() => CreateInvoiceScreen(order: Order(poId: 0, shopId: 0, prodId: 0, cusId: 0, poNo: '', poQty: 0, prodPrice: 0, remark: '', insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: '', custCd: '', cusName: '', prodName: '')));
                         // Add logic to create order
                       },
                     ),

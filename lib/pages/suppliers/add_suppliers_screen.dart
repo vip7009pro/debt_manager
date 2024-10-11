@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
@@ -32,6 +34,16 @@ class _AddSuppliersScreenState extends State<AddSuppliersScreen> {
       }
     });
     return check;    
+  }
+  //generate supplier code contains 4 letters and 4 numbers
+  String _generateSupplierCode() {
+    return '${String.fromCharCodes(List.generate(4, (index) => Random().nextInt(26) + 65))}${Random().nextInt(10000).toString().padLeft(4, '0')}';
+  } 
+
+  @override
+  void initState() {
+    _supplierCodeController.text = _generateSupplierCode(); 
+    super.initState();
   }
 
   @override

@@ -172,8 +172,8 @@ class Product {
 }
 
 class Customer {
-  final String shopId;
-  final String cusId;
+  final int shopId;
+  final num cusId;
   final String cusName;
   final String cusPhone;
   final String cusEmail;
@@ -231,6 +231,171 @@ class Customer {
       'UPD_DATE': updDate.toIso8601String(),
       'UPD_UID': updUid,
       'CUST_CD': custCd,
+    };
+  }
+}
+
+
+class Order {
+  final num poId;
+  final num shopId;
+  final num prodId;
+  final num cusId;
+  final String poNo;
+  final int poQty;
+  final double prodPrice;
+  final String remark;
+  final DateTime insDate;
+  final String insUid;
+  final DateTime updDate;
+  final String updUid;
+  final String prodCode;
+  final String custCd;
+  final String cusName;
+  final String prodName;
+
+  Order({
+    required this.poId,
+    required this.shopId,
+    required this.prodId,
+    required this.cusId,
+    required this.poNo,
+    required this.poQty,
+    required this.prodPrice,
+    required this.remark,
+    required this.insDate,
+    required this.insUid,
+    required this.updDate,
+    required this.updUid,
+    required this.prodCode,
+    required this.custCd,
+    required this.cusName,
+    required this.prodName,
+  });
+
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return Order(
+      poId: json['PO_ID'],
+      shopId: json['SHOP_ID'],
+      prodId: json['PROD_ID'],
+      cusId: json['CUS_ID'],
+      poNo: json['PO_NO'],
+      poQty: json['PO_QTY'],
+      prodPrice: json['PROD_PRICE'].toDouble(),
+      remark: json['REMARK'],
+      insDate: DateTime.parse(json['INS_DATE']),
+      insUid: json['INS_UID'],
+      updDate: DateTime.parse(json['UPD_DATE']),
+      updUid: json['UPD_UID'],
+      prodCode: json['PROD_CODE'],
+      custCd: json['CUST_CD'],
+      cusName: json['CUS_NAME'],
+      prodName: json['PROD_NAME'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'PO_ID': poId,
+      'SHOP_ID': shopId,
+      'PROD_ID': prodId,
+      'CUS_ID': cusId,
+      'PO_NO': poNo,
+      'PO_QTY': poQty,
+      'PROD_PRICE': prodPrice,
+      'REMARK': remark,
+      'INS_DATE': insDate.toIso8601String(),
+      'INS_UID': insUid,
+      'UPD_DATE': updDate.toIso8601String(),
+      'UPD_UID': updUid,
+      'PROD_CODE': prodCode,
+      'CUST_CD': custCd,
+      'CUS_NAME': cusName,
+      'PROD_NAME': prodName,
+    };
+  }
+}
+
+class Invoice {
+  final int invoiceId;
+  final String invoiceNo;
+  final int shopId;
+  final int prodId;
+  final int cusId;
+  final String prodCode;
+  final String custCd;
+  final String poNo;
+  final int invoiceQty;
+  final double prodPrice;
+  final String remark;
+  final DateTime insDate;
+  final String insUid;
+  final DateTime updDate;
+  final String updUid;
+  final String cusName;
+  final String prodName;
+
+  Invoice({
+    required this.invoiceId,
+    required this.invoiceNo,
+    required this.shopId,
+    required this.prodId,
+    required this.cusId,
+    required this.prodCode,
+    required this.custCd,
+    required this.poNo,
+    required this.invoiceQty,
+    required this.prodPrice,
+    required this.remark,
+    required this.insDate,
+    required this.insUid,
+    required this.updDate,
+    required this.updUid,
+    required this.cusName,
+    required this.prodName,
+  });
+
+  factory Invoice.fromJson(Map<String, dynamic> json) {
+    return Invoice(
+      invoiceId: json['INVOICE_ID'],
+      invoiceNo: json['INVOICE_NO'],
+      shopId: json['SHOP_ID'],
+      prodId: json['PROD_ID'],
+      cusId: json['CUS_ID'],
+      prodCode: json['PROD_CODE'],
+      custCd: json['CUST_CD'],
+      poNo: json['PO_NO'],
+      invoiceQty: json['INVOICE_QTY'],
+      prodPrice: json['PROD_PRICE'].toDouble(),
+      remark: json['REMARK'],
+      insDate: DateTime.parse(json['INS_DATE']),
+      insUid: json['INS_UID'],
+      updDate: DateTime.parse(json['UPD_DATE']),
+      updUid: json['UPD_UID'],
+      cusName: json['CUS_NAME'],
+      prodName: json['PROD_NAME'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'INVOICE_ID': invoiceId,
+      'INVOICE_NO': invoiceNo,
+      'SHOP_ID': shopId,
+      'PROD_ID': prodId,
+      'CUS_ID': cusId,
+      'PROD_CODE': prodCode,
+      'CUST_CD': custCd,
+      'PO_NO': poNo,
+      'INVOICE_QTY': invoiceQty,
+      'PROD_PRICE': prodPrice,
+      'REMARK': remark,
+      'INS_DATE': insDate.toIso8601String(),
+      'INS_UID': insUid,
+      'UPD_DATE': updDate.toIso8601String(),
+      'UPD_UID': updUid,
+      'CUS_NAME': cusName,
+      'PROD_NAME': prodName,
     };
   }
 }
