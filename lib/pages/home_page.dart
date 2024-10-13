@@ -194,7 +194,7 @@ class _HomePageState extends State<HomePage> {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
-                "http://192.168.1.136/shop_avatars/${shop.shopId}.jpg",
+                "http://14.160.33.94:3010/shop_avatars/${shop.shopId}.jpg",
                 width: 30,
                 height: 30,
                 fit: BoxFit.cover,
@@ -259,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.network(
-                    'http://192.168.1.136/shop_avatars/banner.jpg',
+                    'http://14.160.33.94:3010/shop_avatars/banner.jpg',
                     width: MediaQuery.of(context).size.width * 0.9,
                     height: MediaQuery.of(context).size.height * 0.1,
                     fit: BoxFit.fill,

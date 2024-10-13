@@ -23,7 +23,6 @@ class API_Request {
     var cookieJar = CookieJar();
     dio.interceptors.add(CookieManager(cookieJar));
     String savedToken = await LocalDataAccess.getVariable("token");    
-    print(savedToken);
     data['token_string'] = savedToken;
     final body = {'command': command, 'DATA': data};    
     try {

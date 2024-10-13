@@ -74,7 +74,7 @@ class _ShopListScreenState extends State<ShopListScreen> {
                       borderRadius: BorderRadius.circular(25),
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/empty_avatar.png',
-                        image: "http://192.168.1.136/shop_avatars/${snapshot.data![index].shopId}.jpg",
+                        image: "http://14.160.33.94:3010/shop_avatars/${snapshot.data![index].shopId}.jpg",
                         width: 50,
                         height: 50,
                         fit: BoxFit.cover,

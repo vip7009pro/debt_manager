@@ -196,7 +196,7 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
                       },
                     ):              
                Image.network(
-                "http://192.168.1.136/shop_avatars/${shop.shopId}.jpg",
+                "http://14.160.33.94:3010/shop_avatars/${shop.shopId}.jpg",
                 width: 30,
                 height: 30,
                 fit: BoxFit.cover,
