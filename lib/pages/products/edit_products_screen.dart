@@ -57,6 +57,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     }).then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;
+        _uploadImage();
       } else {
         check = false;
       }
@@ -90,9 +91,8 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
       print('image: ' + image);
       if (image.isNotEmpty) {
         try {
-          final File imageFile;
-          if (image.startsWith('http://') || image.startsWith('https://')) {
-            print('vao day');
+          File imageFile;
+          if (image.startsWith('http://') || image.startsWith('https://')) {            
             // download image from image link
             final response = await http.get(Uri.parse(image));
             final bytes = response.bodyBytes;
@@ -100,8 +100,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
             final tempFile = File('${tempDir.path}/temp_image_$i.jpg'); 
             await tempFile.writeAsBytes(bytes);
             imageFile = tempFile;
-          } else {
-            print('vao day 2');
+          } else {            
             imageFile = File(image);
           }
 
@@ -367,7 +366,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                           title: 'Thông báo',
                           desc: 'Thêm sản phẩm thành công',
                           btnOkOnPress: () {
-                            _uploadImage();
+                            
                             //Get.back();
                           },
                           btnCancelText: 'Cancel',
