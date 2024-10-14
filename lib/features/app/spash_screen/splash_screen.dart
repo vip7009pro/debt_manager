@@ -1,5 +1,7 @@
 import 'package:debt_manager/controller/GetXController.dart';
+import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
+import 'package:debt_manager/pages/shops/shop_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
@@ -33,7 +35,12 @@ class _SplashScreenState extends State<SplashScreen> {
       if (value['tk_status'] == 'OK') {
         check = true;
         LocalDataAccess.saveVariable('userData', jsonEncode(value['data']));
-        Get.off(() => const HomePage());        
+        print('shopID: ${c.shopID.value}');
+        if(c.shopID.isNotEmpty){  
+          Get.off(() => const HomePage());        
+        }else{
+          Get.off(() => const ShopListScreen());
+        }
       } else {
         check = false;
         Get.off(() => const LoginPage());
@@ -44,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {  
-    _checkLogin();
+    GlobalFunction.checkLogin();  
     super.initState();
   }
 

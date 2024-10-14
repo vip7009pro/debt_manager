@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
     List<dynamic> shopList = [];
     await API_Request.api_query('getShopInfo', {
       'SHOP_ID': c.shopID.value == ''
-          ? await LocalDataAccess.getVariable('shopid')
+          ? await LocalDataAccess.getVariable('shopId')
           : c.shopID.value
     }).then((value) {
       shopList = value['data'] ?? [];
@@ -90,7 +90,9 @@ class _HomePageState extends State<HomePage> {
     });
   }
   void _loadshopidfromlocaldatabse() async {
-    c.shopID.value = await LocalDataAccess.getVariable('shopid');
+    String shopId = await LocalDataAccess.getVariable('shopId');
+    c.shopID.value = shopId;
+    print('c.shopID.value' + shopId);
   }
   @override
   void initState() {
@@ -633,7 +635,6 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: Builder(builder: (context) {
         return FloatingActionButton(
             backgroundColor: const Color(0xFF4FC3F7),
-            child: const Icon(Icons.add, color: Colors.white, size: 30),
             mini: true,
             onPressed: () {
               //Scaffold.of(context).openDrawer();
@@ -654,8 +655,8 @@ class _HomePageState extends State<HomePage> {
                 items: <PopupMenuEntry>[
                   PopupMenuItem(
                     child: ListTile(
-                      leading: Icon(Icons.add_shopping_cart),
-                      title: Text('Tạo đơn hàng'),
+                      leading: const Icon(Icons.add_shopping_cart),
+                      title: const Text('Tạo đơn hàng'),
                       onTap: () {
                         Navigator.pop(context);
                         Get.to(() => const AddOrdersScreen());
@@ -666,8 +667,8 @@ class _HomePageState extends State<HomePage> {
                   //tạo invoice
                   PopupMenuItem(
                     child: ListTile(
-                      leading: Icon(Icons.add_shopping_cart),
-                      title: Text('Tạo invoice'),
+                      leading: const Icon(Icons.add_shopping_cart),
+                      title: const Text('Tạo invoice'),
                       onTap: () {
                         Navigator.pop(context);
                         Get.to(() => CreateInvoiceScreen(order: Order(poId: 0, shopId: 0, prodId: 0, cusId: 0, poNo: '', poQty: 0, prodPrice: 0, remark: '', insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: '', custCd: '', cusName: '', prodName: '')));
@@ -677,8 +678,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PopupMenuItem(
                     child: ListTile(
-                      leading: Icon(Icons.person_add),
-                      title: Text('Thêm khách hàng'),
+                      leading: const Icon(Icons.person_add),
+                      title: const Text('Thêm khách hàng'),
                       onTap: () {
                         Navigator.pop(context);
                         Get.to(() => const AddCustomersScreen());
@@ -688,8 +689,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PopupMenuItem(
                     child: ListTile(
-                      leading: Icon(Icons.business),
-                      title: Text('Thêm nhà cung cấp'),
+                      leading: const Icon(Icons.business),
+                      title: const Text('Thêm nhà cung cấp'),
                       onTap: () {
                         Navigator.pop(context);
                         Get.to(() => const AddSuppliersScreen());
@@ -699,8 +700,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PopupMenuItem(
                     child: ListTile(
-                      leading: Icon(Icons.inventory),
-                      title: Text('Thêm sản phẩm'),
+                      leading: const Icon(Icons.inventory),
+                      title: const Text('Thêm sản phẩm'),
                       onTap: () {
                         Navigator.pop(context);
                         Get.to(() => const AddProductsScreen());
@@ -710,7 +711,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               );
-            });
+            },
+            child: const Icon(Icons.add, color: Colors.white, size: 30));
       }),
     );
   }

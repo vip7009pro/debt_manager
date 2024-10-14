@@ -3,10 +3,7 @@ import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/pages/shops/add_shop_page.dart';
 import 'package:debt_manager/pages/home_page.dart';
-import 'package:debt_manager/pages/shops/shop_home_page.dart';
-import 'package:debt_manager/pages/shops/shop_list_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:get/get.dart';
 
@@ -64,7 +61,7 @@ class _ShopListScreenState extends State<ShopListScreen> {
                 itemBuilder: (context, index) {
                   return ListTile(
                     onTap: () {
-                      LocalDataAccess.saveVariable('shopid', snapshot.data![index].shopId.toString());
+                      LocalDataAccess.saveVariable('shopId', snapshot.data![index].shopId.toString());
                       c.shopID.value = snapshot.data![index].shopId.toString();
                       Get.offAll(() => const HomePage());
                     },

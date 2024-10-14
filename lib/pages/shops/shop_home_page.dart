@@ -13,7 +13,7 @@ class _ShopHomePageState extends State<ShopHomePage> {
   @override
   void initState() {
     super.initState();  
-      LocalDataAccess.getVariable('shopid').then((value) {
+      LocalDataAccess.getVariable('shopId').then((value) {
         setState(() {
           shopid = value;
         });

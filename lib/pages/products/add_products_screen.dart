@@ -136,7 +136,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                 ),
                 keyboardType: TextInputType.number,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 24),              
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {

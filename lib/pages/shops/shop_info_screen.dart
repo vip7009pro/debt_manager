@@ -39,7 +39,7 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
     List<dynamic> shopList = [];
     await API_Request.api_query('getShopInfo', {
       'SHOP_ID': c.shopID.value == ''
-          ? await LocalDataAccess.getVariable('shopid')
+          ? await LocalDataAccess.getVariable('shopId')
           : c.shopID.value
     }).then((value) {
       shopList = value['data'] ?? [];
@@ -58,7 +58,7 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
     
     await API_Request.api_query('updateShopInfo', {
       'SHOP_ID': c.shopID.value == ''
-          ? await LocalDataAccess.getVariable('shopid')
+          ? await LocalDataAccess.getVariable('shopId')
           : c.shopID.value,
       'SHOP_NAME': shopNameController.text,
       'SHOP_DESCR': shopDescrController.text,
@@ -88,14 +88,12 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
       }
     });
   }
-  void _uploadImage() async {
-    print('shop ID Local: ${await LocalDataAccess.getVariable('shopid')}');
-    print('shop ID Global: ${c.shopID.value}');
+  void _uploadImage() async {    
     if (shopAvatarController.text.isNotEmpty && File(shopAvatarController.text).existsSync()) {      
       try {
         final result = await API_Request.uploadQuery(
           file: File(shopAvatarController.text),
-          filename: '${await LocalDataAccess.getVariable('shopid')}.jpg',
+          filename: '${await LocalDataAccess.getVariable('shopId')}.jpg',
           uploadfoldername: 'shop_avatars',
         );
         if (result['tk_status'] == 'OK') {
