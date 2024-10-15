@@ -45,27 +45,42 @@ class _CustomerScreenState extends State<CustomerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Customers'),
+        title: Text('Customers', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 39, 82, 176),
         actions: [
-          IconButton(onPressed: () {
-            Get.to(() => AddCustomersScreen());
-          }, icon: Icon(Icons.add))
+          IconButton(
+            onPressed: () {
+              Get.to(() => AddCustomersScreen());
+            },
+            icon: Icon(Icons.add),
+            color: Colors.yellow,
+          )
         ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
            _getCustomerList();
         },
+        color: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         child: ListView.builder(
           itemCount: customers.length,
           itemBuilder: (context, index) {
             return ListTile(
               leading: CircleAvatar(
                 child: Text('${index + 1}'),
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
               ),
-              title: Text(customers[index].cusName ?? ''),
-              subtitle: Text(customers[index].cusPhone ?? ''),
-              trailing: Icon(Icons.chevron_right),
+              title: Text(
+                customers[index].cusName ?? '',
+                style: TextStyle(color: Colors.indigo),
+              ),
+              subtitle: Text(
+                customers[index].cusPhone ?? '',
+                style: TextStyle(color: Colors.teal),
+              ),
+              trailing: Icon(Icons.chevron_right, color: Colors.red),
               onTap: () {
                 // Add logic to view customer details
               },

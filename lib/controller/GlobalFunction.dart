@@ -14,7 +14,7 @@ class GlobalFunction {
   final GlobalController c = Get.put(GlobalController());
   static void logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    LocalDataAccess.saveVariable('shopID', ''); 
+    LocalDataAccess.saveVariable('shopId', ''); 
     prefs.setString('token', 'reset');
   }
   static void showToast(BuildContext context, String message) {
@@ -124,6 +124,7 @@ class GlobalFunction {
         check = true;
         LocalDataAccess.saveVariable('userData', jsonEncode(value['data']));
         final shopID = await LocalDataAccess.getVariable('shopId');
+        print('shopID: ' + shopID);
         if (shopID.isNotEmpty) {
           Get.off(() => const HomePage());
         } else {          

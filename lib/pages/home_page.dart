@@ -29,12 +29,15 @@ import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:awesome_dialog/awesome_dialog.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
   @override
   // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
 }
+
 class _HomePageState extends State<HomePage> {
   int _selectedBottomIndex = 0;
   final GlobalController c = Get.put(GlobalController());
@@ -49,15 +52,18 @@ class _HomePageState extends State<HomePage> {
       updDate: DateTime.now(),
       updUid: '',
       shopAvatar: '');
+
   void _onBottomItemTapped(int index) {
     setState(() {
       _selectedBottomIndex = index;
     });
   }
+
   final logo =
       Image.asset('assets/images/app_logo.png', width: 120, fit: BoxFit.cover);
   int mobileVer = 4;
   late Timer _timer;
+
   Future<bool> _checkLogin(String uid, String email) async {
     bool check = true;
     await API_Request.api_query('login', {'EMAIL': email, 'UID': uid})
@@ -74,6 +80,7 @@ class _HomePageState extends State<HomePage> {
     });
     return check;
   }
+
   Future<void> _getShopInfo() async {
     List<dynamic> shopList = [];
     await API_Request.api_query('getShopInfo', {
@@ -89,25 +96,28 @@ class _HomePageState extends State<HomePage> {
       });
     });
   }
+
   void _loadshopidfromlocaldatabse() async {
     String shopId = await LocalDataAccess.getVariable('shopId');
     c.shopID.value = shopId;
     print('c.shopID.value' + shopId);
   }
+
   @override
   void initState() {
     _loadshopidfromlocaldatabse();
     _getShopInfo();
     super.initState();
   }
-  Widget _buildFunctionWidget(IconData icon, String text, VoidCallback onTap) {
+
+  Widget _buildFunctionWidget(IconData icon, String text, VoidCallback onTap, Color color) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 80,
         height: 80,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: color,
           borderRadius: BorderRadius.circular(5),
           boxShadow: [
             BoxShadow(
@@ -121,24 +131,25 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 32, color: Colors.indigo),
+            Icon(icon, size: 32, color: Colors.white),
             const SizedBox(height: 4),
             Text(
               text,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: Colors.indigo),
+              style: const TextStyle(fontSize: 12, color: Colors.white),
             ),
           ],
         ),
       ),
     );
   }
-  Widget _buildStatsWidget(IconData icon, String title, String amount) {
+
+  Widget _buildStatsWidget(IconData icon, String title, String amount, Color color) {
     return Container(
       width: 100,
       height: 80,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: color,
         borderRadius: BorderRadius.circular(5),
         boxShadow: [
           BoxShadow(
@@ -154,8 +165,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Icon(icon,
-                size: 30, color: const Color.fromARGB(255, 42, 97, 199)),
+            child: Icon(icon, size: 30, color: Colors.white),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                 style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 42, 97, 199)),
+                    color: Colors.white),
               ),
               const SizedBox(height: 4),
               Text(
@@ -174,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                 style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: Color.fromARGB(255, 42, 97, 199)),
+                    color: Colors.white),
               ),
             ],
           ),
@@ -182,6 +192,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     final appBar = AppBar(
@@ -233,17 +244,9 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      backgroundColor: Colors.lightBlue,
-      flexibleSpace: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Colors.lightBlue, Colors.lightBlueAccent],
-          ),
-        ),
-      ),
+      backgroundColor: const Color.fromARGB(255, 114, 184, 151),
     );
+
     final bannerWidget = SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
       height: 100,
@@ -252,7 +255,7 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (context, index) {
           return Container(
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 245, 250, 249),
+              color: Colors.orange,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -284,7 +287,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'Banner ${index + 1}',
                     style: const TextStyle(
-                        fontSize: 10, color: Color.fromARGB(255, 48, 44, 44)),
+                        fontSize: 10, color: Colors.white),
                   ),
                 ],
               ),
@@ -294,101 +297,114 @@ class _HomePageState extends State<HomePage> {
       ),
     );
     final drawer = Drawer(
-      backgroundColor: Colors.white,
-      child: ListView(
-        children: [
-          const SizedBox(
-            height: 100, //fit child content height,
-            child: DrawerHeader(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [
-                      Color(0xFFE1F5FE), // Light blue
-                      Color.fromARGB(255, 159, 222, 252), // Darker blue
-                    ],
-                    begin: FractionalOffset(0.0, 0.0),
-                    end: FractionalOffset(0.0, 0.5),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp),
-              ),
-              margin: EdgeInsets.zero,
-              padding: EdgeInsets.zero,
-              child: DrawerHeaderTab(),
-            ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [const Color.fromARGB(255, 226, 234, 241)!, const Color.fromARGB(255, 212, 141, 224)!],
           ),
-          ExpansionTile(
-            title: const Text("Quản lý cửa hàng",
-                style: TextStyle(color: Colors.lightBlue)),
-            leading: const Icon(
-              Icons.shopping_bag,
-              color: Colors.lightBlue,
-            ),
-            childrenPadding: const EdgeInsets.only(left: 10),
-            children: [
-              ListTile(
-                visualDensity: const VisualDensity(vertical: -3),
-                leading: const FaIcon(
-                  FontAwesomeIcons.list,
-                  color: Colors.lightBlue,
+        ),
+        child: ListView(
+          children: [
+            const SizedBox(
+              height: 100,
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [
+                        Colors.purple,
+                        Colors.deepPurple,
+                      ],
+                      begin: FractionalOffset(0.0, 0.0),
+                      end: FractionalOffset(0.0, 0.5),
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp),
                 ),
-                title: const Text("Danh sách cửa hàng",
-                    style: TextStyle(color: Colors.lightBlue)),
-                onTap: () {
-                  Get.to(() => const ShopListScreen());
-                },
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
+                child: DrawerHeaderTab(),
               ),
-            ],
-          ),
-          ExpansionTile(
-            title: const Text("Quản lý nhân viên",
-                style: TextStyle(color: Colors.lightBlue)),
-            leading: const Icon(
-              Icons.people,
-              color: Colors.lightBlue,
             ),
-            childrenPadding: const EdgeInsets.only(left: 10),
-            children: [
-              ListTile(
-                visualDensity: const VisualDensity(vertical: -3),
-                leading: const FaIcon(
-                  FontAwesomeIcons.list,
-                  color: Colors.lightBlue,
+            ExpansionTile(
+              title: const Text("Quản lý cửa hàng",
+                  style: TextStyle(color: Colors.indigo, fontSize: 14)),
+              leading: const Icon(
+                Icons.shopping_bag,
+                color: Colors.orange,
+                size: 20,
+              ),
+              childrenPadding: const EdgeInsets.only(left: 10),
+              children: [
+                ListTile(
+                  visualDensity: const VisualDensity(vertical: -3),
+                  leading: const FaIcon(
+                    FontAwesomeIcons.list,
+                    color: Colors.teal,
+                    size: 18,
+                  ),
+                  title: const Text("Danh sách cửa hàng",
+                      style: TextStyle(color: Colors.indigo, fontSize: 13)),
+                  onTap: () {
+                    Get.to(() => const ShopListScreen());
+                  },
                 ),
-                title: const Text("Danh sách nhân viên",
-                    style: TextStyle(color: Colors.lightBlue)),
-                onTap: () {
-                  Get.to(() => const ShopListScreen());
-                },
-              ),
-            ],
-          ),
-          ListTile(
-            visualDensity: const VisualDensity(vertical: -3),
-            leading: const Icon(
-              Icons.logout,
-              color: Colors.red,
+              ],
             ),
-            title: const Text("Logout", style: TextStyle(color: Colors.red)),
-            onTap: () {
-              AwesomeDialog(
-                context: context,
-                dialogType: DialogType.question,
-                animType: AnimType.rightSlide,
-                title: 'Cảnh báo',
-                desc: 'Bạn muốn logout?',
-                btnCancelOnPress: () {},
-                btnOkOnPress: () async {
-                  try {
-                    GlobalFunction.logout();
-                    Get.off(() => const LoginPage());
-                  } catch (e) {
-                    Get.snackbar("Thông báo", "Lỗi: ${e.toString()}");
-                  }
-                },
-              ).show();
-            },
-          ),
-        ],
+            ExpansionTile(
+              title: const Text("Quản lý nhân viên",
+                  style: TextStyle(color: Colors.indigo, fontSize: 14)),
+              leading: const Icon(
+                Icons.people,
+                color: Colors.green,
+                size: 20,
+              ),
+              childrenPadding: const EdgeInsets.only(left: 10),
+              children: [
+                ListTile(
+                  visualDensity: const VisualDensity(vertical: -3),
+                  leading: const FaIcon(
+                    FontAwesomeIcons.list,
+                    color: Colors.teal,
+                    size: 18,
+                  ),
+                  title: const Text("Danh sách nhân viên",
+                      style: TextStyle(color: Colors.indigo, fontSize: 13)),
+                  onTap: () {
+                    Get.to(() => const ShopListScreen());
+                  },
+                ),
+              ],
+            ),
+            ListTile(
+              visualDensity: const VisualDensity(vertical: -3),
+              leading: const Icon(
+                Icons.logout,
+                color: Colors.red,
+                size: 20,
+              ),
+              title: const Text("Logout", style: TextStyle(color: Colors.red, fontSize: 14)),
+              onTap: () {
+                AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.question,
+                  animType: AnimType.rightSlide,
+                  title: 'Cảnh báo',
+                  desc: 'Bạn muốn logout?',
+                  btnCancelOnPress: () {},
+                  btnOkOnPress: () async {
+                    try {
+                      GlobalFunction.logout();
+                      Get.off(() => const LoginPage());
+                    } catch (e) {
+                      Get.snackbar("Thông báo", "Lỗi: ${e.toString()}");
+                    }
+                  },
+                ).show();
+              },
+            ),
+          ],
+        ),
       ),
     );
     final functionWidget = Center(
@@ -396,11 +412,15 @@ class _HomePageState extends State<HomePage> {
         height: 300,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 251, 255, 255).withOpacity(0.1),
+          gradient: LinearGradient(
+            colors: [Colors.purple.withOpacity(0.1), Colors.blue.withOpacity(0.1)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
+              color: Colors.purple.withOpacity(0.3),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 2),
@@ -414,13 +434,13 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildFunctionWidget(Icons.receipt, "PO",
-                    () => Get.to(() => const OrdersScreen())),
+                    () => Get.to(() => const OrdersScreen()), Colors.red),
                 _buildFunctionWidget(Icons.description, "Invoice",
-                    () => Get.to(() => const InvoiceScreen())),
+                    () => Get.to(() => const InvoiceScreen()), Colors.green),
                 _buildFunctionWidget(Icons.inventory, "Products",
-                    () => Get.to(() => const ProductsScreen())),
+                    () => Get.to(() => const ProductsScreen()), Colors.blue),
                 _buildFunctionWidget(Icons.local_offer, "Coupons",
-                    () => Get.to(() => const CouponsScreen())),
+                    () => Get.to(() => const CouponsScreen()), Colors.orange),
               ],
             ),
             const SizedBox(height: 16),
@@ -428,13 +448,13 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildFunctionWidget(Icons.storage, "Stock",
-                    () => Get.to(() => const StockScreen())),
+                    () => Get.to(() => const StockScreen()), Colors.purple),
                 _buildFunctionWidget(Icons.warehouse, "Warehouse",
-                    () => Get.to(() => const WarehouseScreen())),
+                    () => Get.to(() => const WarehouseScreen()), Colors.teal),
                 _buildFunctionWidget(Icons.people, "Supplier",
-                    () => Get.to(() => const SupplierScreen())),
+                    () => Get.to(() => const SupplierScreen()), Colors.indigo),
                 _buildFunctionWidget(Icons.person, "Customers",
-                    () => Get.to(() => const CustomerScreen())),
+                    () => Get.to(() => const CustomerScreen()), Colors.pink),
               ],
             ),
             const SizedBox(height: 16),
@@ -442,13 +462,13 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildFunctionWidget(Icons.storage, "Stock",
-                    () => Get.to(() => const StockScreen())),
+                    () => Get.to(() => const StockScreen()), Colors.amber),
                 _buildFunctionWidget(Icons.bar_chart, "Report",
-                    () => Get.to(() => const ReportScreen())),
+                    () => Get.to(() => const ReportScreen()), Colors.deepOrange),
                 _buildFunctionWidget(Icons.people, "Supplier",
-                    () => Get.to(() => const SupplierScreen())),
+                    () => Get.to(() => const SupplierScreen()), Colors.lightBlue),
                 _buildFunctionWidget(Icons.more_horiz, "More...",
-                    () => Get.to(() => const MoreOptionsScreen())),
+                    () => Get.to(() => const MoreOptionsScreen()), Colors.deepPurple),
               ],
             ),
           ],
@@ -459,11 +479,15 @@ class _HomePageState extends State<HomePage> {
       width: MediaQuery.of(context).size.width,
       height: 100,
       decoration: BoxDecoration(
-        color: const Color(0xFFE1F5FE).withOpacity(0.1),
+        gradient: LinearGradient(
+          colors: [Colors.green.withOpacity(0.1), Colors.yellow.withOpacity(0.1)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF81D4FA).withOpacity(0.3),
+            color: Colors.green.withOpacity(0.3),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 2),
@@ -473,20 +497,24 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildStatsWidget(Icons.shopping_cart, "PO", "1,234"),
-          _buildStatsWidget(Icons.attach_money, "Revenue", "\$5,678"),
-          _buildStatsWidget(Icons.trending_up, "Profit", "\$2,345"),
+          _buildStatsWidget(Icons.shopping_cart, "PO", "1,234", Colors.blue),
+          _buildStatsWidget(Icons.attach_money, "Revenue", "\$5,678", Colors.green),
+          _buildStatsWidget(Icons.trending_up, "Profit", "\$2,345", Colors.orange),
         ],
       ),
     );
     final orderStatusWidget = Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(124, 255, 255, 255),
+        gradient: LinearGradient(
+          colors: [Colors.orange.withOpacity(0.1), Colors.red.withOpacity(0.1)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(5),
         boxShadow: [
           BoxShadow(
-            color: const Color.fromARGB(255, 241, 243, 243).withOpacity(0.3),
+            color: Colors.orange.withOpacity(0.3),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 2),
@@ -503,56 +531,56 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.lightBlue),
+                    color: Colors.deepPurple),
               ),
               TextButton(
                 onPressed: () {
                   // TODO: Implement show detail functionality
                 },
                 child: const Text("Show Detail",
-                    style: TextStyle(color: Colors.lightBlue)),
+                    style: TextStyle(color: Colors.deepPurple)),
               ),
             ],
           ),
           const SizedBox(height: 5),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Column(
                 children: [
-                  Icon(Icons.hourglass_empty, size: 20, color: Colors.orange),
+                  Icon(Icons.hourglass_empty, size: 20, color: Colors.blue),
                   Text(
                     "Waiting",
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.orange),
+                        color: Colors.blue),
                   ),
                   Text(
                     "5", // Replace with actual number
                     style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange),
+                        color: Colors.blue),
                   ),
                 ],
               ),
               Column(
                 children: [
-                  Icon(Icons.sync, size: 20, color: Colors.lightBlue),
+                  Icon(Icons.sync, size: 20, color: Colors.green),
                   Text(
                     "Processing",
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.lightBlue),
+                        color: Colors.green),
                   ),
                   Text(
                     "3", // Replace with actual number
                     style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Colors.lightBlue),
+                        color: Colors.green),
                   ),
                 ],
               ),
@@ -574,8 +602,8 @@ class _HomePageState extends State<HomePage> {
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
                 colors: [
-                  Color(0xFFE1F5FE),
-                  Color(0xFFB3E5FC),
+                  Color(0xFFFFF9C4), // Light yellow
+                  Color(0xFFE1F5FE), // Light blue
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -610,31 +638,32 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: Color(0xFF4FC3F7),
+            backgroundColor: Color(0xFFFFF9C4), // Light yellow
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.business),
             label: 'Business',
-            backgroundColor: Color(0xFF29B6F6),
+            backgroundColor: Color(0xFFE1F5FE), // Light blue
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
             label: 'School',
-            backgroundColor: Color(0xFF03A9F4),
+            backgroundColor: Color(0xFFF0F4C3), // Light lime
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
-            backgroundColor: Color(0xFF039BE5),
+            backgroundColor: Color(0xFFE8EAF6), // Light indigo
           ),
         ],
         currentIndex: _selectedBottomIndex,
-        selectedItemColor: Colors.white,
+        selectedItemColor: Colors.deepPurple,
+        unselectedItemColor: Colors.grey,
         onTap: _onBottomItemTapped,
       ),
       floatingActionButton: Builder(builder: (context) {
         return FloatingActionButton(
-            backgroundColor: const Color(0xFF4FC3F7),
+            backgroundColor: Colors.deepPurple,
             mini: true,
             onPressed: () {
               //Scaffold.of(context).openDrawer();
@@ -655,8 +684,8 @@ class _HomePageState extends State<HomePage> {
                 items: <PopupMenuEntry>[
                   PopupMenuItem(
                     child: ListTile(
-                      leading: const Icon(Icons.add_shopping_cart),
-                      title: const Text('Tạo đơn hàng'),
+                      leading: const Icon(Icons.add_shopping_cart, color: Colors.green),
+                      title: const Text('Tạo đơn hàng', style: TextStyle(color: Colors.green)),
                       onTap: () {
                         Navigator.pop(context);
                         Get.to(() => const AddOrdersScreen());
@@ -667,8 +696,8 @@ class _HomePageState extends State<HomePage> {
                   //tạo invoice
                   PopupMenuItem(
                     child: ListTile(
-                      leading: const Icon(Icons.add_shopping_cart),
-                      title: const Text('Tạo invoice'),
+                      leading: const Icon(Icons.add_shopping_cart, color: Colors.blue),
+                      title: const Text('Tạo invoice', style: TextStyle(color: Colors.blue)),
                       onTap: () {
                         Navigator.pop(context);
                         Get.to(() => CreateInvoiceScreen(order: Order(poId: 0, shopId: 0, prodId: 0, cusId: 0, poNo: '', poQty: 0, prodPrice: 0, remark: '', insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: '', custCd: '', cusName: '', prodName: '')));
@@ -678,8 +707,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PopupMenuItem(
                     child: ListTile(
-                      leading: const Icon(Icons.person_add),
-                      title: const Text('Thêm khách hàng'),
+                      leading: const Icon(Icons.person_add, color: Colors.orange),
+                      title: const Text('Thêm khách hàng', style: TextStyle(color: Colors.orange)),
                       onTap: () {
                         Navigator.pop(context);
                         Get.to(() => const AddCustomersScreen());
@@ -689,8 +718,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PopupMenuItem(
                     child: ListTile(
-                      leading: const Icon(Icons.business),
-                      title: const Text('Thêm nhà cung cấp'),
+                      leading: const Icon(Icons.business, color: Colors.purple),
+                      title: const Text('Thêm nhà cung cấp', style: TextStyle(color: Colors.purple)),
                       onTap: () {
                         Navigator.pop(context);
                         Get.to(() => const AddSuppliersScreen());
@@ -700,8 +729,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PopupMenuItem(
                     child: ListTile(
-                      leading: const Icon(Icons.inventory),
-                      title: const Text('Thêm sản phẩm'),
+                      leading: const Icon(Icons.inventory, color: Colors.red),
+                      title: const Text('Thêm sản phẩm', style: TextStyle(color: Colors.red)),
                       onTap: () {
                         Navigator.pop(context);
                         Get.to(() => const AddProductsScreen());

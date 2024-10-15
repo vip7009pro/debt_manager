@@ -37,16 +37,18 @@ class _AddCustomersScreenState extends State<AddCustomersScreen> {
 
       if (response['tk_status'] == 'OK') {
         Get.back();
-        Get.snackbar('Success', 'Customer added successfully');
+        Get.snackbar('Success', 'Customer added successfully', 
+          backgroundColor: Colors.green, colorText: Colors.white);
       } else {
-        Get.snackbar('Error', 'Failed to add customer');
+        Get.snackbar('Error', 'Failed to add customer', 
+          backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
-      Get.snackbar('Error', 'An error occurred: $e');
+      Get.snackbar('Error', 'An error occurred: $e', 
+        backgroundColor: Colors.orange, colorText: Colors.white);
     }
   }
 
-  //generate random customer code contains letter and number of length 15
   String generateRandomCustomerCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     return List.generate(15, (_) => chars[Random().nextInt(chars.length)]).join('');
@@ -62,74 +64,126 @@ class _AddCustomersScreenState extends State<AddCustomersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thêm khách hàng'),
+        title: const Text('Thêm khách hàng', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 147, 114, 240),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              //Mã khách hàng
-              TextFormField(
-                controller: _custCdController,
-                decoration: const InputDecoration(
-                  labelText: 'Mã khách hàng',
-                  hintText: 'Nhập mã khách hàng',
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue[100]!, Colors.purple[100]!],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                TextFormField(
+                  controller: _custCdController,
+                  decoration: InputDecoration(
+                    labelText: 'Mã khách hàng',
+                    hintText: 'Nhập mã khách hàng',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.purple),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _cusNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Tên khách hàng',
-                  hintText: 'Nhập tên khách hàng',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _cusNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Tên khách hàng',
+                    hintText: 'Nhập tên khách hàng',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _cusPhoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Số điện thoại',
-                  hintText: 'Nhập số điện thoại khách hàng',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _cusPhoneController,
+                  decoration: InputDecoration(
+                    labelText: 'Số điện thoại',
+                    hintText: 'Nhập số điện thoại khách hàng',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                  ),
+                  keyboardType: TextInputType.phone,
                 ),
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _cusEmailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  hintText: 'Nhập email khách hàng',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _cusEmailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'Nhập email khách hàng',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.orange),
+                    ),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _cusAddController,
-                decoration: const InputDecoration(
-                  labelText: 'Địa chỉ',
-                  hintText: 'Nhập địa chỉ khách hàng',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _cusAddController,
+                  decoration: InputDecoration(
+                    labelText: 'Địa chỉ',
+                    hintText: 'Nhập địa chỉ khách hàng',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _cusLocController,
-                decoration: const InputDecoration(
-                  labelText: 'Địa chỉ',
-                  hintText: 'Nhập địa chỉ khách hàng',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _cusLocController,
+                  decoration: InputDecoration(
+                    labelText: 'Vị trí',
+                    hintText: 'Nhập vị trí khách hàng',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.teal),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {  
-                    _addCustomer(); 
-                  }
-                },
-                child: const Text('Lưu khách hàng'),
-              ),
-            ],
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {  
+                      _addCustomer(); 
+                    }
+                  },
+                  child: const Text('Lưu khách hàng', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

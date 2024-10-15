@@ -10,12 +10,14 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+
 class EditProductsScreen extends StatefulWidget {
   final Product product;
   const EditProductsScreen({Key? key, required this.product}) : super(key: key);
   @override
   _EditProductsScreenState createState() => _EditProductsScreenState();
 }
+
 class _EditProductsScreenState extends State<EditProductsScreen> {
   final _formKey = GlobalKey<FormState>();
   String? productCategory;
@@ -31,12 +33,20 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
   final productPriceController = TextEditingController();
   final productCodeController = TextEditingController();
   final GlobalController c = Get.put(GlobalController());
-  //create random product code contains letter and number of length 10
+
+  // Color palette
+  final Color primaryColor = Colors.purple;
+  final Color secondaryColor = Colors.orange;
+  final Color accentColor = Colors.teal;
+  final Color backgroundColor = Colors.yellow[50]!;
+  final Color textColor = Colors.indigo;
+
   String createRandomProductCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     return List.generate(10, (_) => chars[Random().nextInt(chars.length)])
         .join('');
   }
+
   Future<bool> _editProduct(
       String productCode,
       String productCategory,
@@ -57,6 +67,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     }).then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;
+        _deleteProduct(productCode, widget.product.prodImg);  
         _uploadImage();
       } else {
         check = false;
@@ -64,14 +75,31 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     });
     return check;
   }
+
   Future<bool> _updateProductImage(String productCode, String productImg) async {
-    // Add product logic here
     bool check = true;
     String shopID = c.shopID.value;
     await API_Request.api_query('updateProductImage', {
       'PROD_CODE': productCode,
       'SHOP_ID': shopID,
       'PROD_IMG': productImg
+    }).then((value) {
+      if (value['tk_status'] == 'OK') {
+        check = true;
+      } else {
+        check = false;
+      }
+    });
+    return check;
+  }
+
+  Future<bool> _deleteProduct(String productCode, String productImg) async {
+    bool check = true;
+    String shopID = c.shopID.value;
+    await API_Request.api_query('deleteProductImage', {
+      'PROD_CODE': productCode,
+      'SHOP_ID': shopID,
+      'PROD_IMG': productImg 
     }).then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;
@@ -93,7 +121,6 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
         try {
           File imageFile;
           if (image.startsWith('http://') || image.startsWith('https://')) {            
-            // download image from image link
             final response = await http.get(Uri.parse(image));
             final bytes = response.bodyBytes;
             final tempDir = await getTemporaryDirectory();
@@ -119,23 +146,25 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please choose a valid image')),
+          SnackBar(content: Text('Please choose a valid image', style: TextStyle(color: textColor))),
         );
       }
     }    
     await _updateProductImage(productCodeController.text, List.generate(allImages.length, (index) => index.toString()).join(','));
   }
+
   @override
   void initState() {
     super.initState();
     productCodeController.text = widget.product.prodCode;
     productCategoryController.text = widget.product.catId.toString();
-    productNameController.text = widget.product.prodName;
+    productNameController.text = widget.product.prodName; 
     productDescriptionController.text = widget.product.prodDescr;
     productPriceController.text = widget.product.prodPrice.toString();
-    print(widget.product.prodImg);  
+    productCategory = widget.product.catId.toString();
     serverImages = widget.product.prodImg.split(',').map((element) => 'http://14.160.33.94:3010/product_images/${c.shopID.value}_${productCodeController.text}_$element.jpg').toList();
   }
+
   @override
   Widget build(BuildContext context) {
     final addProductImageWidget = Column(
@@ -144,7 +173,6 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
           alignment: Alignment.topLeft,
           child: ElevatedButton(
             onPressed: () {
-              // Add logic to pick and add a new image
               showModalBottomSheet(
                 context: context,
                 builder: (BuildContext context) {
@@ -153,8 +181,8 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         ListTile(
-                          leading: Icon(Icons.photo_library),
-                          title: Text('Choose from gallery'),
+                          leading: Icon(Icons.photo_library, color: accentColor),
+                          title: Text('Choose from gallery', style: TextStyle(color: textColor)),
                           onTap: () async {
                             Navigator.pop(context);
                             final List<XFile>? images =
@@ -163,13 +191,14 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                               setState(() {
                                 locallyAddedImages
                                     .addAll(images.map((image) => image.path));
+                                serverImages.clear();
                               });
                             }
                           },
                         ),
                         ListTile(
-                          leading: Icon(Icons.photo_camera),
-                          title: Text('Take a photo'),
+                          leading: Icon(Icons.photo_camera, color: accentColor),
+                          title: Text('Take a photo', style: TextStyle(color: textColor)),
                           onTap: () async {
                             Navigator.pop(context);
                             final XFile? image = await ImagePicker()
@@ -177,6 +206,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                             if (image != null) {
                               setState(() {
                                 locallyAddedImages.add(image.path);
+                                serverImages.clear();
                               });
                             }
                           },
@@ -187,7 +217,10 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                 },
               );
             },
-            child: Text('Add'),
+            child: Text('Add', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white, backgroundColor: secondaryColor,
+            ),
           ),
         ),
         SizedBox(height: 10),
@@ -196,7 +229,6 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              // Existing server images
               ...serverImages.asMap().entries.map((entry) {                
                 return Stack(
                   children: [
@@ -208,6 +240,8 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                           image: NetworkImage(entry.value),
                           fit: BoxFit.cover,
                         ),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: accentColor, width: 2),
                       ),
                     ),
                     Positioned(
@@ -225,7 +259,6 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                   ],
                 );
               }),
-              // Locally added images
               ...locallyAddedImages
                   .asMap()
                   .entries
@@ -239,6 +272,8 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                                 image: FileImage(File(entry.value)),
                                 fit: BoxFit.cover,
                               ),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: accentColor, width: 2),
                             ),
                           ),
                           Positioned(
@@ -261,10 +296,13 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
         ),
       ],
     );
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sửa sản phẩm'),
+        title: const Text('Sửa sản phẩm', style: TextStyle(color: Colors.white)),
+        backgroundColor: primaryColor,
       ),
+      backgroundColor: backgroundColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -273,17 +311,32 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
             children: [
               TextFormField(
                 controller: productCodeController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Mã sản phẩm',
                   hintText: 'Nhập mã sản phẩm',
+                  labelStyle: TextStyle(color: textColor),
+                  hintStyle: TextStyle(color: textColor.withOpacity(0.6)),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: accentColor),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
                 ),
+                style: TextStyle(color: textColor),
               ),
               const SizedBox(height: 16),
-              //Phân loại sản phẩm
-              DropdownButtonFormField<String>(
+              DropdownButtonFormField<String>(                
                 value: productCategory,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Phân loại sản phẩm',
+                  labelStyle: TextStyle(color: textColor),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: accentColor),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
                 ),
                 items: const [
                   DropdownMenuItem<String>(
@@ -316,31 +369,52 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                   }
                   return null;
                 },
-                hint: const Text('Chọn phân loại sản phẩm'),
+                hint: Text('Chọn phân loại sản phẩm', style: TextStyle(color: textColor.withOpacity(0.6))),
+                style: TextStyle(color: textColor),
+                dropdownColor: backgroundColor,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: productNameController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Tên sản phẩm',
                   hintText: 'Nhập tên sản phẩm',
+                  labelStyle: TextStyle(color: textColor),
+                  hintStyle: TextStyle(color: textColor.withOpacity(0.6)),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: accentColor),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
                 ),
+                style: TextStyle(color: textColor),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: productDescriptionController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Mô tả sản phẩm',
                   hintText: 'Nhập mô tả sản phẩm',
+                  labelStyle: TextStyle(color: textColor),
+                  hintStyle: TextStyle(color: textColor.withOpacity(0.6)),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: accentColor),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
                 ),
                 maxLines: 3,
+                style: TextStyle(color: textColor),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: productPriceController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Giá sản phẩm',
                   hintText: 'Nhập giá sản phẩm',
+                  labelStyle: TextStyle(color: textColor),
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -393,6 +467,23 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                 },
                 child: const Text('Update'),
               ),
+              //deleteProductButton 
+              ElevatedButton(
+                onPressed: () {
+                  // Add logic to delete the product
+                  _deleteProduct(productCodeController.text, widget.product.prodImg).then((value) {
+                    if (value) {
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.success,
+                        title: 'Thông báo',
+                        desc: 'Xóa sản phẩm thành công',
+                      ).show();
+                    }
+                  }); 
+                },
+                child: const Text('Delete'),
+              ),  
             ],
           ),
         ),

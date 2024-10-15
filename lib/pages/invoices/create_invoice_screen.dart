@@ -76,92 +76,146 @@ class _CreateInvoiceScreenState extends State<CreateInvoiceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Create Invoice"),
+        backgroundColor: const Color.fromARGB(255, 87, 214, 236),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          child: ListView(
-            children: [
-              //invoice no
-              TextFormField(
-                controller: invoice_no_controller,
-                decoration: const InputDecoration(
-                  labelText: 'INVOICE_NO',
-                  hintText: 'Enter Invoice Number',
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue[100]!, Colors.purple[100]!],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            child: ListView(
+              children: [
+                //invoice no
+                TextFormField(
+                  controller: invoice_no_controller,
+                  decoration: InputDecoration(
+                    labelText: 'INVOICE_NO',
+                    hintText: 'Enter Invoice Number',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.purple),
+                    ),
+                  ),
+                ),  
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: prod_id_controller,
+                  decoration: InputDecoration(
+                    labelText: 'PROD_ID',
+                    hintText: 'Enter Product ID',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
                 ),
-              ),  
-              TextFormField(
-                controller: prod_id_controller,
-                decoration: const InputDecoration(
-                  labelText: 'PROD_ID',
-                  hintText: 'Enter Product ID',
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: cus_id_controller,
+                  decoration: InputDecoration(
+                    labelText: 'CUS_ID',
+                    hintText: 'Enter Customer ID',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: cus_id_controller,
-                decoration: const InputDecoration(
-                  labelText: 'CUS_ID',
-                  hintText: 'Enter Customer ID',
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: po_no_controller,
+                  decoration: InputDecoration(
+                    labelText: 'PO_NO',
+                    hintText: 'Enter Purchase Order Number',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.orange),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: po_no_controller,
-                decoration: const InputDecoration(
-                  labelText: 'PO_NO',
-                  hintText: 'Enter Purchase Order Number',
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: invoice_qty_controller,
+                  decoration: InputDecoration(
+                    labelText: 'INVOICE_QTY',
+                    hintText: 'Enter Invoice Quantity',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: invoice_qty_controller,
-                decoration: const InputDecoration(
-                  labelText: 'INVOICE_QTY',
-                  hintText: 'Enter Invoice Quantity',
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: remark_controller,
+                  decoration: InputDecoration(
+                    labelText: 'REMARK',
+                    hintText: 'Enter Remark',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.teal),
+                    ),
+                  ),
+                  maxLines: 3,
                 ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: remark_controller,
-                decoration: const InputDecoration(
-                  labelText: 'REMARK',
-                  hintText: 'Enter Remark',
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    // Add logic to save the new invoice
+                    _addInvoice(invoice_no_controller.text, c.shopID.value, prod_id_controller.text, cus_id_controller.text, order.prodCode, order.custCd, po_no_controller.text, invoice_qty_controller.text, order.prodPrice.toString(), remark_controller.text).then((value) {
+                      if (value) {
+                        AwesomeDialog(
+                          context: context,
+                          title: 'Success',
+                          body: Text('Invoice created successfully'),
+                          dialogType: DialogType.success,
+                          btnOkOnPress: () {
+                            Get.back();
+                          },
+                        ).show(); 
+                      } else {
+                        AwesomeDialog(
+                          context: context,
+                          title: 'Error',
+                          body: Text('Failed to create invoice'),
+                          dialogType: DialogType.error,
+                          btnOkOnPress: () {
+                            //Get.back();
+                          },
+                        ).show(); 
+                      } 
+                      }); 
+                  },
+                  child: const Text('Create Invoice', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  // Add logic to save the new invoice
-                  _addInvoice(invoice_no_controller.text, c.shopID.value, prod_id_controller.text, cus_id_controller.text, order.prodCode, order.custCd, po_no_controller.text, invoice_qty_controller.text, order.prodPrice.toString(), remark_controller.text).then((value) {
-                    if (value) {
-                      AwesomeDialog(
-                        context: context,
-                        title: 'Success',
-                        body: Text('Invoice created successfully'),
-                        dialogType: DialogType.success,
-                        btnOkOnPress: () {
-                          Get.back();
-                        },
-                      ).show(); 
-                    } else {
-                      AwesomeDialog(
-                        context: context,
-                        title: 'Error',
-                        body: Text('Failed to create invoice'),
-                        dialogType: DialogType.error,
-                        btnOkOnPress: () {
-                          //Get.back();
-                        },
-                      ).show(); 
-                    } 
-                    }); 
-                },
-                child: const Text('Create Invoice'),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

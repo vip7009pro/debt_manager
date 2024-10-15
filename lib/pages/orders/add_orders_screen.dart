@@ -78,9 +78,6 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
     return check;    
   }
 
-
-
-
  //generate order number with format: SO-YYYYMMDD-NNNN  
  String _generateOrderNumber() {
   String date = DateTime.now().toString().substring(0, 10);
@@ -111,98 +108,151 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thêm đơn hàng'),
+        backgroundColor: Colors.purple,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          child: ListView(
-            children: [
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue[100]!, Colors.purple[100]!],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            child: ListView(
+              children: [
                 DropdownButtonFormField<Product>(
-                onChanged: (Product? value) {
-                  setState(() {
-                    productController.text = value?.prodId.toString() ?? '';
-                    productCode = value?.prodCode ?? '';  
-                  });
-                },
-                items: products.map((Product product) {
-                  return DropdownMenuItem<Product>(
-                    value: product,
-                    child: Text(product.prodName ?? ''),
-                  );
-                }).toList(),
-                decoration: const InputDecoration(
-                  labelText: 'Mã sản phẩm',
-                  hintText: 'Nhập mã sản phẩm',
+                  onChanged: (Product? value) {
+                    setState(() {
+                      productController.text = value?.prodId.toString() ?? '';
+                      productCode = value?.prodCode ?? '';  
+                    });
+                  },
+                  items: products.map((Product product) {
+                    return DropdownMenuItem<Product>(
+                      value: product,
+                      child: Text(product.prodName ?? ''),
+                    );
+                  }).toList(),
+                  decoration: InputDecoration(
+                    labelText: 'Mã sản phẩm',
+                    hintText: 'Nhập mã sản phẩm',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<Customer>(
-                onChanged: (Customer? value) {
-                  setState(() {
-                    customerController.text = value?.cusId.toString() ?? '';
-                    customerCode = value?.custCd ?? '';
-                  });
-                },
-                items: customers.map((Customer customer) {
-                  return DropdownMenuItem<Customer>(
-                    value: customer,
-                    child: Text(customer.cusName ?? ''),
-                  );
-                }).toList(),
-                decoration: const InputDecoration(
-                  labelText: 'Khách hàng',
-                  hintText: 'Chọn khách hàng',
+                const SizedBox(height: 16),
+                DropdownButtonFormField<Customer>(
+                  onChanged: (Customer? value) {
+                    setState(() {
+                      customerController.text = value?.cusId.toString() ?? '';
+                      customerCode = value?.custCd ?? '';
+                    });
+                  },
+                  items: customers.map((Customer customer) {
+                    return DropdownMenuItem<Customer>(
+                      value: customer,
+                      child: Text(customer.cusName ?? ''),
+                    );
+                  }).toList(),
+                  decoration: InputDecoration(
+                    labelText: 'Khách hàng',
+                    hintText: 'Chọn khách hàng',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: orderNumberController,
-                decoration: const InputDecoration(
-                  labelText: 'Số đơn hàng',
-                  hintText: 'Nhập số đơn hàng',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: orderNumberController,
+                  decoration: InputDecoration(
+                    labelText: 'Số đơn hàng',
+                    hintText: 'Nhập số đơn hàng',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: quantityController,
-                decoration: const InputDecoration(
-                  labelText: 'Số lượng',
-                  hintText: 'Nhập số lượng',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: quantityController,
+                  decoration: InputDecoration(
+                    labelText: 'Số lượng',
+                    hintText: 'Nhập số lượng',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
                 ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: priceController,
-                decoration: const InputDecoration(
-                  labelText: 'Giá sản phẩm',
-                  hintText: 'Nhập giá sản phẩm',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: priceController,
+                  decoration: InputDecoration(
+                    labelText: 'Giá sản phẩm',
+                    hintText: 'Nhập giá sản phẩm',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
                 ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: noteController,
-                decoration: const InputDecoration(
-                  labelText: 'Ghi chú',
-                  hintText: 'Nhập ghi chú',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: noteController,
+                  decoration: InputDecoration(
+                    labelText: 'Ghi chú',
+                    hintText: 'Nhập ghi chú',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  maxLines: 3,
                 ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                 _addOrder(orderNumberController.text,productController.text, customerController.text, productCode, customerCode, int.parse(quantityController.text), double.parse(priceController.text), noteController.text).then((value) {
-                    if (value) {      
-                      Get.back();
-                    } else {
-                      Get.snackbar('Thông báo', 'Thêm đơn hàng thất bại');
-                    }
-                  });
-                },
-                child: const Text('Lưu đơn hàng'),
-              ),
-            ],
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                   _addOrder(orderNumberController.text,productController.text, customerController.text, productCode, customerCode, int.parse(quantityController.text), double.parse(priceController.text), noteController.text).then((value) {
+                      if (value) {      
+                        Get.back();
+                      } else {
+                        Get.snackbar('Thông báo', 'Thêm đơn hàng thất bại');
+                      }
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: const Text('Lưu đơn hàng', style: TextStyle(fontSize: 18)),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -56,128 +56,175 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thêm sản phẩm'),
+        backgroundColor: const Color.fromARGB(255, 51, 201, 21),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: productCodeController,
-                decoration: const InputDecoration(
-                  labelText: 'Mã sản phẩm',
-                  hintText: 'Nhập mã sản phẩm',
-                ),
-              ),
-              const SizedBox(height: 16),         
-              //Phân loại sản phẩm
-              DropdownButtonFormField<String>(
-                value: productCategory,
-                decoration: const InputDecoration(
-                  labelText: 'Phân loại sản phẩm',
-                ),
-                items: const [
-                  DropdownMenuItem<String>(
-                    value: '1',
-                    child: Text('Điện tử'),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue[100]!, Colors.purple[100]!],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                TextFormField(
+                  controller: productCodeController,
+                  decoration: InputDecoration(
+                    labelText: 'Mã sản phẩm',
+                    hintText: 'Nhập mã sản phẩm',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
-                  DropdownMenuItem<String>(
-                    value: '2',
-                    child: Text('Thời trang'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: '3',
-                    child: Text('Thực phẩm'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: '4',
-                    child: Text('Đồ gia dụng'),
-                  ),
-                ],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    productCategory = newValue;
-                    productCategoryController.text = newValue ?? '';
-                    print(productCategoryController.text);
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng chọn phân loại sản phẩm';
-                  }
-                  return null;
-                },
-                hint: const Text('Chọn phân loại sản phẩm'),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: productNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Tên sản phẩm',
-                  hintText: 'Nhập tên sản phẩm',
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: productDescriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Mô tả sản phẩm',
-                  hintText: 'Nhập mô tả sản phẩm',
+                const SizedBox(height: 16),         
+                //Phân loại sản phẩm
+                DropdownButtonFormField<String>(
+                  value: productCategory,
+                  decoration: InputDecoration(
+                    labelText: 'Phân loại sản phẩm',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  items: const [
+                    DropdownMenuItem<String>(
+                      value: '1',
+                      child: Text('Điện tử'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: '2',
+                      child: Text('Thời trang'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: '3',
+                      child: Text('Thực phẩm'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: '4',
+                      child: Text('Đồ gia dụng'),
+                    ),
+                  ],
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      productCategory = newValue;
+                      productCategoryController.text = newValue ?? '';
+                      print(productCategoryController.text);
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng chọn phân loại sản phẩm';
+                    }
+                    return null;
+                  },
+                  hint: const Text('Chọn phân loại sản phẩm'),
                 ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: productPriceController,
-                decoration: const InputDecoration(
-                  labelText: 'Giá sản phẩm',
-                  hintText: 'Nhập giá sản phẩm',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: productNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Tên sản phẩm',
+                    hintText: 'Nhập tên sản phẩm',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                 ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 24),              
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Add logic to save the new product
-                    _addProduct(productCodeController.text, productCategoryController.text, productNameController.text, productDescriptionController.text, double.parse(productPriceController.text)).then((value) {
-                      print(value);
-                      if (value) {
-                       AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.success,
-                        title: 'Thông báo',
-                        desc: 'Thêm sản phẩm thành công',
-                        btnOkOnPress: () {
-                          Get.back();
-                        },
-                        btnCancelText: 'Cancel',
-                        btnOkText: 'OK',
-                       ).show();
-                      }
-                      else {
-                        AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.error,
-                        title: 'Thông báo',
-                        desc: 'Thêm sản phẩm thất bại',
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: productDescriptionController,
+                  decoration: InputDecoration(
+                    labelText: 'Mô tả sản phẩm',
+                    hintText: 'Nhập mô tả sản phẩm',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: productPriceController,
+                  decoration: InputDecoration(
+                    labelText: 'Giá sản phẩm',
+                    hintText: 'Nhập giá sản phẩm',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 24),              
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Add logic to save the new product
+                      _addProduct(productCodeController.text, productCategoryController.text, productNameController.text, productDescriptionController.text, double.parse(productPriceController.text)).then((value) {
+                        print(value);
+                        if (value) {
+                         AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.success,
+                          title: 'Thông báo',
+                          desc: 'Thêm sản phẩm thành công',
                           btnOkOnPress: () {
-                          Get.back();
-                        },
-                        btnCancelOnPress: () {
-                          Get.back();
-                        },
-                        btnOkText: 'OK',
-                        btnCancelText: 'Cancel',
-                       ).show();
-                      } 
-                    }); 
-                  }
-                },
-                child: const Text('Lưu sản phẩm'),
-              ),
-            ],
+                            Get.back();
+                          },
+                          btnCancelText: 'Cancel',
+                          btnOkText: 'OK',
+                         ).show();
+                        }
+                        else {
+                          AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          title: 'Thông báo',
+                          desc: 'Thêm sản phẩm thất bại',
+                            btnOkOnPress: () {
+                            Get.back();
+                          },
+                          btnCancelOnPress: () {
+                            Get.back();
+                          },
+                          btnOkText: 'OK',
+                          btnCancelText: 'Cancel',
+                         ).show();
+                        } 
+                      }); 
+                    }
+                  },
+                  child: const Text('Lưu sản phẩm'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

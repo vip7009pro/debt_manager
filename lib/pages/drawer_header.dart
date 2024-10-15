@@ -20,53 +20,63 @@ class _DrawerHeaderTabState extends State<DrawerHeaderTab> {
         height: 100,
         fit: BoxFit.cover,
         imageErrorBuilder: (context, error, stackTrace) {
-          return Container(
+          return Container(            
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: Colors.purple[100],
               borderRadius: BorderRadius.circular(25),
             ),
-            child: Icon(Icons.store, color: Colors.grey[600]),
+            child: Icon(Icons.store, color: Colors.purple[600]),
           );
         },
       ),
     );
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center, 
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        emplImage,
-        const SizedBox(width: 10),
-        const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.person, size: 16, color:  Color.fromARGB(255, 93, 155, 247)),
-                SizedBox(width: 4),
-                Text('Nguyễn Văn A', style: TextStyle(color:  Color.fromARGB(255, 12, 64, 143), fontSize: 16)),
-              ],
-            ),
-            Row(
-              children: [
-                Icon(Icons.email, size: 16, color:  Color.fromARGB(255, 93, 155, 247)),
-                SizedBox(width: 4),
-                Text('hung1893@gmail.com', style: TextStyle(color:  Color.fromARGB(255, 12, 64, 143), fontSize: 16)),
-              ],
-            ),
-            Row(
-              children: [
-                Icon(Icons.phone, size: 16, color:  Color.fromARGB(255, 93, 155, 247)),
-                SizedBox(width: 4),
-                Text('0987654321', style: TextStyle(color:  Color.fromARGB(255, 12, 64, 143), fontSize: 16)),
-              ],
-            ),
-          ],
+    return Container(
+      padding: const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.blue[300]!, Colors.purple[300]!],
         ),
-      ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center, 
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          emplImage,
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.person, size: 16, color: Colors.yellow[700]),
+                  SizedBox(width: 4),
+                  Text('Nguyễn Văn A', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(Icons.email, size: 16, color: Colors.green[400]),
+                  SizedBox(width: 4),
+                  Text('hung1893@gmail.com', style: TextStyle(color: Colors.white, fontSize: 16)),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(Icons.phone, size: 16, color: Colors.red[400]),
+                  SizedBox(width: 4),
+                  Text('0987654321', style: TextStyle(color: Colors.white, fontSize: 16)),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

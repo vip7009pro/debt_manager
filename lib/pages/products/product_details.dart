@@ -26,12 +26,20 @@ class _ProductDetailsState extends State<ProductDetails> {
             children: [
               Container(
                 height: 300,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUDew-OIdj5JI66SbchAq6tRsILOGtz96L5A&s'),
-                    fit: BoxFit.cover,
-                  ),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: widget.product.prodImg.split(',').length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage('http://14.160.33.94:3010/product_images/${widget.product.shopId}_${widget.product.prodCode}_$index.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
               Padding(
