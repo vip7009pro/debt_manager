@@ -302,7 +302,7 @@ class _HomePageState extends State<HomePage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [const Color.fromARGB(255, 226, 234, 241)!, const Color.fromARGB(255, 212, 141, 224)!],
+            colors: [const Color.fromARGB(255, 226, 234, 241), const Color.fromARGB(255, 212, 141, 224)],
           ),
         ),
         child: ListView(
@@ -413,14 +413,14 @@ class _HomePageState extends State<HomePage> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.purple.withOpacity(0.1), Colors.blue.withOpacity(0.1)],
+            colors: [const Color.fromARGB(255, 238, 197, 245).withOpacity(0.1), Colors.blue.withOpacity(0.1)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.purple.withOpacity(0.3),
+              color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 2),
@@ -480,14 +480,14 @@ class _HomePageState extends State<HomePage> {
       height: 100,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.green.withOpacity(0.1), Colors.yellow.withOpacity(0.1)],
+          colors: [const Color.fromARGB(255, 241, 241, 241).withOpacity(0.1), const Color.fromARGB(255, 245, 237, 167).withOpacity(0.1)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.green.withOpacity(0.3),
+            color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 2),
@@ -507,14 +507,14 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.orange.withOpacity(0.1), Colors.red.withOpacity(0.1)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          colors: [const Color.fromARGB(255, 255, 255, 255).withOpacity(0.1), const Color.fromARGB(255, 233, 206, 204).withOpacity(0.1)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(5),
         boxShadow: [
           BoxShadow(
-            color: Colors.orange.withOpacity(0.3),
+            color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 2),

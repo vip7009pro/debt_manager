@@ -39,70 +39,89 @@ class _ShopListScreenState extends State<ShopListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shop List'),
+        title: const Text('Shop List', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.purple,
       ),
-      body: Center(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            setState(() {
-              _getShopList();
-            });
-          },
-          child: FutureBuilder<List<Shop>>(
-          future: _getShopList(),
-          initialData: const [],
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Text('No data');
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    onTap: () {
-                      LocalDataAccess.saveVariable('shopId', snapshot.data![index].shopId.toString());
-                      c.shopID.value = snapshot.data![index].shopId.toString();
-                      Get.offAll(() => const HomePage());
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue[100]!, Colors.purple[100]!],
+          ),
+        ),
+        child: Center(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                _getShopList();
+              });
+            },
+            child: FutureBuilder<List<Shop>>(
+              future: _getShopList(),
+              initialData: const [],
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.purple));
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.red));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Text('No data', style: TextStyle(color: Colors.orange));
+                } else {
+                  return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        elevation: 5,
+                        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        color: Colors.white.withOpacity(0.9),
+                        child: ListTile(
+                          onTap: () {
+                            LocalDataAccess.saveVariable('shopId', snapshot.data![index].shopId.toString());
+                            c.shopID.value = snapshot.data![index].shopId.toString();
+                            Get.offAll(() => const HomePage());
+                          },
+                          title: Text(snapshot.data![index].shopName, style: TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold)),
+                          subtitle: Text(snapshot.data![index].shopDescr, style: TextStyle(color: Colors.teal)),
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(25),
+                            child: FadeInImage.assetNetwork(
+                              placeholder: 'assets/images/empty_avatar.png',
+                              image: "http://14.160.33.94:3010/shop_avatars/${snapshot.data![index].shopId}.jpg",
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                              imageErrorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber,
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                  child: Icon(Icons.store, color: Colors.deepOrange),
+                                );
+                              },
+                            ),
+                          ),
+                          trailing: Icon(Icons.arrow_forward_ios, color: Colors.purple),
+                        ),
+                      );
                     },
-                    title: Text(snapshot.data![index].shopName),
-                    subtitle: Text(snapshot.data![index].shopDescr),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(25),
-                      child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/images/empty_avatar.png',
-                        image: "http://14.160.33.94:3010/shop_avatars/${snapshot.data![index].shopId}.jpg",
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                        imageErrorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: 50,
-                            height: 50,
-                            color: const Color.fromARGB(255, 19, 3, 3),
-                            child: Icon(Icons.store, color: Colors.grey[600]),
-                          );
-                        },
-                      ),
-                    ),
                   );
-                },
-              );
-            }
-          },
+                }
+              },
+            ),
+          ),
         ),
       ),
-    ),
-    floatingActionButton: FloatingActionButton(
-      onPressed: () {
-        Get.to(() => const AddShopPage());
-      },
-      child: const Icon(Icons.add),
-    ),  
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.to(() => const AddShopPage());
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.orange,
+      ),  
     );
   }
 }
-
