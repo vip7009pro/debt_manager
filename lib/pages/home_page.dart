@@ -21,6 +21,7 @@ import 'package:debt_manager/pages/shops/shop_info_screen.dart';
 import 'package:debt_manager/pages/shops/shop_list_screen.dart';
 import 'package:debt_manager/pages/stocks/stock_screen.dart';
 import 'package:debt_manager/pages/stocks/warehouse_screen.dart';
+import 'package:debt_manager/pages/stocks/warehouse_tab_screen.dart';
 import 'package:debt_manager/pages/suppliers/supplier_screen.dart';
 import 'package:debt_manager/pages/suppliers/add_suppliers_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -450,7 +451,7 @@ class _HomePageState extends State<HomePage> {
                 _buildFunctionWidget(Icons.storage, "Stock",
                     () => Get.to(() => const StockScreen()), Colors.purple),
                 _buildFunctionWidget(Icons.warehouse, "Warehouse",
-                    () => Get.to(() => const WarehouseScreen()), Colors.teal),
+                    () => Get.to(() => const WarehouseTabScreen()), Colors.teal),
                 _buildFunctionWidget(Icons.people, "Supplier",
                     () => Get.to(() => const SupplierScreen()), Colors.indigo),
                 _buildFunctionWidget(Icons.person, "Customers",

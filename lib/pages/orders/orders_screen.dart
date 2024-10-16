@@ -1,5 +1,6 @@
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/GetXController.dart';
+import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:debt_manager/pages/invoices/create_invoice_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,8 @@ class OrdersScreen extends StatefulWidget {
 
 class _OrdersScreenState extends State<OrdersScreen> {
   List<Order> orders = []; 
+  List<Order> filteredOrders = [];
+  TextEditingController searchController = TextEditingController();
 
   final GlobalController c = Get.put(GlobalController());
   
@@ -27,14 +30,24 @@ class _OrdersScreenState extends State<OrdersScreen> {
       return Order.fromJson(item);
     }).toList();
   }
+
   void _getOrderList() async {
     await _getOrders().then((value) {
       setState(() {
         orders = value;
+        filteredOrders = orders;
       });
     });
   }
 
+  void _filterOrders(String query) {
+    setState(() {
+      filteredOrders = orders
+          .where((order) =>
+              GlobalFunction.convertVietnameseString(order.prodName).toLowerCase().contains(GlobalFunction.convertVietnameseString(query).toLowerCase()))
+          .toList();
+    });
+  }
 
   @override
   void initState() {
@@ -46,12 +59,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Orders'),
+        title: Text('Orders', style: TextStyle(fontSize: 18)),
         backgroundColor: const Color.fromARGB(255, 115, 231, 163),
         actions: [
           IconButton(onPressed: () {
             Get.to(() => AddOrdersScreen());
-          }, icon: Icon(Icons.add, color: Colors.yellow))
+          }, icon: Icon(Icons.add, color: Colors.yellow, size: 22))
         ],
       ),
       body: Container(
@@ -62,53 +75,73 @@ class _OrdersScreenState extends State<OrdersScreen> {
             colors: [Colors.blue[100]!, Colors.purple[100]!],
           ),
         ),
-        child: RefreshIndicator(
-          onRefresh: () async {
-             _getOrderList();
-          },
-          child: ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              Color cardColor = index % 5 == 0 ? Colors.red[100]! :
-                                index % 5 == 1 ? Colors.green[100]! :
-                                index % 5 == 2 ? Colors.blue[100]! :
-                                index % 5 == 3 ? Colors.orange[100]! :
-                                Colors.purple[100]!;
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                color: cardColor,
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  labelText: 'Search products',
+                  suffixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 25,
-                    child: Text(
-                      orders[index].poNo.substring(orders[index].poNo.length - 4),
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  title: Text(
-                    '#${orders[index].poNo} \n SP: ${orders[index].prodName} \n KH: ${orders[index].cusName} \n QTY: ${orders[index].poQty} \n Price: ${orders[index].prodPrice}',
-                    style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    '${orders[index].insDate.toString().split(' ')[0]} Note:${orders[index].remark}',
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                  trailing: Text(
-                    '\$${(orders[index].poQty * orders[index].prodPrice).toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
-                    style: const TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  onTap: () {
-                    Get.to(() => CreateInvoiceScreen(order: orders[index]));
+                onChanged: _filterOrders,
+              ),
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                   _getOrderList();
+                },
+                child: ListView.builder(
+                  itemCount: filteredOrders.length,
+                  itemBuilder: (context, index) {
+                    Color cardColor = index % 5 == 0 ? Colors.red[100]! :
+                                      index % 5 == 1 ? Colors.green[100]! :
+                                      index % 5 == 2 ? Colors.blue[100]! :
+                                      index % 5 == 3 ? Colors.orange[100]! :
+                                      Colors.purple[100]!;
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                      color: cardColor,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 20,
+                          child: Text(
+                            filteredOrders[index].poNo.substring(filteredOrders[index].poNo.length - 4),
+                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12),
+                          ),
+                        ),
+                        title: Text(
+                          '#${filteredOrders[index].poNo} \n SP: ${filteredOrders[index].prodName} \n KH: ${filteredOrders[index].cusName} \n QTY: ${filteredOrders[index].poQty} \n Price: ${filteredOrders[index].prodPrice}',
+                          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                        subtitle: Text(
+                          '${filteredOrders[index].insDate.toString().split(' ')[0]} Note:${filteredOrders[index].remark}',
+                          style: TextStyle(color: Colors.black54, fontSize: 11),
+                        ),
+                        trailing: Text(
+                          '\$${(filteredOrders[index].poQty * filteredOrders[index].prodPrice).toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                          style: const TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold, fontSize: 14),
+                        ),
+                        onTap: () {
+                          Get.to(() => CreateInvoiceScreen(order: filteredOrders[index]));
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+
 class WarehouseScreen extends StatefulWidget {
   const WarehouseScreen({Key? key}) : super(key: key);
+
   @override
   _WarehouseScreenState createState() => _WarehouseScreenState();
 }
+
 class _WarehouseScreenState extends State<WarehouseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Warehouse', style: TextStyle(color: Colors.white)),
+        title: Text('Warehouse', style: TextStyle(color: Colors.white, fontSize: 16)),
         backgroundColor: Colors.indigo,
         elevation: 0,
       ),
@@ -25,29 +28,29 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
           itemCount: 10, // Replace with actual product input history count
           itemBuilder: (context, index) {
             return Card(
-              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              margin: EdgeInsets.symmetric(horizontal: 14, vertical: 7),
               elevation: 4,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(10)),
               child: InkWell(
                 onTap: () {
                   // Add logic to view detailed input history
                 },
                 child: Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.all(14),
                   child: Row(
                     children: [
                       Container(
-                        width: 60,
-                        height: 60,
+                        width: 50,
+                        height: 50,
                         decoration: BoxDecoration(
                           color: Colors.indigo.shade100,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(Icons.inventory,
-                            color: Colors.indigo, size: 30),
+                            color: Colors.indigo, size: 25),
                       ),
-                      SizedBox(width: 16),
+                      SizedBox(width: 14),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,31 +58,32 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                             Text(
                               'Product Input ${index + 1}',
                               style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.indigo.shade800),
                             ),
-                            SizedBox(height: 4),
+                            SizedBox(height: 3),
                             Text(
                               'Date: ${DateTime.now().subtract(Duration(days: index)).toString().split(' ')[0]}',
                               style: TextStyle(
-                                  fontSize: 14, color: Colors.grey.shade600),
+                                  fontSize: 12, color: Colors.grey.shade600),
                             ),
                           ],
                         ),
                       ),
                       Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
                           color: Colors.indigo.shade100,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(18),
                         ),
                         child: Text(
                           'Quantity: ${(index + 1) * 10}',
                           style: TextStyle(
                               color: Colors.indigo,
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
                         ),
                       ),
                     ],

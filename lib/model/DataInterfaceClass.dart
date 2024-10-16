@@ -399,3 +399,83 @@ class Invoice {
     };
   }
 }
+
+class InputHistory {
+  final int shopId;
+  final int whInId;
+  final int prodId;
+  final int prodQty;
+  final String prodStatus;
+  final DateTime insDate;
+  final String insUid;
+  final DateTime updDate;
+  final String updUid;
+  final String prodCode;
+  final String? custCd;
+  final String? vendorCode;
+  final String prodName;
+  final String prodDescr;
+  final String prodImg;
+  final String? vendorName;
+
+  InputHistory({
+    required this.shopId,
+    required this.whInId,
+    required this.prodId,
+    required this.prodQty,
+    required this.prodStatus,
+    required this.insDate,
+    required this.insUid,
+    required this.updDate,
+    required this.updUid,
+    required this.prodCode,
+    required this.custCd,
+    required this.vendorCode,
+    required this.prodName,
+    required this.prodDescr,
+    required this.prodImg,
+    required this.vendorName,
+  });
+
+  factory InputHistory.fromJson(Map<String, dynamic> json) {
+    return InputHistory(
+      shopId: json['SHOP_ID'],
+      whInId: json['WH_IN_ID'],
+      prodId: json['PROD_ID'],
+      prodQty: json['PROD_QTY'],
+      prodStatus: json['PROD_STATUS'],
+      insDate: DateTime.parse(json['INS_DATE']),
+      insUid: json['INS_UID'],
+      updDate: DateTime.parse(json['UPD_DATE']),
+      updUid: json['UPD_UID'],
+      prodCode: json['PROD_CODE'],
+      custCd: json['CUST_CD'],
+      vendorCode: json['VENDOR_CODE'],
+      prodName: json['PROD_NAME'],
+      prodDescr: json['PROD_DESCR'],
+      prodImg: json['PROD_IMG'],
+      vendorName: json['VENDOR_NAME'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'SHOP_ID': shopId,
+      'WH_IN_ID': whInId,
+      'PROD_ID': prodId,
+      'PROD_QTY': prodQty,
+      'PROD_STATUS': prodStatus,
+      'INS_DATE': insDate.toIso8601String(),
+      'INS_UID': insUid,
+      'UPD_DATE': updDate.toIso8601String(),
+      'UPD_UID': updUid,
+      'PROD_CODE': prodCode,
+      'CUST_CD': custCd,
+      'VENDOR_CODE': vendorCode,
+      'PROD_NAME': prodName,
+      'PROD_DESCR': prodDescr,
+      'PROD_IMG': prodImg,
+      'VENDOR_NAME': vendorName,
+    };
+  }
+}

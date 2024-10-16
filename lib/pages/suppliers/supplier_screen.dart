@@ -13,9 +13,9 @@ class SupplierScreen extends StatefulWidget {
 }
 
 class _SupplierScreenState extends State<SupplierScreen> {
-  List<Vendor> suppliers = [];
-  final GlobalController c = Get.put(GlobalController()); 
 
+  final GlobalController c = Get.put(GlobalController()); 
+  List<Vendor> suppliers = [];
   Future<List<Vendor>> _getSuppliers() async {
     List<dynamic> vendorList = [];
     await API_Request.api_query('getvendorlist', {'SHOP_ID': c.shopID.value}).then((value) {
