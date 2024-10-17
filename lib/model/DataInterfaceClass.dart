@@ -417,7 +417,8 @@ class InputHistory {
   final String prodDescr;
   final String prodImg;
   final String? vendorName;
-
+  final double? bep;
+  final int? stockQty;
   InputHistory({
     required this.shopId,
     required this.whInId,
@@ -435,6 +436,8 @@ class InputHistory {
     required this.prodDescr,
     required this.prodImg,
     required this.vendorName,
+    required this.bep,
+    required this.stockQty,
   });
 
   factory InputHistory.fromJson(Map<String, dynamic> json) {
@@ -455,6 +458,8 @@ class InputHistory {
       prodDescr: json['PROD_DESCR'],
       prodImg: json['PROD_IMG'],
       vendorName: json['VENDOR_NAME'],
+      bep: json['BEP'].toDouble() ,
+      stockQty: json['STOCK_QTY'],
     );
   }
 
@@ -476,6 +481,8 @@ class InputHistory {
       'PROD_DESCR': prodDescr,
       'PROD_IMG': prodImg,
       'VENDOR_NAME': vendorName,
+      'BEP': bep,
+      'STOCK_QTY': stockQty,
     };
   }
 }

@@ -1,3 +1,4 @@
+import 'package:debt_manager/pages/stocks/detail_stock_screen.dart';
 import 'package:debt_manager/pages/stocks/stock_screen.dart';
 import 'package:debt_manager/pages/stocks/warehouse_input_screen.dart';
 import 'package:debt_manager/pages/stocks/warehouse_output_screen.dart';
@@ -28,7 +29,7 @@ class WarehouseTabScreen extends StatelessWidget {
           children: [
             Center(child: StockScreen()),
             Center(child: WarehouseInputScreen()),
-            Center(child: WarehouseOutputScreen()),
+            Center(child: DetailStockScreen()),
           ],
         ),
       ),

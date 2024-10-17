@@ -17,19 +17,19 @@ class _WarehouseInputScreenState extends State<WarehouseInputScreen> {
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController statusController = TextEditingController();
   final TextEditingController vendorController = TextEditingController();
-
-
-
-  Future<bool> _inputWareHouse(String prodId, int quantity, String prodStatus, String prodCode, String vendorCode) async {
+  final TextEditingController bepController = TextEditingController();
+  Future<bool> _inputWareHouse(String prodId, int quantity, String prodStatus,
+      String prodCode, String vendorCode, double Bep) async {
     bool check = true;
     String shopID = c.shopID.value;
     await API_Request.api_query('inputWarehouse', {
       'SHOP_ID': shopID,
       'PROD_ID': prodId,
       'PROD_QTY': quantity.toString(),
-      'PROD_STATUS': prodStatus,      
+      'PROD_STATUS': prodStatus,
       'PROD_CODE': prodCode,
       'VENDOR_CODE': vendorCode,
+      'BEP': Bep.toString(),
     }).then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;
@@ -39,10 +39,6 @@ class _WarehouseInputScreenState extends State<WarehouseInputScreen> {
     });
     return check;
   }
-
-
-
-
   List<Product> products = [];
   Future<List<Product>> _getProducts() async {
     List<dynamic> productList = [];
@@ -67,6 +63,8 @@ class _WarehouseInputScreenState extends State<WarehouseInputScreen> {
   }
   @override
   void initState() {
+    bepController.text = '0';
+    quantityController.text = '0';
     super.initState();
     _getProducts().then((value) {
       setState(() {
@@ -82,6 +80,7 @@ class _WarehouseInputScreenState extends State<WarehouseInputScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Colors.grey[100],
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -101,42 +100,46 @@ class _WarehouseInputScreenState extends State<WarehouseInputScreen> {
                   );
                 }).toList(),
                 decoration: InputDecoration(
-                  labelText: 'Mã sản phẩm',
-                  hintText: 'Nhập mã sản phẩm',
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
+                  labelText: 'Product',
+                  hintText: 'Select a product',
+                  border: OutlineInputBorder(),
                 ),
               ),
               SizedBox(height: 16),
               TextFormField(
                 controller: productController,
-                decoration: InputDecoration(labelText: 'Product ID'),
-                enabled:
-                    false, // This will be filled based on product selection
+                decoration: InputDecoration(
+                  labelText: 'Product ID',
+                  border: OutlineInputBorder(),
+                ),
+                enabled: false,
               ),
               SizedBox(height: 16),
               TextFormField(
                 controller: productCodeController,
-                decoration: InputDecoration(labelText: 'Product Code'),
-                enabled:
-                    false, // This will be filled based on product selection
+                decoration: InputDecoration(
+                  labelText: 'Product Code',
+                  border: OutlineInputBorder(),
+                ),
+                enabled: false,
               ),
               SizedBox(height: 16),
               TextFormField(
                 controller: quantityController,
-                decoration: InputDecoration(labelText: 'Quantity'),
+                decoration: InputDecoration(
+                  labelText: 'Quantity',
+                  border: OutlineInputBorder(),
+                ),
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Status'),
+                decoration: InputDecoration(
+                  labelText: 'Status',
+                  border: OutlineInputBorder(),
+                ),
                 items: [
-                  DropdownMenuItem(
-                      value: 'Y', child: Text('Available')),
+                  DropdownMenuItem(value: 'Y', child: Text('Available')),
                   DropdownMenuItem(value: 'P', child: Text('Reserved')),
                   DropdownMenuItem(value: 'N', child: Text('Damaged')),
                 ],
@@ -148,7 +151,10 @@ class _WarehouseInputScreenState extends State<WarehouseInputScreen> {
               ),
               SizedBox(height: 16),
               DropdownButtonFormField<Vendor>(
-                decoration: InputDecoration(labelText: 'Vendor'),
+                decoration: InputDecoration(
+                  labelText: 'Vendor',
+                  border: OutlineInputBorder(),
+                ),
                 items: suppliers.map((Vendor supplier) {
                   return DropdownMenuItem<Vendor>(
                     value: supplier,
@@ -161,40 +167,76 @@ class _WarehouseInputScreenState extends State<WarehouseInputScreen> {
                   });
                 },
               ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                child: Text('Submit'),
-                onPressed: () async {
-                  bool check = await _inputWareHouse(productController.text, int.parse(quantityController.text), statusController.text, productCodeController.text, vendorController.text);  
-                  if (check) {
-                    AwesomeDialog(
-                      context: context,
-                      title: 'Success',
-                      body: Text('Input warehouse successfully'),
-                      btnOkOnPress: () {
-                        //Navigator.pop(context);
-                      },
-                    ).show();
-                  }
-                  else {
-                    AwesomeDialog(
-                      context: context,
-                      title: 'Error',
-                      body: Text('Input warehouse failed'),
-                      btnCancelOnPress: () {
-                        //Navigator.pop(context);
-                      },
-                    ).show();
-                  }
-                },
+              SizedBox(height: 16),
+              TextFormField(
+                controller: bepController,
+                decoration: InputDecoration(
+                  labelText: 'BEP',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
               ),
-              //show input history button
-              ElevatedButton(
-                child: Text('Input History'),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => WarehouseInputHistoryScreen()));
-                },
-              ),  
+              SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      child: Text('Submit'),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blueGrey[800],
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                      ),
+                      onPressed: () async {
+                        bool check = await _inputWareHouse(
+                            productController.text,
+                            int.parse(quantityController.text),
+                            statusController.text,
+                            productCodeController.text,
+                            vendorController.text,
+                            double.parse(bepController.text));
+                        if (check) {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.success,
+                            animType: AnimType.bottomSlide,
+                            title: 'Success',
+                            desc: 'Input warehouse successfully',
+                            btnOkOnPress: () {},
+                          ).show();
+                        } else {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            animType: AnimType.bottomSlide,
+                            title: 'Error',
+                            desc: 'Input warehouse failed',
+                            btnCancelOnPress: () {},
+                          ).show();
+                        }
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: OutlinedButton(
+                      child: Text('Input History'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.blueGrey[800],
+                        side: BorderSide(color: Colors.blueGrey[800]!),
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    WarehouseInputHistoryScreen()));
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

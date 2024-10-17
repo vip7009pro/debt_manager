@@ -1,5 +1,6 @@
 import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:debt_manager/pages/products/edit_products_screen.dart';
+import 'package:debt_manager/pages/products/full_sreen_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,12 +31,18 @@ class _ProductDetailsState extends State<ProductDetails> {
                   scrollDirection: Axis.horizontal,
                   itemCount: widget.product.prodImg.split(',').length,
                   itemBuilder: (context, index) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage('http://14.160.33.94:3010/product_images/${widget.product.shopId}_${widget.product.prodCode}_$index.jpg'),
-                          fit: BoxFit.cover,
+                    String imageUrl = 'http://14.160.33.94:3010/product_images/${widget.product.shopId}_${widget.product.prodCode}_$index.jpg';
+                    return GestureDetector(
+                      onTap: () {
+                        Get.to(() => FullSreenImage(imageUrl: imageUrl));
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(imageUrl),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     );
@@ -49,22 +56,22 @@ class _ProductDetailsState extends State<ProductDetails> {
                   children: [
                     Text(
                       widget.product.prodName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       '\$${widget.product.prodPrice.toStringAsFixed(2)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         color: Colors.green,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: 16),
-                    Text(
+                    const SizedBox(height: 16),
+                    const Text(
                       'Description',
                       style: TextStyle(
                         fontSize: 18,

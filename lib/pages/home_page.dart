@@ -30,6 +30,7 @@ import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,6 +42,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedBottomIndex = 0;
+  int _po_qty = 0;  
+  double _po_amount = 0;
+  double _revenue = 0;
+  double _profit = 0;
+
   final GlobalController c = Get.put(GlobalController());
   Shop shop = Shop(
       shopId: 0,
@@ -64,6 +70,36 @@ class _HomePageState extends State<HomePage> {
       Image.asset('assets/images/app_logo.png', width: 120, fit: BoxFit.cover);
   int mobileVer = 4;
   late Timer _timer;
+
+  Future<void> _getPOData() async {
+    await API_Request.api_query('getTodayPOQtyAndAmount', {
+      'SHOP_ID': c.shopID.value == ''
+          ? await LocalDataAccess.getVariable('shopId')
+          : c.shopID.value
+    }).then((value) {
+       if (value['tk_status'] == 'OK') {
+        setState(() {
+          _po_qty = value['data'][0]['PO_QTY'];
+          _po_amount = double.parse(value['data'][0]['PO_AMOUNT'].toString());        
+        });
+      }
+    });
+  }
+
+  Future<void> _getInvoiceData() async {
+    await API_Request.api_query('getTodayInvoiceQtyAndAmount', {
+      'SHOP_ID': c.shopID.value == ''
+          ? await LocalDataAccess.getVariable('shopId')
+          : c.shopID.value
+    }).then((value) {
+      if (value['tk_status'] == 'OK') {
+        setState(() {
+          _revenue = double.parse(value['data'][0]['INVOICE_AMOUNT'].toString());            
+        });
+      }
+    });
+  }
+
 
   Future<bool> _checkLogin(String uid, String email) async {
     bool check = true;
@@ -108,6 +144,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _loadshopidfromlocaldatabse();
     _getShopInfo();
+    _getInvoiceData();
+    _getPOData(); 
     super.initState();
   }
 
@@ -147,7 +185,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildStatsWidget(IconData icon, String title, String amount, Color color) {
     return Container(
-      width: 100,
+      width: 120,
       height: 80,
       decoration: BoxDecoration(
         color: color,
@@ -161,33 +199,30 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(icon, size: 30, color: Colors.white),
-          ),
-          Column(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Icon(icon, size: 24, color: Colors.white),
+              const SizedBox(width: 8),
               Text(
                 title,
                 style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
               ),
-              const SizedBox(height: 4),
-              Text(
-                amount,
-                style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              ),
             ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 1).format(double.parse(amount)),
+            style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.white),
           ),
         ],
       ),
@@ -484,9 +519,9 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildStatsWidget(Icons.shopping_cart, "PO", "1,234", Colors.blue),
-          _buildStatsWidget(Icons.attach_money, "Revenue", "\$5,678", Colors.green),
-          _buildStatsWidget(Icons.trending_up, "Profit", "\$2,345", Colors.orange),
+          _buildStatsWidget(Icons.shopping_cart, "PO", _po_amount.toString(), Colors.blue),
+          _buildStatsWidget(Icons.attach_money, "Revenue", _revenue.toString(), Colors.green),
+          _buildStatsWidget(Icons.trending_up, "Profit", _profit.toString(), Colors.orange),
         ],
       ),
     );
@@ -600,6 +635,8 @@ class _HomePageState extends State<HomePage> {
                   child: RefreshIndicator(
                     onRefresh: () async {
                       _getShopInfo();
+                       _getPOData(); 
+                       _getInvoiceData();                     
                       imageCache.clear();
                       imageCache.clearLiveImages();
                     },
