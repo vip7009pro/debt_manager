@@ -159,7 +159,6 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
                 }
               },
             ),
-            //show output history button
             ElevatedButton(
               child: Text('Output History'),
               onPressed: () {

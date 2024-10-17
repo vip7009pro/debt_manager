@@ -333,7 +333,7 @@ class Invoice {
   final DateTime updDate;
   final String updUid;
   final String cusName;
-  final String prodName;
+  final String? prodName;
 
   Invoice({
     required this.invoiceId,
@@ -476,6 +476,154 @@ class InputHistory {
       'PROD_DESCR': prodDescr,
       'PROD_IMG': prodImg,
       'VENDOR_NAME': vendorName,
+    };
+  }
+}
+
+class OutputHistory {
+  final int shopId;
+  final int whOutId;
+  final int prodId;
+  final int prodQty;
+  final int cusId;
+  final DateTime insDate;
+  final String insUid;
+  final DateTime updDate;
+  final String updUid;
+  final String prodCode;
+  final String custCd;
+  final String prodName;
+  final String prodDescr;
+  final String prodImg;
+  final String cusName;
+
+  OutputHistory({
+    required this.shopId,
+    required this.whOutId,
+    required this.prodId,
+    required this.prodQty,
+    required this.cusId,
+    required this.insDate,
+    required this.insUid,
+    required this.updDate,
+    required this.updUid,
+    required this.prodCode,
+    required this.custCd,
+    required this.prodName,
+    required this.prodDescr,
+    required this.prodImg,
+    required this.cusName,
+  });
+
+  factory OutputHistory.fromJson(Map<String, dynamic> json) {
+    return OutputHistory(
+      shopId: json['SHOP_ID'],
+      whOutId: json['WH_OUT_ID'],
+      prodId: json['PROD_ID'],
+      prodQty: json['PROD_QTY'],
+      cusId: json['CUS_ID'],
+      insDate: DateTime.parse(json['INS_DATE']),
+      insUid: json['INS_UID'],
+      updDate: DateTime.parse(json['UPD_DATE']),
+      updUid: json['UPD_UID'],
+      prodCode: json['PROD_CODE'],
+      custCd: json['CUST_CD'],
+      prodName: json['PROD_NAME'],
+      prodDescr: json['PROD_DESCR'],
+      prodImg: json['PROD_IMG'],
+      cusName: json['CUS_NAME'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'SHOP_ID': shopId,
+      'WH_OUT_ID': whOutId,
+      'PROD_ID': prodId,
+      'PROD_QTY': prodQty,
+      'CUS_ID': cusId,
+      'INS_DATE': insDate.toIso8601String(),
+      'INS_UID': insUid,
+      'UPD_DATE': updDate.toIso8601String(),
+      'UPD_UID': updUid,
+      'PROD_CODE': prodCode,
+      'CUST_CD': custCd,
+      'PROD_NAME': prodName,
+      'PROD_DESCR': prodDescr,
+      'PROD_IMG': prodImg,
+      'CUS_NAME': cusName,
+    };
+  }
+}
+
+class Stock {
+  final int prodId;
+  final String prodCode;
+  final String prodName;
+  final double prodPrice;
+  final String prodImg;
+  final String prodDescr;
+  final int catId;
+  final DateTime insDate;
+  final String insUid;
+  final DateTime updDate;
+  final String updUid;
+  final int inputQty;
+  final int outputQty;
+  final int stockQty;
+
+  Stock({
+    required this.prodId,
+    required this.prodCode,
+    required this.prodName,
+    required this.prodPrice,
+    required this.prodImg,
+    required this.prodDescr,
+    required this.catId,
+    required this.insDate,
+    required this.updDate,
+    required this.insUid,
+    required this.updUid,
+    required this.inputQty,
+    required this.outputQty,
+    required this.stockQty,
+  });
+
+  factory Stock.fromJson(Map<String, dynamic> json) {
+    return Stock(
+      prodId: json['PROD_ID'],
+      prodCode: json['PROD_CODE'],
+      prodName: json['PROD_NAME'],
+      prodPrice: json['PROD_PRICE'].toDouble(),
+      prodImg: json['PROD_IMG'],
+      prodDescr: json['PROD_DESCR'],
+      catId: json['CAT_ID'],
+      insDate: DateTime.parse(json['INS_DATE']),
+      insUid: json['INS_UID'],
+      updDate: DateTime.parse(json['UPD_DATE']),
+      updUid: json['UPD_UID'],
+      inputQty: json['INPUT_QTY'],
+      outputQty: json['OUTPUT_QTY'],
+      stockQty: json['STOCK_QTY'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'PROD_ID': prodId,
+      'PROD_CODE': prodCode,
+      'PROD_NAME': prodName,
+      'PROD_PRICE': prodPrice,
+      'PROD_IMG': prodImg,
+      'PROD_DESCR': prodDescr,
+      'CAT_ID': catId,
+      'INS_DATE': insDate.toIso8601String(),
+      'INS_UID': insUid,
+      'UPD_DATE': updDate.toIso8601String(),
+      'UPD_UID': updUid,
+      'INPUT_QTY': inputQty,
+      'OUTPUT_QTY': outputQty,
+      'STOCK_QTY': stockQty,
     };
   }
 }

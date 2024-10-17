@@ -410,7 +410,7 @@ class _HomePageState extends State<HomePage> {
     );
     final functionWidget = Center(
       child: Container(
-        height: 300,
+        height: 200,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -447,31 +447,17 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildFunctionWidget(Icons.storage, "Stock",
-                    () => Get.to(() => const StockScreen()), Colors.purple),
+              children: [                
                 _buildFunctionWidget(Icons.warehouse, "Warehouse",
                     () => Get.to(() => const WarehouseTabScreen()), Colors.teal),
                 _buildFunctionWidget(Icons.people, "Supplier",
                     () => Get.to(() => const SupplierScreen()), Colors.indigo),
                 _buildFunctionWidget(Icons.person, "Customers",
                     () => Get.to(() => const CustomerScreen()), Colors.pink),
+                     _buildFunctionWidget(Icons.bar_chart, "Report",
+                    () => Get.to(() => const ReportScreen()), Colors.deepOrange),           
               ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildFunctionWidget(Icons.storage, "Stock",
-                    () => Get.to(() => const StockScreen()), Colors.amber),
-                _buildFunctionWidget(Icons.bar_chart, "Report",
-                    () => Get.to(() => const ReportScreen()), Colors.deepOrange),
-                _buildFunctionWidget(Icons.people, "Supplier",
-                    () => Get.to(() => const SupplierScreen()), Colors.lightBlue),
-                _buildFunctionWidget(Icons.more_horiz, "More...",
-                    () => Get.to(() => const MoreOptionsScreen()), Colors.deepPurple),
-              ],
-            ),
+            ),            
           ],
         ),
       ),

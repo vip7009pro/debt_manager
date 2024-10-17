@@ -43,7 +43,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     setState(() {
       filteredInvoices = invoices
           .where((invoice) =>
-              GlobalFunction.convertVietnameseString(invoice.prodName).toLowerCase().contains(GlobalFunction.convertVietnameseString(query).toLowerCase()))
+              GlobalFunction.convertVietnameseString(invoice.prodName ?? '').toLowerCase().contains(GlobalFunction.convertVietnameseString(query).toLowerCase()))
           .toList();
     });
   }
