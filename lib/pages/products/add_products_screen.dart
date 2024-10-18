@@ -1,17 +1,17 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
+import 'package:debt_manager/features/barcode_scanner/barcode_scanner_pageview.dart';
+import 'package:debt_manager/features/barcode_scanner/barcode_scanner_window.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-
 import 'package:get/get.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 class AddProductsScreen extends StatefulWidget {
-  const AddProductsScreen({ Key? key }) : super(key: key);
-
+  const AddProductsScreen({Key? key}) : super(key: key);
   @override
   _AddProductsScreenState createState() => _AddProductsScreenState();
 }
-
 class _AddProductsScreenState extends State<AddProductsScreen> {
   final _formKey = GlobalKey<FormState>();
   String? productCategory;
@@ -19,40 +19,81 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
   String? productDescription;
   double? productPrice;
   String? productCode;
-
   final productCategoryController = TextEditingController();
   final productNameController = TextEditingController();
   final productDescriptionController = TextEditingController();
   final productPriceController = TextEditingController();
   final productCodeController = TextEditingController();
   final GlobalController c = Get.put(GlobalController());
-  
+  MobileScannerController cameraController = MobileScannerController();
+  Barcode? _barcode;
   //create random product code contains letter and number of length 10
   String createRandomProductCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    return List.generate(10, (_) => chars[Random().nextInt(chars.length)]).join('');
-  } 
-
-
-  @override
-  Widget build(BuildContext context) {
-    productCodeController.text = createRandomProductCode();
-
-
-  Future<bool> _addProduct(String productCode, String productCategory, String productName, String productDescription, double productPrice) async {
+    return List.generate(10, (_) => chars[Random().nextInt(chars.length)])
+        .join('');
+  }
+  void _handleBarcode(BarcodeCapture barcodes) {
+    if (mounted) {
+      setState(() {
+        productCodeController.text = barcodes.barcodes.firstOrNull?.rawValue ?? '';
+        cameraController.stop();
+      });
+    }
+  }
+  Widget _buildBarcode(Barcode? value) {
+    if (value == null) {
+      return const Text(
+        'Scan something!',
+        overflow: TextOverflow.fade,
+        style: TextStyle(color: Colors.white),
+      );
+    }
+    return Text(
+      value.displayValue ?? 'No display value.',
+      overflow: TextOverflow.fade,
+      style: const TextStyle(color: Colors.white),
+    );
+  }
+  Future<bool> _addProduct(
+      String productCode,
+      String productCategory,
+      String productName,
+      String productDescription,
+      double productPrice) async {
     // Add product logic here
     bool check = true;
     String shopID = c.shopID.value;
-    await API_Request.api_query('addNewProduct', {'PROD_CODE': productCode, 'CAT_ID': productCategory, 'PROD_NAME': productName, 'PROD_DESCR': productDescription, 'PROD_PRICE': productPrice, 'SHOP_ID': shopID, 'PROD_IMG': 'N'})
-        .then((value) {
+    await API_Request.api_query('addNewProduct', {
+      'PROD_CODE': productCode,
+      'CAT_ID': productCategory,
+      'PROD_NAME': productName,
+      'PROD_DESCR': productDescription,
+      'PROD_PRICE': productPrice,
+      'SHOP_ID': shopID,
+      'PROD_IMG': 'N'
+    }).then((value) {
       if (value['tk_status'] == 'OK') {
-        check = true;        
+        check = true;
       } else {
         check = false;
       }
     });
-    return check;    
+    return check;
   }
+  @override
+  void dispose() {
+    cameraController.dispose();
+    super.dispose();
+  }
+  @override
+  void initState() {
+    super.initState();
+    cameraController = MobileScannerController();
+    productCodeController.text = createRandomProductCode();
+  }
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thêm sản phẩm'),
@@ -72,20 +113,49 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
             key: _formKey,
             child: ListView(
               children: [
-                TextFormField(
-                  controller: productCodeController,
-                  decoration: InputDecoration(
-                    labelText: 'Mã sản phẩm',
-                    hintText: 'Nhập mã sản phẩm',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: productCodeController,
+                        decoration: InputDecoration(
+                          labelText: 'Mã sản phẩm',
+                          hintText: 'Nhập mã sản phẩm',
+                          fillColor: Colors.white,
+                          filled: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    IconButton(
+                      icon: Icon(Icons.qr_code_scanner),
+                      onPressed: () async {
+                        final result = await Get.to(() => BarcodeScannerWithScanWindow());
+                        if (result != null) {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.success,
+                            title: 'Thông báo',
+                            desc: '${result.rawValue}',
+                            btnOkOnPress: () {
+                              Get.back();
+                            },
+                            btnCancelText: 'Cancel',
+                            btnOkText: 'OK',
+                          ).show(); 
+
+                          setState(() {
+                            productCodeController.text = result.rawValue ?? '';
+                          });
+                        }
+                      },
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),         
+                SizedBox(height: 16),
                 //Phân loại sản phẩm
                 DropdownButtonFormField<String>(
                   value: productCategory,
@@ -175,43 +245,48 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                   ),
                   keyboardType: TextInputType.number,
                 ),
-                const SizedBox(height: 24),              
+                const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       // Add logic to save the new product
-                      _addProduct(productCodeController.text, productCategoryController.text, productNameController.text, productDescriptionController.text, double.parse(productPriceController.text)).then((value) {
+                      _addProduct(
+                              productCodeController.text,
+                              productCategoryController.text,
+                              productNameController.text,
+                              productDescriptionController.text,
+                              double.parse(productPriceController.text))
+                          .then((value) {
                         print(value);
                         if (value) {
-                         AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.success,
-                          title: 'Thông báo',
-                          desc: 'Thêm sản phẩm thành công',
-                          btnOkOnPress: () {
-                            Get.back();
-                          },
-                          btnCancelText: 'Cancel',
-                          btnOkText: 'OK',
-                         ).show();
-                        }
-                        else {
                           AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.error,
-                          title: 'Thông báo',
-                          desc: 'Thêm sản phẩm thất bại',
+                            context: context,
+                            dialogType: DialogType.success,
+                            title: 'Thông báo',
+                            desc: 'Thêm sản phẩm thành công',
                             btnOkOnPress: () {
-                            Get.back();
-                          },
-                          btnCancelOnPress: () {
-                            Get.back();
-                          },
-                          btnOkText: 'OK',
-                          btnCancelText: 'Cancel',
-                         ).show();
-                        } 
-                      }); 
+                              Get.back();
+                            },
+                            btnCancelText: 'Cancel',
+                            btnOkText: 'OK',
+                          ).show();
+                        } else {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            title: 'Thông báo',
+                            desc: 'Thêm sản phẩm thất bại',
+                            btnOkOnPress: () {
+                              Get.back();
+                            },
+                            btnCancelOnPress: () {
+                              Get.back();
+                            },
+                            btnOkText: 'OK',
+                            btnCancelText: 'Cancel',
+                          ).show();
+                        }
+                      });
                     }
                   },
                   child: const Text('Lưu sản phẩm'),
@@ -222,7 +297,8 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                ),
+                ),               
+               
               ],
             ),
           ),

@@ -30,7 +30,7 @@ if (flutterMinSdkVersion == null) {
 
 android {
     namespace "hnp.app.debtmanager"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion flutter.compileSdkVersion  // Update this to at least 31, but 33 is recommended
     ndkVersion "25.1.8937393"
 
     compileOptions {
@@ -52,7 +52,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutterMinSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion flutter.targetSdkVersion  // Update this to match compileSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
@@ -66,6 +66,17 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+            minifyEnabled true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'androidx.multidex-proguard.pro'
+        }
+    }
+
+    // Add this block to override dependency configurations
+    configurations.all {
+        resolutionStrategy {
+            force 'androidx.core:core-ktx:1.9.0'
+            force 'androidx.appcompat:appcompat:1.6.1'
         }
     }
 }
@@ -76,4 +87,14 @@ flutter {
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+}
+subprojects {
+    project.configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'androidx.core' &&
+                !details.requested.name.contains('androidx')) {
+                details.useVersion "1.9.0"
+            }
+        }
+    }
 }

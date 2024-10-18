@@ -1,0 +1,6 @@
+-keep class com.google.android.gms.** { *; }
+-keep class com.google.android.material.** { *; }
+-keep class androidx.** { *; }
+-keep class com.amolg.flutterbarcodescanner.** { *; }
+-keepclassmembers class com.amolg.flutterbarcodescanner.** { *; }
+-keep class androidx.core.app.CoreComponentFactory { *; }
