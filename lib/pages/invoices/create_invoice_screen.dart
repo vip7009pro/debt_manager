@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/GetXController.dart';
+import 'package:debt_manager/pages/invoices/invoice_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
@@ -189,7 +190,7 @@ class _CreateInvoiceScreenState extends State<CreateInvoiceScreen> {
                           body: Text('Invoice created successfully'),
                           dialogType: DialogType.success,
                           btnOkOnPress: () {
-                            Get.back();
+                            Get.off(() => InvoiceScreen());
                           },
                         ).show(); 
                       } else {

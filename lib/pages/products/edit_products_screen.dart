@@ -4,6 +4,7 @@ import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
+import 'package:debt_manager/pages/products/products_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:get/get.dart';  
@@ -21,6 +22,7 @@ class EditProductsScreen extends StatefulWidget {
 class _EditProductsScreenState extends State<EditProductsScreen> {
   final _formKey = GlobalKey<FormState>();
   String? productCategory;
+  String? productCategoryCode;
   String? productCategoryId;  
   String? productName;
   String? productDescription;
@@ -78,6 +80,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
       String productCategory,
       String productName,
       String productDescription,
+      String productCategoryCode,
       double productPrice) async {
     // Add product logic here
     bool check = true;
@@ -85,6 +88,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     await API_Request.api_query('editProduct', {
       'PROD_CODE': productCode,
       'CAT_ID': productCategory,
+      'CAT_CODE': productCategoryCode,
       'PROD_NAME': productName,
       'PROD_DESCR': productDescription,
       'PROD_PRICE': productPrice,
@@ -93,7 +97,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     }).then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;
-        _deleteProduct(productCode, widget.product.prodImg);  
+        _deleteProductImage(productCode, widget.product.prodImg);  
         _uploadImage();
       } else {
         check = false;
@@ -119,13 +123,31 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     return check;
   }
 
-  Future<bool> _deleteProduct(String productCode, String productImg) async {
+  //delete product image
+  Future<bool> _deleteProductImage(String productCode, String productImg) async {
     bool check = true;
     String shopID = c.shopID.value;
     await API_Request.api_query('deleteProductImage', {
       'PROD_CODE': productCode,
       'SHOP_ID': shopID,
-      'PROD_IMG': productImg 
+      'PROD_IMG': productImg,
+    }).then((value) {
+      if (value['tk_status'] == 'OK') {
+        check = true; 
+      } else {
+        check = false;
+      }
+    });
+    return check;
+  }
+
+
+  Future<bool> _deleteProduct(String productCode) async {
+    bool check = true;
+    String shopID = c.shopID.value;
+    await API_Request.api_query('deleteProduct', {
+      'PROD_CODE': productCode,
+      'SHOP_ID': shopID,   
     }).then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;
@@ -187,9 +209,10 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     productNameController.text = widget.product.prodName; 
     productDescriptionController.text = widget.product.prodDescr;
     productPriceController.text = widget.product.prodPrice.toString();
-    productCategory = widget.product.catId.toString();
+    productCategory = widget.product.catCode.toString();
     serverImages = widget.product.prodImg.split(',').map((element) => 'http://14.160.33.94:3010/product_images/${c.shopID.value}_${productCodeController.text}_$element.jpg').toList();
     _getCategoryList();
+    productCategoryCode = widget.product.catCode;
   }
 
   @override
@@ -458,7 +481,8 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                             productCodeController.text,
                             productCategoryController.text,
                             productNameController.text,
-                            productDescriptionController.text,
+                            productDescriptionController.text,                              
+                            productCategoryCode ?? '',
                             double.parse(productPriceController.text))
                         .then((value) {
                       print(value);
@@ -467,9 +491,9 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                           context: context,
                           dialogType: DialogType.success,
                           title: 'Thông báo',
-                          desc: 'Thêm sản phẩm thành công',
+                          desc: 'Sửa sản phẩm thành công',
                           btnOkOnPress: () {
-                            
+                            Get.off(() => ProductsScreen());                            
                             //Get.back();
                           },
                           btnCancelText: 'Cancel',
@@ -480,7 +504,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                           context: context,
                           dialogType: DialogType.error,
                           title: 'Thông báo',
-                          desc: 'Thêm sản phẩm thất bại',
+                          desc: 'Sửa sản phẩm thất bại',
                           btnOkOnPress: () {
                             Get.back();
                           },
@@ -500,13 +524,16 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
               ElevatedButton(
                 onPressed: () {
                   // Add logic to delete the product
-                  _deleteProduct(productCodeController.text, widget.product.prodImg).then((value) {
+                  _deleteProduct(productCodeController.text).then((value) {
                     if (value) {
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.success,
                         title: 'Thông báo',
                         desc: 'Xóa sản phẩm thành công',
+                        btnOkOnPress: () {
+                          Get.back();
+                        },  
                       ).show();
                     }
                   }); 

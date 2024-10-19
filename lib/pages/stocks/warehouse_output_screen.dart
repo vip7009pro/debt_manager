@@ -22,7 +22,7 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController customerController = TextEditingController();
   TextEditingController customerCodeController = TextEditingController();
-  Product selectedProduct = Product(prodId: 0, prodCode: '', prodName: '', prodImg: '', shopId: 0, prodDescr: '', prodPrice: 0, insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', catId: 0);
+  Product selectedProduct = Product(prodId: 0, prodCode: '', prodName: '', prodImg: '', shopId: 0, prodDescr: '', prodPrice: 0, insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', catId: 0, catCode: '');
   String wh_in_id = ''; 
   Future<bool> _outputWareHouse(String prodId, int quantity, String cusId,
       String prodCode, String custCd, String wHInId) async {

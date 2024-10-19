@@ -167,7 +167,6 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
               mainAxisAlignment: MainAxisAlignment.center,  
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(width: 10),
                 GestureDetector(
                   onTap: () async {
                     final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -178,53 +177,53 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
                     }
                   },
                   child: ClipRRect(
-              borderRadius: BorderRadius.circular(25),
-              child:shopAvatarController.text.isNotEmpty ?  Image.file(
-                      File(shopAvatarController.text),
-                      width: 30,
-                      height: 30,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: 30,
-                          height: 30,
-                          color: Colors.grey[300],
-                          child: Icon(Icons.store, color: Colors.grey[600]),
-                        );
-                      },
-                    ):              
-               Image.network(
-                "http://14.160.33.94:3010/shop_avatars/${shop.shopId}.jpg",
-                width: 30,
-                height: 30,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {                 
-                    return Container(
-                      width: 30,
-                      height: 30,
-                      color: Colors.grey[300],
-                      child: Icon(Icons.store, color: Colors.grey[600]),
-                    );
-                  
-                },
-              ),
-            )
+                    borderRadius: BorderRadius.circular(25),
+                    child: shopAvatarController.text.isNotEmpty
+                        ? Image.file(
+                            File(shopAvatarController.text),
+                            width: 30,
+                            height: 30,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 30,
+                                height: 30,
+                                color: Colors.grey[300],
+                                child: Icon(Icons.store, color: Colors.grey[600]),
+                              );
+                            },
+                          )
+                        : Image.network(
+                            "http://14.160.33.94:3010/shop_avatars/${shop.shopId}.jpg",
+                            width: 30,
+                            height: 30,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {                 
+                              return Container(
+                                width: 30,
+                                height: 30,
+                                color: Colors.grey[300],
+                                child: Icon(Icons.store, color: Colors.grey[600]),
+                              );
+                            },
+                          ),
+                  )
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () async {
-                   _uploadImage();
+                    _uploadImage();
                   },
                   child: const Text('Upload Image'),
                 ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    _updateShopInfo();                 
+                  },
+                  child: const Text('Update Shop Info'),
+                ),
               ],
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _updateShopInfo();                 
-              },
-              child: const Text('Update Shop Info'),
             ),
           ],
         ),

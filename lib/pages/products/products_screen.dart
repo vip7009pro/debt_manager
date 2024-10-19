@@ -63,8 +63,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
         backgroundColor: const Color.fromARGB(255, 104, 160, 245),
         actions: [
           IconButton(
-              onPressed: () {
-                Get.to(() => AddProductsScreen());
+              onPressed: () async {
+                final result = await  Get.to(() => AddProductsScreen());
+                if (true) {
+                  _getProductList();
+                }
               },
               icon: Icon(Icons.add, color: Colors.white))
         ],

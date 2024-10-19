@@ -116,6 +116,7 @@ class _DetailStockScreenState extends State<DetailStockScreen> {
                           updDate: history.updDate,
                           updUid: history.updUid,
                           catId: 0,
+                          catCode: '',
                           prodPrice: 0,
                         ), wh_in_id: history.whInId.toString()));
                       },

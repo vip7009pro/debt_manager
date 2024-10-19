@@ -112,6 +112,7 @@ class _StockScreenState extends State<StockScreen> {
                                 updDate: stocks[index].updDate,
                                 updUid: stocks[index].updUid,
                                 catId: stocks[index].catId,
+                                catCode: '', 
                                 prodCode: stocks[index].prodCode,
                                 prodImg: stocks[index].prodImg)));
                       },

@@ -3,6 +3,7 @@ import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:debt_manager/pages/categories/add_category_screen.dart';
+import 'package:debt_manager/pages/categories/edit_category_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -62,9 +63,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {
+            onPressed: () async {
               // TODO: Implement add category functionality
-              Get.to(() => AddCategoryScreen());
+              final result = await Get.to(() => AddCategoryScreen());
+              if (true) {
+                _getCategoryList();
+              }
             },
           ),
         ],
@@ -97,10 +101,28 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 itemBuilder: (context, index) {
                   return ListTile(
                     title: Text(filteredCategories[index].catName),
+                    leading: // category image from server
+                    Image.network(
+                      'http://14.160.33.94:3010/category_images/${c.shopID.value}_${filteredCategories[index].catCode}.jpg',
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 50,
+                          height: 50,
+                          color: Colors.grey[300],
+                          child: Icon(Icons.category, color: Colors.grey[600]),
+                        );
+                      },
+                    ),
                     trailing: IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        // TODO: Implement edit category functionality
+                      onPressed: () async {
+                        final result = await  Get.to(() => EditCategoryScreen(selectedCategory: filteredCategories[index]));
+                        if (true) {
+                          _getCategoryList();
+                        }
                       },
                     ),  
                     onTap: () {

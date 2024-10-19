@@ -118,6 +118,7 @@ class Product {
   final DateTime updDate;
   final String updUid;
   final int catId;
+  final String catCode;
   final String prodCode;
   final String prodImg;
 
@@ -132,6 +133,7 @@ class Product {
     required this.updDate,
     required this.updUid,
     required this.catId,
+    required this.catCode,
     required this.prodCode,
     required this.prodImg,
   });
@@ -148,6 +150,7 @@ class Product {
       updDate: DateTime.parse(json['UPD_DATE']),
       updUid: json['UPD_UID'],
       catId: json['CAT_ID'],
+      catCode: json['CAT_CODE'],
       prodCode: json['PROD_CODE'],
       prodImg: json['PROD_IMG'],
     );
@@ -165,6 +168,7 @@ class Product {
       'UPD_DATE': updDate.toIso8601String(),
       'UPD_UID': updUid,
       'CAT_ID': catId,
+      'CAT_CODE': catCode,
       'PROD_CODE': prodCode,
       'PROD_IMG': prodImg,
     };

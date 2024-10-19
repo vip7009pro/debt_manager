@@ -62,8 +62,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
         title: Text('Orders', style: TextStyle(fontSize: 18)),
         backgroundColor: const Color.fromARGB(255, 115, 231, 163),
         actions: [
-          IconButton(onPressed: () {
-            Get.to(() => AddOrdersScreen());
+          IconButton(onPressed: () async {
+            final result = await Get.to(() => AddOrdersScreen());
+            if (true) {
+              _getOrderList();
+            }
+
           }, icon: Icon(Icons.add, color: Colors.yellow, size: 22))
         ],
       ),
@@ -132,8 +136,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           '\$${(filteredOrders[index].poQty * filteredOrders[index].prodPrice).toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                           style: const TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold, fontSize: 14),
                         ),
-                        onTap: () {
-                          Get.to(() => CreateInvoiceScreen(order: filteredOrders[index]));
+                        onTap: () async {
+                          final result = await  Get.to(() => CreateInvoiceScreen(order: filteredOrders[index]));
+                          if (true) {
+                            _getOrderList();
+                          }
                         },
                       ),
                     );
