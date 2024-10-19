@@ -71,7 +71,7 @@ class _WarehouseInputHistoryScreenState
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.network(
-                                'http://14.160.33.94:3010/product_images/${c.shopID.value}_${history.prodCode}_${history.prodImg.split(',')[0]}.jpg',
+                                'http://14.160.33.94:3010/product_images/${c.shopID.value}_${history.prodCode}_${history.prodImg?.split(',')[0] ?? ''}.jpg',
                                 width: 80,
                                 height: 80,
                                 fit: BoxFit.cover,
@@ -86,7 +86,7 @@ class _WarehouseInputHistoryScreenState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    history.prodName,
+                                    history.prodName ?? '',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,

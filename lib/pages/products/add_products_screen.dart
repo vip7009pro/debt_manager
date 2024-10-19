@@ -3,6 +3,7 @@ import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/features/barcode_scanner/barcode_scanner_pageview.dart';
 import 'package:debt_manager/features/barcode_scanner/barcode_scanner_window.dart';
+import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:get/get.dart';
@@ -15,10 +16,12 @@ class AddProductsScreen extends StatefulWidget {
 class _AddProductsScreenState extends State<AddProductsScreen> {
   final _formKey = GlobalKey<FormState>();
   String? productCategory;
+  String? productCategoryId;  
   String? productName;
   String? productDescription;
   double? productPrice;
   String? productCode;
+  Category? selectedCategory;
   final productCategoryController = TextEditingController();
   final productNameController = TextEditingController();
   final productDescriptionController = TextEditingController();
@@ -26,8 +29,27 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
   final productCodeController = TextEditingController();
   final GlobalController c = Get.put(GlobalController());
   MobileScannerController cameraController = MobileScannerController();
-  Barcode? _barcode;
+    List<Category> categories = [];
   //create random product code contains letter and number of length 10
+     Future<List<Category>> _getCategories() async {
+    List<dynamic> categoryList = [];
+    await API_Request.api_query('getCategoryList', {'SHOP_ID': c.shopID.value})
+        .then((value) {
+      categoryList = value['data'] ?? [];
+    });
+    return categoryList.map((dynamic item) {
+      return Category.fromJson(item);
+    }).toList();
+  }
+
+  void _getCategoryList() async {
+    await _getCategories().then((value) {
+      setState(() {
+        categories = value;        
+      });
+    });
+  }
+  
   String createRandomProductCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     return List.generate(10, (_) => chars[Random().nextInt(chars.length)])
@@ -57,16 +79,18 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
   }
   Future<bool> _addProduct(
       String productCode,
-      String productCategory,
+      String catId,
       String productName,
       String productDescription,
+      String catCode,
       double productPrice) async {
     // Add product logic here
     bool check = true;
     String shopID = c.shopID.value;
     await API_Request.api_query('addNewProduct', {
       'PROD_CODE': productCode,
-      'CAT_ID': productCategory,
+      'CAT_ID': catId,
+      'CAT_CODE': catCode,
       'PROD_NAME': productName,
       'PROD_DESCR': productDescription,
       'PROD_PRICE': productPrice,
@@ -91,6 +115,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
     super.initState();
     cameraController = MobileScannerController();
     productCodeController.text = createRandomProductCode();
+    _getCategoryList(); 
   }
   @override
   Widget build(BuildContext context) {
@@ -157,49 +182,50 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                 ),
                 SizedBox(height: 16),
                 //Phân loại sản phẩm
-                DropdownButtonFormField<String>(
-                  value: productCategory,
-                  decoration: InputDecoration(
-                    labelText: 'Phân loại sản phẩm',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  items: const [
-                    DropdownMenuItem<String>(
-                      value: '1',
-                      child: Text('Điện tử'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: '2',
-                      child: Text('Thời trang'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: '3',
-                      child: Text('Thực phẩm'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: '4',
-                      child: Text('Đồ gia dụng'),
-                    ),
-                  ],
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      productCategory = newValue;
-                      productCategoryController.text = newValue ?? '';
-                      print(productCategoryController.text);
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Vui lòng chọn phân loại sản phẩm';
+                FutureBuilder<List<Category>>(
+                  future: _getCategories(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Text('No categories available');
+                    } else {
+                      return DropdownButtonFormField<String>(
+                        value: productCategoryId,
+                        decoration: InputDecoration(
+                          labelText: 'Phân loại sản phẩm',
+                          fillColor: Colors.white,
+                          filled: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        items: snapshot.data!.map((Category category) {
+                          return DropdownMenuItem<String>(
+                            value: category.catId.toString(),
+                            child: Text(category.catName),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            productCategoryId = newValue;
+                            selectedCategory = snapshot.data!.firstWhere((category) => category.catId.toString() == newValue);
+                            productCategory = selectedCategory?.catCode;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Vui lòng chọn phân loại sản phẩm';
+                          }
+                          return null;
+                        },
+                        hint: const Text('Chọn phân loại sản phẩm'),
+                      );
                     }
-                    return null;
                   },
-                  hint: const Text('Chọn phân loại sản phẩm'),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -251,11 +277,12 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                     if (_formKey.currentState!.validate()) {
                       // Add logic to save the new product
                       _addProduct(
-                              productCodeController.text,
-                              productCategoryController.text,
-                              productNameController.text,
-                              productDescriptionController.text,
-                              double.parse(productPriceController.text))
+                        productCodeController.text, 
+                        productCategoryId!,
+                        productNameController.text,
+                        productDescriptionController.text,
+                        productCategory!,
+                        double.parse(productPriceController.text))
                           .then((value) {
                         print(value);
                         if (value) {
@@ -292,6 +319,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                   child: const Text('Lưu sản phẩm'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

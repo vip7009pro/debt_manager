@@ -43,7 +43,7 @@ class _DetailStockScreenState extends State<DetailStockScreen> {
     setState(() {
       filteredHistory = inputHistory
           .where((history) =>
-              GlobalFunction.convertVietnameseString(history.prodName).contains(GlobalFunction.convertVietnameseString(query)) ||
+              GlobalFunction.convertVietnameseString(history.prodName ?? '').contains(GlobalFunction.convertVietnameseString(query)) ||
               GlobalFunction.convertVietnameseString(history.prodCode).contains(GlobalFunction.convertVietnameseString(query)))
           .toList();
     });
@@ -107,10 +107,10 @@ class _DetailStockScreenState extends State<DetailStockScreen> {
                         Get.to(()=> WarehouseOutputScreen(product: Product(
                           prodId: history.prodId,
                           prodCode: history.prodCode,
-                          prodName: history.prodName,
-                          prodImg: history.prodImg,
+                          prodName: history.prodName ?? '',
+                          prodImg: history.prodImg ?? '',
                           shopId: int.parse(c.shopID.value),
-                          prodDescr: history.prodDescr,                          
+                          prodDescr: history.prodDescr ?? '',                          
                           insDate: history.insDate,
                           insUid: history.insUid,
                           updDate: history.updDate,
@@ -127,7 +127,7 @@ class _DetailStockScreenState extends State<DetailStockScreen> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.network(
-                                'http://14.160.33.94:3010/product_images/${c.shopID.value}_${history.prodCode}_${history.prodImg.split(',')[0]}.jpg',
+                                'http://14.160.33.94:3010/product_images/${c.shopID.value}_${history.prodCode}_${history.prodImg?.split(',')[0] ?? ''}.jpg',
                                 width: 80,
                                 height: 80,
                                 fit: BoxFit.cover,
@@ -142,7 +142,7 @@ class _DetailStockScreenState extends State<DetailStockScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    history.prodName,
+                                    history.prodName ?? '',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,

@@ -413,9 +413,9 @@ class InputHistory {
   final String prodCode;
   final String? custCd;
   final String? vendorCode;
-  final String prodName;
-  final String prodDescr;
-  final String prodImg;
+  final String? prodName;
+  final String? prodDescr;
+  final String? prodImg;
   final String? vendorName;
   final double? bep;
   final int? stockQty;
@@ -634,3 +634,52 @@ class Stock {
     };
   }
 }
+
+class Category {
+  final int catId;
+  final String catName;
+  final DateTime insDate;
+  final String insUid;
+  final DateTime updDate;
+  final String updUid;
+  final int shopId;
+  final String catCode;
+
+  Category({
+    required this.catId,
+    required this.catName,
+    required this.insDate,
+    required this.insUid,
+    required this.updDate,
+    required this.updUid,
+    required this.shopId,
+    required this.catCode,
+  });
+
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+      catId: json['CAT_ID'],
+      catName: json['CAT_NAME'],
+      insDate: DateTime.parse(json['INS_DATE']),
+      insUid: json['INS_UID'],
+      updDate: DateTime.parse(json['UPD_DATE']),
+      updUid: json['UPD_UID'],
+      shopId: json['SHOP_ID'],
+      catCode: json['CAT_CODE'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'CAT_ID': catId,
+      'CAT_NAME': catName,
+      'INS_DATE': insDate.toIso8601String(),
+      'INS_UID': insUid,
+      'UPD_DATE': updDate.toIso8601String(),
+      'UPD_UID': updUid,
+      'SHOP_ID': shopId,
+      'CAT_CODE': catCode,
+    };
+  }
+}
+

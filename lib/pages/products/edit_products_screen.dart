@@ -21,10 +21,12 @@ class EditProductsScreen extends StatefulWidget {
 class _EditProductsScreenState extends State<EditProductsScreen> {
   final _formKey = GlobalKey<FormState>();
   String? productCategory;
+  String? productCategoryId;  
   String? productName;
   String? productDescription;
   double? productPrice;
   String? productCode;
+  Category? selectedCategory; 
   List<String> locallyAddedImages = [];
   late List<String> serverImages;
   final productCategoryController = TextEditingController();
@@ -46,6 +48,30 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     return List.generate(10, (_) => chars[Random().nextInt(chars.length)])
         .join('');
   }
+
+  List<Category> categories = [];
+  Future<List<Category>> _getCategories() async {
+    List<dynamic> categoryList = [];
+    await API_Request.api_query('getCategoryList', {'SHOP_ID': c.shopID.value})
+        .then((value) {
+      categoryList = value['data'] ?? [];
+    });
+    return categoryList.map((dynamic item) {
+      return Category.fromJson(item);
+    }).toList();
+  }
+
+  void _getCategoryList() async {
+    await _getCategories().then((value) {
+      setState(() {
+        categories = value;      
+        productCategoryId = widget.product.catId.toString();  
+        //set selected category  to the category that has the same catID as widget.product.catId  
+        selectedCategory = categories.where((category) => category.catId == widget.product.catId).first;  
+      });
+    });
+  }
+
 
   Future<bool> _editProduct(
       String productCode,
@@ -163,6 +189,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     productPriceController.text = widget.product.prodPrice.toString();
     productCategory = widget.product.catId.toString();
     serverImages = widget.product.prodImg.split(',').map((element) => 'http://14.160.33.94:3010/product_images/${c.shopID.value}_${productCodeController.text}_$element.jpg').toList();
+    _getCategoryList();
   }
 
   @override
@@ -326,52 +353,54 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                 style: TextStyle(color: textColor),
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(                
-                value: productCategory,
-                decoration: InputDecoration(
-                  labelText: 'Phân loại sản phẩm',
-                  labelStyle: TextStyle(color: textColor),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: accentColor),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor),
-                  ),
-                ),
-                items: const [
-                  DropdownMenuItem<String>(
-                    value: '1',
-                    child: Text('Điện tử'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: '2',
-                    child: Text('Thời trang'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: '3',
-                    child: Text('Thực phẩm'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: '4',
-                    child: Text('Đồ gia dụng'),
-                  ),
-                ],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    productCategory = newValue;
-                    productCategoryController.text = newValue ?? '';
-                    print(productCategoryController.text);
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng chọn phân loại sản phẩm';
+              FutureBuilder<List<Category>>(
+                future: _getCategories(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(color: primaryColor);
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}', style: TextStyle(color: textColor));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Text('No categories available', style: TextStyle(color: textColor));
+                  } else {
+                    return DropdownButtonFormField<String>(
+                      value: productCategoryId,
+                      decoration: InputDecoration(
+                        labelText: 'Phân loại sản phẩm',
+                        labelStyle: TextStyle(color: textColor),
+                        hintStyle: TextStyle(color: textColor.withOpacity(0.6)),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: accentColor),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: primaryColor),
+                        ),
+                      ),
+                      dropdownColor: backgroundColor,
+                      style: TextStyle(color: textColor),
+                      items: snapshot.data!.map((Category category) {
+                        return DropdownMenuItem<String>(
+                          value: category.catId.toString(),
+                          child: Text(category.catName),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          productCategoryId = newValue;
+                          selectedCategory = snapshot.data!.firstWhere((category) => category.catId.toString() == newValue);
+                          productCategory = selectedCategory?.catCode;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vui lòng chọn phân loại sản phẩm';
+                        }
+                        return null;
+                      },
+                      hint: Text('Chọn phân loại sản phẩm', style: TextStyle(color: textColor.withOpacity(0.6))),
+                    );
                   }
-                  return null;
                 },
-                hint: Text('Chọn phân loại sản phẩm', style: TextStyle(color: textColor.withOpacity(0.6))),
-                style: TextStyle(color: textColor),
-                dropdownColor: backgroundColor,
               ),
               const SizedBox(height: 16),
               TextFormField(

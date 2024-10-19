@@ -5,6 +5,7 @@ import 'package:debt_manager/controller/GlobalFunction.dart';
 import 'package:debt_manager/controller/LocalDataAccess.dart';
 import 'package:debt_manager/features/user_auth/presentation/pages/login_page.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
+import 'package:debt_manager/pages/categories/category_screen.dart';
 import 'package:debt_manager/pages/coupons/coupons_screen.dart';
 import 'package:debt_manager/pages/customers/customer_screen.dart';
 import 'package:debt_manager/pages/invoices/create_invoice_screen.dart';
@@ -475,8 +476,8 @@ class _HomePageState extends State<HomePage> {
                     () => Get.to(() => const InvoiceScreen()), Colors.green),
                 _buildFunctionWidget(Icons.inventory, "Products",
                     () => Get.to(() => const ProductsScreen()), Colors.blue),
-                _buildFunctionWidget(Icons.local_offer, "Coupons",
-                    () => Get.to(() => const CouponsScreen()), Colors.orange),
+                _buildFunctionWidget(Icons.category, "Categories",
+                    () => Get.to(() => const CategoryScreen()), const Color.fromARGB(255, 183, 116, 223)),
               ],
             ),
             const SizedBox(height: 16),
