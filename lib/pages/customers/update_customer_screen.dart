@@ -80,7 +80,29 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Update Customer', style: TextStyle(color: Colors.white)),
+        //change back arrow color
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Get.back(),
+        ),  
         backgroundColor: const Color.fromARGB(255, 39, 82, 176),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.white),
+            onPressed: () {
+              AwesomeDialog(
+                context: context,
+                title: 'Delete Customer',
+                body: Text('Are you sure you want to delete this customer?'),
+                buttonsTextStyle: TextStyle(color: Colors.white),
+                dialogType: DialogType.warning,
+                showCloseIcon: true,
+                btnCancelOnPress: () {},
+                btnOkOnPress: _deleteCustomer,
+              ).show();
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -127,43 +149,14 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
                   decoration: InputDecoration(labelText: 'Location'),
                 ),
                 SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: _updateCustomer,
-                      child: Text('Update Customer'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // TODO: Implement delete customer functionality
-                        //AwesomeDialog to confirm for delete
-                        AwesomeDialog(
-                          context: context,
-                          title: 'Delete Customer',
-                          body: Text('Are you sure you want to delete this customer?'),
-                          buttonsTextStyle: TextStyle(color: Colors.white),
-                          dialogType: DialogType.warning,
-                          showCloseIcon: true,
-                          btnCancelOnPress: () {
-                            //Get.back();
-                          },
-                          btnOkOnPress: _deleteCustomer,
-                        ).show();
-                      },
-                      child: Text('Delete Customer'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                  ],
+                ElevatedButton(
+                  onPressed: _updateCustomer,
+                  child: Text('Update Customer'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                  ),
                 ),
-                
               ],
             ),
           ),

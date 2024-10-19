@@ -59,7 +59,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sản phẩm', style: TextStyle(color: Colors.white)),
+        title: const Text('Sản phẩm', style: TextStyle(color: Colors.white)),
+        //change back arrow color
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Get.back(),
+        ),  
         backgroundColor: const Color.fromARGB(255, 104, 160, 245),
         actions: [
           IconButton(
@@ -69,7 +74,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   _getProductList();
                 }
               },
-              icon: Icon(Icons.add, color: Colors.white))
+              icon: const Icon(Icons.add, color: Colors.white))
         ],
       ),
       body: Column(

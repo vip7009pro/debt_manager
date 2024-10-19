@@ -64,6 +64,11 @@ class _CustomerScreenState extends State<CustomerScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Customers', style: TextStyle(color: Colors.white)),
+        //change back arrow color
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Get.back(),
+        ),  
         backgroundColor: const Color.fromARGB(255, 39, 82, 176),
         actions: [
           IconButton(
