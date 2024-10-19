@@ -123,7 +123,8 @@ class _EditInvoiceScreenState extends State<EditInvoiceScreen> {
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text('Invoice #${widget.invoice.invoiceNo}',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -179,28 +180,13 @@ class _EditInvoiceScreenState extends State<EditInvoiceScreen> {
                       value!.isEmpty ? 'Please enter remark' : null,
                 ),  
                 SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _updateInvoice,
-                        child: Text('Update Invoice'),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: const Color.fromARGB(255, 175, 162, 46),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: _deleteInvoice,
-                      child: Text('Delete'),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.red,
-                      ),
-                    ),
-                  ],
+                ElevatedButton(
+                  onPressed: _updateInvoice,
+                  child: Text('Update Invoice'),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 175, 162, 46),
+                  ),
                 ),
               ],
             ),
