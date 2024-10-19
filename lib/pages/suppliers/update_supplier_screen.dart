@@ -70,6 +70,33 @@ class _UpdateSupplierScreenState extends State<UpdateSupplierScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Update Supplier'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () async {
+              AwesomeDialog(
+                context: context,
+                dialogType: DialogType.warning,
+                title: 'Delete Supplier',
+                desc: 'Are you sure you want to delete this supplier?',
+                btnCancelOnPress: () {},
+                btnOkOnPress: () async {
+                  bool check = await _deleteSupplier(widget.supplier.vendorCode);
+                  if (check) {
+                    Get.back(result: true);
+                  } else {
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.error,
+                      title: 'Failed to delete supplier',
+                      btnOkOnPress: () {},
+                    ).show();
+                  }
+                },
+              ).show();
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -109,63 +136,29 @@ class _UpdateSupplierScreenState extends State<UpdateSupplierScreen> {
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      bool check = await _updateSupplier();
-                      if (check) {
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.success,
-                          title: 'Supplier updated successfully',
-                          btnOkOnPress: () {
-                            Get.back(result: true);
-                          },
-                        ).show();
-                      } else {
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.error,
-                          title: 'Failed to update supplier',
-                          desc: 'Please check the supplier information',
-                          btnOkOnPress: () {},
-                        ).show();
-                      }
-                    },
-                    child: const Text('Update Supplier'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.warning,
-                          title: 'Delete Supplier',
-                          desc: 'Are you sure you want to delete this supplier?',
-                          btnCancelOnPress: () {},
-                          btnOkOnPress: () async {
-                            bool check =
-                                await _deleteSupplier(widget.supplier.vendorCode);
-                            if (check) {
-                              Get.back(result: true);
-                            } else {
-                              AwesomeDialog(
-                                context: context,
-                                dialogType: DialogType.error,
-                                title: 'Failed to delete supplier',
-                                btnOkOnPress: () {},
-                              ).show();
-                            }
-                          }).show();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.red,
-                    ),
-                    child: const Text('Delete Supplier'),
-                  ),
-                ],
+              ElevatedButton(
+                onPressed: () async {
+                  bool check = await _updateSupplier();
+                  if (check) {
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.success,
+                      title: 'Supplier updated successfully',
+                      btnOkOnPress: () {
+                        Get.back(result: true);
+                      },
+                    ).show();
+                  } else {
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.error,
+                      title: 'Failed to update supplier',
+                      desc: 'Please check the supplier information',
+                      btnOkOnPress: () {},
+                    ).show();
+                  }
+                },
+                child: const Text('Update Supplier'),
               ),
             ],
           ),
