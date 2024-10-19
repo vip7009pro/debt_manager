@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:debt_manager/controller/GetXController.dart';
 import 'package:flutter/material.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:get/get.dart'; 
@@ -16,12 +17,14 @@ class _AddSuppliersScreenState extends State<AddSuppliersScreen> {
   final TextEditingController _supplierNameController = TextEditingController();
   final TextEditingController _supplierAddressController = TextEditingController();
   final TextEditingController _supplierPhoneController = TextEditingController();
+  final GlobalController c = Get.put(GlobalController());
 
   Future<bool> _addSupplier(String SHOP_ID, String VENDOR_CODE, String VENDOR_NAME, String VENDOR_ADD, String VENDOR_PHONE) async {
     // Add supplier logic here
     bool check = true;
+    String shopID = c.shopID.value;
     await API_Request.api_query('addvendor', {      
-      'SHOP_ID':'23',
+      'SHOP_ID':shopID,
       'VENDOR_CODE': VENDOR_CODE, // Using supplierId as VENDOR_CODE, adjust if different
       'VENDOR_NAME': VENDOR_NAME,
       'VENDOR_ADD': VENDOR_ADD,

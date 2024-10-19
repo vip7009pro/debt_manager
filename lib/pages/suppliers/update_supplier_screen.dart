@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:debt_manager/controller/GetXController.dart';
 import 'package:flutter/material.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
@@ -18,7 +19,7 @@ class _UpdateSupplierScreenState extends State<UpdateSupplierScreen> {
   final TextEditingController _supplierNameController = TextEditingController();
   final TextEditingController _supplierAddressController = TextEditingController();
   final TextEditingController _supplierPhoneController = TextEditingController();
-
+  final GlobalController c = Get.put(GlobalController());
   @override
   void initState() {
     super.initState();
@@ -30,8 +31,9 @@ class _UpdateSupplierScreenState extends State<UpdateSupplierScreen> {
 
   Future<bool> _updateSupplier() async {
     bool check = false;
+    String shopID = c.shopID.value;
     await API_Request.api_query('updateVendor', {
-      'SHOP_ID': '23',
+      'SHOP_ID': shopID,
       'VENDOR_CODE': _supplierCodeController.text,
       'VENDOR_NAME': _supplierNameController.text,
       'VENDOR_ADD': _supplierAddressController.text,
@@ -45,8 +47,9 @@ class _UpdateSupplierScreenState extends State<UpdateSupplierScreen> {
   }
   Future<bool> _deleteSupplier(String vendorCode) async {
     bool check = false;
+    String shopID = c.shopID.value;
     await API_Request.api_query('deleteVendor', {
-      'SHOP_ID': '23',
+      'SHOP_ID': shopID,
       'VENDOR_CODE': vendorCode
     }).then((value) {
       if (value['tk_status'] == 'OK') {
