@@ -86,6 +86,7 @@ class _UpdateSupplierScreenState extends State<UpdateSupplierScreen> {
                     Get.back(result: true);
                   } else {
                     AwesomeDialog(
+                      // ignore: use_build_context_synchronously
                       context: context,
                       dialogType: DialogType.error,
                       title: 'Failed to delete supplier',
