@@ -244,17 +244,17 @@ class Order {
   final num poId;
   final num shopId;
   final num prodId;
-  final num cusId;
+  late final num cusId;
   final String poNo;
-  final int poQty;
-  final double prodPrice;
-  final String remark;
+  late final int poQty;
+  late final double prodPrice;
+  late final String remark;
   final DateTime insDate;
   final String insUid;
   final DateTime updDate;
   final String updUid;
   final String prodCode;
-  final String custCd;
+  late final String custCd;
   final String cusName;
   final String prodName;
 

@@ -92,48 +92,94 @@ class _WarehouseInputHistoryScreenState
                       itemBuilder: (context, index) {
                         final history = filteredHistory[index];
                         return Card(
-                          elevation: 2,
-                          margin: EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16),
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                           child: InkWell(
                             onTap: () {
                               print('tapped');
                             },
                             child: Padding(
                               padding: EdgeInsets.all(16),
-                              child: Row(
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.network(
-                                      'http://14.160.33.94:3010/product_images/${c.shopID.value}_${history.prodCode}_${history.prodImg?.split(',')[0] ?? ''}.jpg',
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Icon(Icons.image_not_supported, size: 80);
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          history.prodName ?? '',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.network(
+                                          'http://14.160.33.94:3010/product_images/${c.shopID.value}_${history.prodCode}_${history.prodImg?.split(',')[0] ?? ''}.jpg',
+                                          width: 80,
+                                          height: 80,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Container(
+                                              width: 80,
+                                              height: 80,
+                                              color: Colors.grey[300],
+                                              child: Icon(Icons.image_not_supported, size: 40, color: Colors.grey[600]),
+                                            );
+                                          },
                                         ),
-                                        SizedBox(height: 8),
-                                        Text('Quantity: ${history.prodQty} / Date: ${history.insDate.toString().split(' ')[0]}'),
-                                        Text('Status: ${history.prodStatus} / Vendor: ${history.vendorName ?? 'N/A'}'),
-                                        Text('Bep: \$${history.bep ?? 'N/A'}'),
-                                      ],
-                                    ),
+                                      ),
+                                      SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              history.prodName ?? '',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue[800],
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            SizedBox(height: 8),
+                                            Text(
+                                              'Vendor: ${history.vendorName ?? 'N/A'}',
+                                              style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 12),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Qty: ${history.prodQty}',
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      Text(
+                                        'Date: ${history.insDate.toString().split(' ')[0]}',
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      Text(
+                                        'Status: ${history.prodStatus}',
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.attach_money, color: Colors.green[700]),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Bep: \$${history.bep ?? 'N/A'}',
+                                        style: TextStyle(color: Colors.green[700], fontSize: 14),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),

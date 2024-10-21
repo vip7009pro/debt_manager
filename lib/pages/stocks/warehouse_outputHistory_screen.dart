@@ -93,9 +93,11 @@ class _WarehouseOutputHistoryScreenState
                       itemBuilder: (context, index) {
                         final history = snapshot.data![index];
                         return Card(
-                          elevation: 2,
-                          margin: EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16),
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                           child: InkWell(
                             onTap: () {
                               print('tapped');
@@ -106,15 +108,19 @@ class _WarehouseOutputHistoryScreenState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
                                       'http://14.160.33.94:3010/product_images/${c.shopID.value}_${history.prodCode}_${history.prodImg.split(',')[0]}.jpg',
-                                      width: 80,
-                                      height: 80,
+                                      width: 100,
+                                      height: 100,
                                       fit: BoxFit.cover,
                                       errorBuilder: (context, error, stackTrace) {
-                                        return Icon(Icons.image_not_supported,
-                                            size: 80);
+                                        return Container(
+                                          width: 100,
+                                          height: 100,
+                                          color: Colors.grey[300],
+                                          child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey[600]),
+                                        );
                                       },
                                     ),
                                   ),
@@ -128,13 +134,48 @@ class _WarehouseOutputHistoryScreenState
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
+                                            color: Colors.blue[800],
                                           ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                         SizedBox(height: 8),
-                                        Text('Quantity: ${history.prodQty}'),
-                                        Text(
-                                            'Date: ${history.insDate.toString().split(' ')[0]}'),
-                                        Text('Customer: ${history.cusName}'),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.shopping_cart, size: 16, color: Colors.green),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              'Quantity: ${history.prodQty}',
+                                              style: TextStyle(fontSize: 14, color: Colors.green),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              'Date: ${history.insDate.toString().split(' ')[0]}',
+                                              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.person, size: 16, color: Colors.blue),
+                                            SizedBox(width: 4),
+                                            Expanded(
+                                              child: Text(
+                                                'Customer: ${history.cusName}',
+                                                style: TextStyle(fontSize: 14, color: Colors.blue),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ),

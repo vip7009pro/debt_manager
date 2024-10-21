@@ -63,11 +63,11 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
     });
   }  
 
-  Future<bool> _addOrder(String orderNumber, String prodId, String cusId, String productCode, String customerCode, int quantity, double price, String note) async {
-    // Add product logic here
+  List<Order> selectedOrders = [];
+
+  Future<bool> _addOrder(Order order) async {
     bool check = true;
-    String shopID = c.shopID.value;
-    await API_Request.api_query('addNewOrder', {'PO_NO': orderNumber,'PROD_ID': prodId , 'PROD_CODE': productCode, 'CUS_ID': cusId, 'CUST_CD': customerCode, 'PO_QTY': quantity.toString(), 'PROD_PRICE': price.toString(), 'REMARK': note, 'SHOP_ID': shopID})
+    await API_Request.api_query('addNewOrder', order.toJson())
         .then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;        
@@ -78,12 +78,38 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
     return check;    
   }
 
- //generate order number with format: SO-YYYYMMDD-NNNN  
+  Future<void> _addAllOrders() async {
+    if (selectedOrders.isEmpty) {
+      Get.snackbar('Thông báo', 'Vui lòng chọn ít nhất một sản phẩm');
+      return;
+    }
+
+    bool allSuccess = true;
+    for (var order in selectedOrders) {
+      order.cusId = int.parse(customerController.text);
+      order.custCd = customerCode;
+      order.remark = noteController.text;
+      bool success = await _addOrder(order);
+      if (!success) {
+        allSuccess = false;
+        Get.snackbar('Thông báo', 'Thêm sản phẩm ${order.prodName} thất bại');
+      }
+    }
+
+    if (allSuccess) {
+      Get.back();
+      Get.snackbar('Thông báo', 'Thêm tất cả đơn hàng thành công');
+    } else {
+      Get.snackbar('Thông báo', 'Một số đơn hàng thêm thất bại');
+    }
+  }
+   //generate order number with format: SO-YYYYMMDD-NNNN  
  String _generateOrderNumber() {
   String date = DateTime.now().toString().substring(0, 10);
   String number = (DateTime.now().millisecondsSinceEpoch % 10000).toString().padLeft(4, '0');
   return 'SO-$date-$number';
  }  
+
 
   @override
   void initState() {    
@@ -103,6 +129,7 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
     noteController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,10 +152,31 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
               children: [
                 DropdownButtonFormField<Product>(
                   onChanged: (Product? value) {
-                    setState(() {
-                      productController.text = value?.prodId.toString() ?? '';
-                      productCode = value?.prodCode ?? '';  
-                    });
+                    if (value != null) {
+                      setState(() {
+                        productController.text = value.prodId.toString();
+                        productCode = value.prodCode ?? '';
+                        
+                        /* selectedOrders.add(Order(
+                          poId: 0, // This will be assigned by the backend
+                          shopId: int.parse(c.shopID.value),
+                          prodId: value.prodId,
+                          cusId: 0, // This will be set when a customer is selected
+                          poNo: orderNumberController.text,
+                          poQty: 1,
+                          prodPrice: value.prodPrice,
+                          remark: '',
+                          insDate: DateTime.now(),
+                          insUid: '',
+                          updDate: DateTime.now(),
+                          updUid: '',
+                          prodCode: value.prodCode,
+                          custCd: customerCode,
+                          cusName: '',
+                          prodName: value.prodName,
+                        )); */
+                      });
+                    }
                   },
                   items: products.map((Product product) {
                     return DropdownMenuItem<Product>(
@@ -232,16 +280,16 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
                   maxLines: 3,
                 ),
                 const SizedBox(height: 24),
+                //add a button to add product to list 
                 ElevatedButton(
                   onPressed: () {
-                   _addOrder(orderNumberController.text,productController.text, customerController.text, productCode, customerCode, int.parse(quantityController.text), double.parse(priceController.text), noteController.text).then((value) {
-                      if (value) {      
-                        Get.back();
-                      } else {
-                        Get.snackbar('Thông báo', 'Thêm đơn hàng thất bại');
-                      }
-                    });
+                    selectedOrders.add(Order(poId: 0, shopId: int.parse(c.shopID.value), prodId: int.parse(productController.text), cusId: int.parse(customerController.text), poNo: orderNumberController.text, poQty: int.parse(quantityController.text), prodPrice: double.parse(priceController.text), remark: noteController.text, insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: productCode, custCd: customerCode, cusName: '', prodName: products.firstWhere((p) => p.prodId == int.parse(productController.text)).prodName));
                   },
+                  child: Text('Thêm đơn hàng'),
+                ),    
+
+                ElevatedButton(
+                  onPressed: _addAllOrders,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     shape: RoundedRectangleBorder(
@@ -250,6 +298,63 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
                     padding: EdgeInsets.symmetric(vertical: 15),
                   ),
                   child: const Text('Lưu đơn hàng', style: TextStyle(fontSize: 18)),
+                ),
+
+                // Updated selected orders card
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Selected Products:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        SizedBox(height: 8),
+                        ...selectedOrders.map((order) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: Row(
+                            children: [
+                              Expanded(child: Text(order.prodName)),
+                              TextFormField(
+                                initialValue: order.poQty.toString(),
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  setState(() {
+                                    order.poQty = int.tryParse(value) ?? 1;
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  labelText: 'Qty',
+                                  constraints: BoxConstraints(maxWidth: 60),
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              TextFormField(
+                                initialValue: order.prodPrice.toString(),
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  setState(() {
+                                    order.prodPrice = double.tryParse(value) ?? 0;
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  labelText: 'Price',
+                                  constraints: BoxConstraints(maxWidth: 80),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.clear, color: Colors.red),
+                                onPressed: () => selectedOrders.remove(order),
+                              ),
+                            ],
+                          ),
+                        )).toList(),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),

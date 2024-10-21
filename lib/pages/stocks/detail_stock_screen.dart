@@ -100,7 +100,10 @@ class _DetailStockScreenState extends State<DetailStockScreen> {
                 itemBuilder: (context, index) {
                   final history = filteredHistory[index];
                   return Card(
-                    elevation: 2,
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     child: InkWell(
                       onTap: () {
@@ -133,7 +136,12 @@ class _DetailStockScreenState extends State<DetailStockScreen> {
                                 height: 80,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Icon(Icons.image_not_supported, size: 80);
+                                  return Container(
+                                    width: 80,
+                                    height: 80,
+                                    color: Colors.grey[300],
+                                    child: Icon(Icons.image_not_supported, size: 40, color: Colors.grey[600]),
+                                  );
                                 },
                               ),
                             ),
@@ -147,12 +155,66 @@ class _DetailStockScreenState extends State<DetailStockScreen> {
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
+                                      color: Colors.blue[800],
                                     ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   SizedBox(height: 8),
-                                  Text('Quantity: ${history.stockQty} / Date: ${history.updDate.toString().split(' ')[0]}'),
-                                  Text('Status: ${history.prodStatus} / Vendor: ${history.vendorName ?? 'N/A'}'),
-                                  Text('Bep: \$${history.bep ?? 'N/A'}'),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.inventory, size: 16, color: Colors.grey[600]),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Quantity: ${history.stockQty}',
+                                        style: TextStyle(color: Colors.grey[700]),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Date: ${history.updDate.toString().split(' ')[0]}',
+                                        style: TextStyle(color: Colors.grey[700]),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.info_outline, size: 16, color: Colors.grey[600]),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Status: ${history.prodStatus}',
+                                        style: TextStyle(color: Colors.grey[700]),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.business, size: 16, color: Colors.grey[600]),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Vendor: ${history.vendorName ?? 'N/A'}',
+                                        style: TextStyle(color: Colors.grey[700]),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.attach_money, size: 16, color: Colors.grey[600]),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Bep: \$${history.bep ?? 'N/A'}',
+                                        style: TextStyle(color: Colors.grey[700]),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
