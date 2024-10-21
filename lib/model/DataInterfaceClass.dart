@@ -54,8 +54,6 @@ class Shop {
   }
 }
 
-
-
 class Vendor {
   final num shopId;
   final String vendorCode;
@@ -107,6 +105,7 @@ class Vendor {
     };
   }
 }
+
 class Product {
   final int prodId;
   final int shopId;
@@ -239,24 +238,23 @@ class Customer {
   }
 }
 
-
 class Order {
-   num poId;
-   num shopId;
-   num prodId;
-  late  num cusId;
-   String poNo;
+  num poId;
+  num shopId;
+  num prodId;
+  late num cusId;
+  String poNo;
   late int poQty;
   late double prodPrice;
-  late  String remark;
-   DateTime insDate;
-   String insUid;
-   DateTime updDate;
-   String updUid;
-   String prodCode;
-  late  String custCd;
-   String cusName;
-   String prodName;
+  late String remark;
+  DateTime insDate;
+  String insUid;
+  DateTime updDate;
+  String updUid;
+  String prodCode;
+  late String custCd;
+  String cusName;
+  String prodName;
 
   Order({
     required this.poId,
@@ -462,7 +460,7 @@ class InputHistory {
       prodDescr: json['PROD_DESCR'],
       prodImg: json['PROD_IMG'],
       vendorName: json['VENDOR_NAME'],
-      bep: json['BEP'].toDouble() ,
+      bep: json['BEP'].toDouble(),
       stockQty: json['STOCK_QTY'],
     );
   }
@@ -686,4 +684,3 @@ class Category {
     };
   }
 }
-
