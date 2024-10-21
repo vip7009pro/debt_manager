@@ -4,6 +4,7 @@ import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/GetXController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 
 class AddCustomersScreen extends StatefulWidget {
   const AddCustomersScreen({ Key? key }) : super(key: key);
@@ -22,6 +23,12 @@ class _AddCustomersScreenState extends State<AddCustomersScreen> {
   final TextEditingController _cusAddController = TextEditingController();
   final TextEditingController _cusLocController = TextEditingController();
   final TextEditingController _custCdController = TextEditingController();
+
+  List<Contact> _contacts = [];
+  List<Contact> _filteredContacts = [];
+  Contact? _selectedContact;
+  bool _showContactList = false;
+  bool _isContactsLoaded = false;
 
   Future<void> _addCustomer() async {
     try {
@@ -58,6 +65,29 @@ class _AddCustomersScreenState extends State<AddCustomersScreen> {
   void initState() {
     super.initState();
     _custCdController.text = generateRandomCustomerCode();
+    _loadContacts();
+  }
+
+  Future<void> _loadContacts() async {
+    if (await FlutterContacts.requestPermission()) {
+      final allContacts = await FlutterContacts.getContacts(withProperties: true);
+      setState(() {
+        _contacts = allContacts.where((contact) => contact.phones.isNotEmpty).toList();
+        _filteredContacts = _contacts;
+        _isContactsLoaded = true;
+      });
+    }
+  }
+
+  void _filterContacts(String query) {
+    setState(() {
+      _filteredContacts = _contacts
+          .where((contact) =>
+              contact.displayName.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+      _selectedContact = null;
+      _showContactList = query.isNotEmpty;
+    });
   }
 
   @override
@@ -75,114 +105,159 @@ class _AddCustomersScreenState extends State<AddCustomersScreen> {
             colors: [Colors.blue[100]!, Colors.purple[100]!],
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                TextFormField(
-                  controller: _custCdController,
-                  decoration: InputDecoration(
-                    labelText: 'Mã khách hàng',
-                    hintText: 'Nhập mã khách hàng',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.purple),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _custCdController,
+                    decoration: InputDecoration(
+                      labelText: 'Mã khách hàng',
+                      hintText: 'Nhập mã khách hàng',
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.purple),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _cusNameController,
-                  decoration: InputDecoration(
-                    labelText: 'Tên khách hàng',
-                    hintText: 'Nhập tên khách hàng',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.blue),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _cusNameController,
+                    decoration: InputDecoration(
+                      labelText: 'Tên khách hàng',
+                      hintText: _isContactsLoaded 
+                        ? 'Nhập tên khách hàng' 
+                        : 'Đang tải danh bạ...',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.person),
+                      suffixIcon: _isContactsLoaded 
+                        ? null 
+                        : SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
+                          ),
+                    ),
+                    onChanged: (value) {
+                      if (_isContactsLoaded) {
+                        _filterContacts(value);
+                        setState(() {});
+                      }
+                    },
+                    enabled: _isContactsLoaded,
+                  ),
+                  const SizedBox(height: 16),
+                  if (_showContactList && _isContactsLoaded)
+                    Card(
+                      elevation: 2,
+                      child: Container(
+                        height: 200,
+                        child: ListView.builder(
+                          itemCount: _filteredContacts.length,
+                          itemBuilder: (context, index) {
+                            final contact = _filteredContacts[index];
+                            return ListTile(
+                              leading: CircleAvatar(
+                                child: Text(contact.displayName[0]),
+                              ),
+                              title: Text(contact.displayName),
+                              subtitle: Text(contact.phones.first.number),
+                              onTap: () {
+                                setState(() {
+                                  _selectedContact = contact;
+                                  _cusNameController.text = contact.displayName;
+                                  _cusPhoneController.text = contact.phones.first.number;
+                                  _showContactList = false;
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _cusPhoneController,
+                    decoration: InputDecoration(
+                      labelText: 'Số điện thoại',
+                      hintText: 'Nhập số điện thoại khách hàng',
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.green),
+                      ),
+                    ),
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _cusEmailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      hintText: 'Nhập email khách hàng',
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.orange),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _cusAddController,
+                    decoration: InputDecoration(
+                      labelText: 'Địa chỉ',
+                      hintText: 'Nhập địa chỉ khách hàng',
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.red),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _cusPhoneController,
-                  decoration: InputDecoration(
-                    labelText: 'Số điện thoại',
-                    hintText: 'Nhập số điện thoại khách hàng',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.green),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _cusLocController,
+                    decoration: InputDecoration(
+                      labelText: 'Vị trí',
+                      hintText: 'Nhập vị trí khách hàng',
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.teal),
+                      ),
                     ),
                   ),
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _cusEmailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'Nhập email khách hàng',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.orange),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {  
+                        _addCustomer(); 
+                      }
+                    },
+                    child: const Text('Lưu khách hàng', style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _cusAddController,
-                  decoration: InputDecoration(
-                    labelText: 'Địa chỉ',
-                    hintText: 'Nhập địa chỉ khách hàng',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.red),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _cusLocController,
-                  decoration: InputDecoration(
-                    labelText: 'Vị trí',
-                    hintText: 'Nhập vị trí khách hàng',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.teal),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {  
-                      _addCustomer(); 
-                    }
-                  },
-                  child: const Text('Lưu khách hàng', style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
