@@ -241,22 +241,22 @@ class Customer {
 
 
 class Order {
-  final num poId;
-  final num shopId;
-  final num prodId;
-  late final num cusId;
-  final String poNo;
-  late final int poQty;
-  late final double prodPrice;
-  late final String remark;
-  final DateTime insDate;
-  final String insUid;
-  final DateTime updDate;
-  final String updUid;
-  final String prodCode;
-  late final String custCd;
-  final String cusName;
-  final String prodName;
+   num poId;
+   num shopId;
+   num prodId;
+  late  num cusId;
+   String poNo;
+  late int poQty;
+  late double prodPrice;
+  late  String remark;
+   DateTime insDate;
+   String insUid;
+   DateTime updDate;
+   String updUid;
+   String prodCode;
+  late  String custCd;
+   String cusName;
+   String prodName;
 
   Order({
     required this.poId,

@@ -134,7 +134,19 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thêm đơn hàng'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Get.back();
+          },
+        ),  
+        title: const Text('Thêm đơn hàng', style: TextStyle(color: Colors.white)),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.save, color: Colors.white),
+            onPressed: _addAllOrders,
+          ),
+        ],
         backgroundColor: Colors.purple,
       ),
       body: Container(
@@ -283,22 +295,12 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
                 //add a button to add product to list 
                 ElevatedButton(
                   onPressed: () {
-                    selectedOrders.add(Order(poId: 0, shopId: int.parse(c.shopID.value), prodId: int.parse(productController.text), cusId: int.parse(customerController.text), poNo: orderNumberController.text, poQty: int.parse(quantityController.text), prodPrice: double.parse(priceController.text), remark: noteController.text, insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: productCode, custCd: customerCode, cusName: '', prodName: products.firstWhere((p) => p.prodId == int.parse(productController.text)).prodName));
+                    setState(() { 
+                      selectedOrders.add(Order(poId: 0, shopId: int.parse(c.shopID.value), prodId: int.parse(productController.text), cusId: int.parse(customerController.text), poNo: orderNumberController.text, poQty: int.parse(quantityController.text), prodPrice: double.parse(priceController.text), remark: noteController.text, insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: productCode, custCd: customerCode, cusName: '', prodName: products.firstWhere((p) => p.prodId == int.parse(productController.text)).prodName));
+                    });
                   },
                   child: Text('Thêm đơn hàng'),
                 ),    
-
-                ElevatedButton(
-                  onPressed: _addAllOrders,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                  ),
-                  child: const Text('Lưu đơn hàng', style: TextStyle(fontSize: 18)),
-                ),
 
                 // Updated selected orders card
                 Card(
@@ -345,9 +347,16 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
                                   constraints: BoxConstraints(maxWidth: 80),
                                 ),
                               ),
+                              //amount = qty * price
+                              Text('${order.poQty * order.prodPrice}'),
+                              SizedBox(width: 8),
                               IconButton(
                                 icon: Icon(Icons.clear, color: Colors.red),
-                                onPressed: () => selectedOrders.remove(order),
+                                onPressed: () { 
+                                  setState(() {
+                                    selectedOrders.remove(order);
+                                  });
+                                } ,
                               ),
                             ],
                           ),
