@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';  
 
 class AddOrdersScreen extends StatefulWidget {
   const AddOrdersScreen({ Key? key }) : super(key: key);
@@ -168,6 +169,7 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
                       setState(() {
                         productController.text = value.prodId.toString();
                         productCode = value.prodCode ?? '';
+                        priceController.text = value.prodPrice.toString();  
                         
                         /* selectedOrders.add(Order(
                           poId: 0, // This will be assigned by the backend
@@ -212,7 +214,7 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
                   onChanged: (Customer? value) {
                     setState(() {
                       customerController.text = value?.cusId.toString() ?? '';
-                      customerCode = value?.custCd ?? '';
+                      customerCode = value?.custCd ?? '';                      
                     });
                   },
                   items: customers.map((Customer customer) {
@@ -299,7 +301,7 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
                       selectedOrders.add(Order(poId: 0, shopId: int.parse(c.shopID.value), prodId: int.parse(productController.text), cusId: int.parse(customerController.text), poNo: orderNumberController.text, poQty: int.parse(quantityController.text), prodPrice: double.parse(priceController.text), remark: noteController.text, insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: productCode, custCd: customerCode, cusName: '', prodName: products.firstWhere((p) => p.prodId == int.parse(productController.text)).prodName));
                     });
                   },
-                  child: Text('Thêm đơn hàng'),
+                  child: Text('Thêm sản phẩm'),
                 ),    
 
                 // Updated selected orders card
@@ -348,7 +350,12 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
                                 ),
                               ),
                               //amount = qty * price
-                              Text('${order.poQty * order.prodPrice}'),
+                              Column(
+                                children: [
+                                  const Text('Amount', style: TextStyle(fontWeight: FontWeight.normal)),
+                                  Text('\$${NumberFormat('#,##0.00', 'en_US').format(order.poQty * order.prodPrice)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                                ],
+                              ),
                               SizedBox(width: 8),
                               IconButton(
                                 icon: Icon(Icons.clear, color: Colors.red),
