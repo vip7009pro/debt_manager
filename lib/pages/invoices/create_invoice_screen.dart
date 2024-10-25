@@ -7,6 +7,7 @@ import 'package:debt_manager/pages/invoices/invoice_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
+import 'package:intl/intl.dart';
 
 class CreateInvoiceScreen extends StatefulWidget {
   final Order order;
@@ -19,207 +20,242 @@ class CreateInvoiceScreen extends StatefulWidget {
 class _CreateInvoiceScreenState extends State<CreateInvoiceScreen> {
   final GlobalController c = Get.put(GlobalController());
   late Order order;
-  final TextEditingController prod_id_controller = TextEditingController();
-  final TextEditingController cus_id_controller = TextEditingController();
-  final TextEditingController po_no_controller = TextEditingController();
-  final TextEditingController invoice_qty_controller = TextEditingController();
   final TextEditingController remark_controller = TextEditingController();
-  final TextEditingController invoice_no_controller = TextEditingController();
-
-  Future<bool> _addInvoice(String invoiceNo, String shopId, String prodId, String cusId, String prodCode, String custCd, String poNo, String invoiceQty, String prodPrice, String remark) async {
-    // Add invoice logic here
-    bool check = true;
-    await API_Request.api_query('addNewInvoice', {
-      'INVOICE_NO': invoiceNo,
-      'SHOP_ID': shopId,
-      'PROD_ID': prodId,
-      'CUS_ID': cusId,
-      'PROD_CODE': prodCode,
-      'CUST_CD': custCd,
-      'PO_NO': poNo,
-      'INVOICE_QTY': invoiceQty,
-      'PROD_PRICE': prodPrice,
-      'REMARK': remark
-    }).then((value) {
-      if (value['tk_status'] == 'OK') {
-        check = true;        
-      } else {
-        check = false;
-      }
-    });
-    return check;    
-  }
-
- //generate invoice no with current date and time and shop id and random 3 number
- String _generateInvoiceNo() {
-  DateTime now = DateTime.now();
-  String shopId = c.shopID.value;
-  String random3Number = Random().nextInt(1000).toString().padLeft(3, '0');
-  String invoiceNumber = '${now.year}${now.month}${now.day}-$shopId-$random3Number';
-  return invoiceNumber;
- }  
+  List<Order> orderItems = [];
+  bool isLoading = true;
+  final currencyFormatter = NumberFormat.currency(symbol: '\$');
+  double totalAmount = 0;
 
   @override
   void initState() {
     super.initState();
-    order = widget.order; 
-    prod_id_controller.text = order.prodId.toString();
-    cus_id_controller.text = order.cusId.toString();
-    po_no_controller.text = order.poNo;
-    invoice_qty_controller.text = '0';
-    remark_controller.text = '';  
-    invoice_no_controller.text = _generateInvoiceNo();  
+    order = widget.order;
+    remark_controller.text = '';
+    _loadOrderItems();
+    // Remove _calculateTotal() from here
+  }
+
+  Future<void> _loadOrderItems() async {
+    setState(() => isLoading = true);
+    // Fetch order items from server
+    await API_Request.api_query('getOrderList', {
+      'SHOP_ID': c.shopID.value,  
+      'PO_NO': order.poNo
+    }).then((value) {
+      if (value['tk_status'] == 'OK') {
+        orderItems = (value['data'] as List).map((item) => Order.fromJson(item)).toList();
+        _calculateTotal(); // Calculate total after loading order items
+      }
+    });
+    setState(() => isLoading = false);
+  }
+
+  void _calculateTotal() {
+    totalAmount = orderItems.fold(0, (sum, item) => sum + (item.poQty * item.prodPrice));
+  }
+
+  Future<bool> _addInvoice(Order item) async {
+    return await API_Request.api_query('addNewInvoice', {
+      'INVOICE_NO': _generateInvoiceNo(),
+      'SHOP_ID': c.shopID.value,
+      'PROD_ID': item.prodId.toString(),
+      'CUS_ID': item.cusId.toString(),
+      'PROD_CODE': item.prodCode,
+      'CUST_CD': item.custCd,
+      'PO_NO': item.poNo,
+      'INVOICE_QTY': item.poQty.toString(),
+      'PROD_PRICE': item.prodPrice.toString(),
+      'REMARK': remark_controller.text
+    }).then((value) => value['tk_status'] == 'OK');
+  }
+
+  Future<bool> _createInvoices() async {
+    bool allSuccess = true;
+    for (var item in orderItems) {
+      if (item.poQty > 0) {
+        bool success = await _addInvoice(item);
+        if (!success) allSuccess = false;
+      }
+    }
+    return allSuccess;
+  }
+
+  String _generateInvoiceNo() {
+    DateTime now = DateTime.now();
+    String shopId = c.shopID.value;
+    String random3Number = Random().nextInt(1000).toString().padLeft(3, '0');
+    return '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}-$shopId-$random3Number';
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: Text("Create Invoice"),
-        backgroundColor: const Color.fromARGB(255, 87, 214, 236),
+        backgroundColor: Colors.indigo,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Colors.blue[100]!, Colors.purple[100]!],
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            child: ListView(
-              children: [
-                //invoice no
-                TextFormField(
-                  controller: invoice_no_controller,
-                  decoration: InputDecoration(
-                    labelText: 'INVOICE_NO',
-                    hintText: 'Enter Invoice Number',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.purple),
-                    ),
-                  ),
-                ),  
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: prod_id_controller,
-                  decoration: InputDecoration(
-                    labelText: 'PROD_ID',
-                    hintText: 'Enter Product ID',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: cus_id_controller,
-                  decoration: InputDecoration(
-                    labelText: 'CUS_ID',
-                    hintText: 'Enter Customer ID',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.green),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: po_no_controller,
-                  decoration: InputDecoration(
-                    labelText: 'PO_NO',
-                    hintText: 'Enter Purchase Order Number',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.orange),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: invoice_qty_controller,
-                  decoration: InputDecoration(
-                    labelText: 'INVOICE_QTY',
-                    hintText: 'Enter Invoice Quantity',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.red),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: remark_controller,
-                  decoration: InputDecoration(
-                    labelText: 'REMARK',
-                    hintText: 'Enter Remark',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.teal),
-                    ),
-                  ),
-                  maxLines: 3,
-                ),
-                SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    // Add logic to save the new invoice
-                    _addInvoice(invoice_no_controller.text, c.shopID.value, prod_id_controller.text, cus_id_controller.text, order.prodCode, order.custCd, po_no_controller.text, invoice_qty_controller.text, order.prodPrice.toString(), remark_controller.text).then((value) {
-                      if (value) {
-                        AwesomeDialog(
-                          context: context,
-                          title: 'Success',
-                          body: Text('Invoice created successfully'),
-                          dialogType: DialogType.success,
-                          btnOkOnPress: () {
-                            Get.off(() => InvoiceScreen());
+        color: Colors.grey[100],
+        child: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        _buildSummaryCard(),
+                        SizedBox(height: 16),
+                        Text('Order Items', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: orderItems.length,
+                          itemBuilder: (context, index) {
+                            return _buildOrderItemCard(orderItems[index]);
                           },
-                        ).show(); 
-                      } else {
-                        AwesomeDialog(
-                          context: context,
-                          title: 'Error',
-                          body: Text('Failed to create invoice'),
-                          dialogType: DialogType.error,
-                          btnOkOnPress: () {
-                            //Get.back();
-                          },
-                        ).show(); 
-                      } 
-                      }); 
-                  },
-                  child: const Text('Create Invoice', style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                        ),
+                        _buildTotalSection(),
+                        SizedBox(height: 16),
+                        TextFormField(
+                          controller: remark_controller,
+                          decoration: InputDecoration(
+                            labelText: 'Remarks',
+                            border: OutlineInputBorder(),
+                          ),                    
+                        ),
+                        SizedBox(height: 16),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  ElevatedButton(
+                    onPressed: _validateAndCreateInvoices,
+                    child: Text('Create Invoices'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.indigo,
+                      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard() {
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Invoice Summary', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text('Customer: ${order.custCd}'),
+            Text('PO Number: ${order.poNo}'),
+            Text('Date: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}'),
+          ],
         ),
       ),
     );
+  }
+
+  Widget _buildOrderItemCard(Order item) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.prodName ?? 'Unknown Product', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('Code: ${item.prodCode}'),
+                  Text('Price: ${currencyFormatter.format(item.prodPrice)}'),
+                  // Add this line to show the amount
+                  Text('Amount: ${currencyFormatter.format(item.poQty * item.prodPrice)}', style: TextStyle(fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 80,
+              child: TextFormField(
+                initialValue: item.poQty.toString(),
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: 'Qty'),
+                onChanged: (value) {
+                  setState(() {
+                    item.poQty = int.tryParse(value) ?? 0;
+                    _calculateTotal();
+                  });
+                },
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                setState(() {
+                  orderItems.remove(item);
+                  _calculateTotal();
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTotalSection() {
+    return Card(
+      color: Colors.indigo[50],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Total Amount:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(currencyFormatter.format(totalAmount), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _validateAndCreateInvoices() {
+    if (orderItems.every((item) => item.poQty == 0)) {
+      _showErrorDialog('Please enter a quantity for at least one item.');
+      return;
+    }
+
+    _createInvoices().then((success) {
+      if (success) {
+        AwesomeDialog(
+          context: context,
+          title: 'Success',
+          desc: 'Invoices created successfully',
+          dialogType: DialogType.success,
+          btnOkOnPress: () => Get.off(() => InvoiceScreen()),
+        ).show();
+      } else {
+        _showErrorDialog('Failed to create some invoices. Please try again.');
+      }
+    });
+  }
+
+  void _showErrorDialog(String message) {
+    AwesomeDialog(
+      context: context,
+      title: 'Error',
+      desc: message,
+      dialogType: DialogType.error,
+      btnOkOnPress: () {},
+    ).show();
   }
 }

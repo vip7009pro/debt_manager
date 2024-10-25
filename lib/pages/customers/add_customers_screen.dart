@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:debt_manager/controller/APIRequest.dart';
 import 'package:debt_manager/controller/GetXController.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +23,10 @@ class _AddCustomersScreenState extends State<AddCustomersScreen> {
   final TextEditingController _cusLocController = TextEditingController();
   final TextEditingController _custCdController = TextEditingController();
 
-  List<Contact> _contacts = [];
+  List<Contact> get _contacts => c.contacts;
   List<Contact> _filteredContacts = [];
   Contact? _selectedContact;
   bool _showContactList = false;
-  bool _isContactsLoaded = false;
 
   Future<void> _addCustomer() async {
     try {
@@ -65,18 +63,7 @@ class _AddCustomersScreenState extends State<AddCustomersScreen> {
   void initState() {
     super.initState();
     _custCdController.text = generateRandomCustomerCode();
-    _loadContacts();
-  }
-
-  Future<void> _loadContacts() async {
-    if (await FlutterContacts.requestPermission()) {
-      final allContacts = await FlutterContacts.getContacts(withProperties: true);
-      setState(() {
-        _contacts = allContacts.where((contact) => contact.phones.isNotEmpty).toList();
-        _filteredContacts = _contacts;
-        _isContactsLoaded = true;
-      });
-    }
+    _filteredContacts = _contacts;
   }
 
   void _filterContacts(String query) {
@@ -130,31 +117,17 @@ class _AddCustomersScreenState extends State<AddCustomersScreen> {
                     controller: _cusNameController,
                     decoration: InputDecoration(
                       labelText: 'Tên khách hàng',
-                      hintText: _isContactsLoaded 
-                        ? 'Nhập tên khách hàng' 
-                        : 'Đang tải danh bạ...',
+                      hintText: 'Nhập tên khách hàng',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.person),
-                      suffixIcon: _isContactsLoaded 
-                        ? null 
-                        : SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                            ),
-                          ),
                     ),
                     onChanged: (value) {
-                      if (_isContactsLoaded) {
-                        _filterContacts(value);
-                        setState(() {});
-                      }
+                      _filterContacts(value);
+                      setState(() {});
                     },
-                    enabled: _isContactsLoaded,
                   ),
                   const SizedBox(height: 16),
-                  if (_showContactList && _isContactsLoaded)
+                  if (_showContactList)
                     Card(
                       elevation: 2,
                       child: Container(

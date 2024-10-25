@@ -20,11 +20,11 @@ class _AddSuppliersScreenState extends State<AddSuppliersScreen> {
   final TextEditingController _supplierPhoneController = TextEditingController();
   final GlobalController c = Get.put(GlobalController());
 
-  List<Contact> _contacts = [];
+  List<Contact> get _contacts => c.contacts;
   List<Contact> _filteredContacts = [];
   Contact? _selectedContact;
-
   bool _showContactList = false;
+
   bool _isContactsLoaded = false;
 
   Future<bool> _addSupplier(String VENDOR_CODE, String VENDOR_NAME, String VENDOR_ADD, String VENDOR_PHONE) async {
@@ -50,18 +50,7 @@ class _AddSuppliersScreenState extends State<AddSuppliersScreen> {
   void initState() {
     super.initState();
     _supplierCodeController.text = _generateSupplierCode();
-    _loadContacts();
-  }
-
-  Future<void> _loadContacts() async {
-    if (await FlutterContacts.requestPermission()) {
-      final allContacts = await FlutterContacts.getContacts(withProperties: true);
-      setState(() {
-        _contacts = allContacts.where((contact) => contact.phones.isNotEmpty).toList();
-        _filteredContacts = _contacts;
-        _isContactsLoaded = true;
-      });
-    }
+    _filteredContacts = _contacts;
   }
 
   void _filterContacts(String query) {
@@ -118,35 +107,21 @@ class _AddSuppliersScreenState extends State<AddSuppliersScreen> {
                           controller: _supplierNameController,
                           decoration: InputDecoration(
                             labelText: 'Tên nhà cung cấp',
-                            hintText: _isContactsLoaded 
-                              ? 'Nhập tên nhà cung cấp' 
-                              : 'Đang tải danh bạ...',
+                            hintText: 'Nhập tên nhà cung cấp',
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.person),
-                            suffixIcon: _isContactsLoaded 
-                              ? null 
-                              : SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
                           ),
                           onChanged: (value) {
-                            if (_isContactsLoaded) {
-                              _filterContacts(value);
-                              setState(() {});
-                            }
+                            _filterContacts(value);
+                            setState(() {});
                           },
-                          enabled: _isContactsLoaded,
                         ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 16),
-                if (_showContactList && _isContactsLoaded)
+                if (_showContactList)
                   Card(
                     elevation: 2,
                     child: Container(

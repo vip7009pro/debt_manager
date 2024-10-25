@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
 
   final logo =
       Image.asset('assets/images/app_logo.png', width: 120, fit: BoxFit.cover);
-  int mobileVer = 4;
+  int mobileVer = 5;
   late Timer _timer;
 
   Future<void> _getPOData() async {
@@ -147,6 +147,7 @@ class _HomePageState extends State<HomePage> {
     _getShopInfo();
     _getInvoiceData();
     _getPOData(); 
+    c.loadContacts(); // Add this line to load contacts
     super.initState();
   }
 

@@ -8,6 +8,8 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
   if (Platform.isAndroid) {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
@@ -16,8 +18,8 @@ Future main() async {
             messagingSenderId: "171888820198",
             projectId: "fbapptest1-e43aa"));
     await FirebaseAppCheck.instance.activate(      
-    androidProvider: AndroidProvider.playIntegrity,
-  );  
+      androidProvider: AndroidProvider.playIntegrity,
+    );  
   } else {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
@@ -26,20 +28,21 @@ Future main() async {
             messagingSenderId: "171888820198",
             projectId: "fbapptest1-e43aa"));
   }
+
+  // Initialize GetX controller and load contacts
+  final GlobalController c = Get.put(GlobalController());
+  await c.loadContacts();
+
   runApp(const MyApp());
 }
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
   @override
-  // ignore: library_private_types_in_public_api
   _MyAppState createState() => _MyAppState();
 }
+
 class _MyAppState extends State<MyApp> {
-  final GlobalController c = Get.put(GlobalController());
-  @override
-  void initState() {
-    super.initState();
-  }
   @override
   Widget build(BuildContext context) {
     return const GetMaterialApp(
