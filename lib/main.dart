@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:debt_manager/controller/GetXController.dart';
 import 'package:debt_manager/features/app/spash_screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/foundation.dart'; // Add this import
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,11 +31,14 @@ Future main() async {
             projectId: "fbapptest1-e43aa"));
   }
 
-  // Initialize GetX controller and load contacts
+  // Initialize GetX controller
   final GlobalController c = Get.put(GlobalController());
-  await c.loadContacts();
-
+  
+  // Start the app immediately
   runApp(const MyApp());
+  
+  // Load contacts in background
+  Timer.run(() => c.loadContacts());
 }
 
 class MyApp extends StatefulWidget {
