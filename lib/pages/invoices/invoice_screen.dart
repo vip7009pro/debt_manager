@@ -99,28 +99,49 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 itemCount: filteredInvoices.length,
                 itemBuilder: (context, index) {
                   return Card(
-                    margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                    margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                     color: index % 2 == 0 ? Colors.blue[100] : Colors.green[100],
-                    child: ListTile(
-                      leading: Icon(Icons.receipt, color: Colors.orange, size: 20),
-                      title: Text(
-                        'Invoice #${filteredInvoices[index].invoiceNo}\nProduct: ${filteredInvoices[index].prodName}\nCustomer: ${filteredInvoices[index].cusName}',
-                        style: TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold, fontSize: 12),
+                    child: Container(
+                      constraints: const BoxConstraints(maxHeight: 150),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        leading: Container(
+                          width: 50,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                filteredInvoices[index].invoiceNo.substring(filteredInvoices[index].invoiceNo.length - 3),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                              ),
+                              CircleAvatar(
+                                radius: 18,
+                                backgroundImage: NetworkImage('http://14.160.33.94:3010/product_images/${c.shopID.value}_${filteredInvoices[index].prodCode}_${0}.jpg'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        title: Text(
+                          'Invoice #${filteredInvoices[index].invoiceNo}\nProduct: ${filteredInvoices[index].prodName}\nCustomer: ${filteredInvoices[index].cusName}',
+                          style: TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold, fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Date: ${filteredInvoices[index].insDate.toString().split(' ')[0]}\nQuantity: ${filteredInvoices[index].invoiceQty}\nPrice: \$${filteredInvoices[index].prodPrice.toStringAsFixed(2)}',
+                          style: TextStyle(color: Colors.deepPurple, fontSize: 10),
+                        ),
+                        trailing: Text(
+                          NumberFormat('\$#,##0.0', 'en_US').format(filteredInvoices[index].invoiceQty * filteredInvoices[index].prodPrice),
+                          style: TextStyle(color: const Color.fromARGB(255, 6, 141, 29), fontWeight: FontWeight.bold, fontSize: 12),
+                        ),
+                        onTap: () async {
+                          final result = await Get.to(() => EditInvoiceScreen(invoice: filteredInvoices[index]));
+                          if (true) {
+                            _getInvoiceList();
+                          }
+                        },
                       ),
-                      subtitle: Text(
-                        'Date: ${filteredInvoices[index].insDate.toString().split(' ')[0]}\nQuantity: ${filteredInvoices[index].invoiceQty}\nPrice: \$${filteredInvoices[index].prodPrice.toStringAsFixed(2)}',
-                        style: TextStyle(color: Colors.deepPurple, fontSize: 11),
-                      ),
-                      trailing: Text(
-                        NumberFormat('\$#,##0.0', 'en_US').format(filteredInvoices[index].invoiceQty * filteredInvoices[index].prodPrice),
-                        style: TextStyle(color: const Color.fromARGB(255, 6, 141, 29), fontWeight: FontWeight.bold, fontSize: 14),
-                      ),
-                      onTap: () async {
-                        final result = await Get.to(() => EditInvoiceScreen(invoice: filteredInvoices[index]));
-                        if (true) {
-                          _getInvoiceList();
-                        }
-                      },
                     ),
                   );
                 },
