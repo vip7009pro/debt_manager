@@ -25,6 +25,7 @@ class _CreateInvoiceScreenState extends State<CreateInvoiceScreen> {
   bool isLoading = true;
   final currencyFormatter = NumberFormat.currency(symbol: '\$');
   double totalAmount = 0;
+  String newInvoiceNo = '';
 
   @override
   void initState() {
@@ -32,6 +33,7 @@ class _CreateInvoiceScreenState extends State<CreateInvoiceScreen> {
     order = widget.order;
     remark_controller.text = '';
     _loadOrderItems();
+    newInvoiceNo = _generateInvoiceNo();
     // Remove _calculateTotal() from here
   }
 
@@ -56,7 +58,7 @@ class _CreateInvoiceScreenState extends State<CreateInvoiceScreen> {
 
   Future<bool> _addInvoice(Order item) async {
     return await API_Request.api_query('addNewInvoice', {
-      'INVOICE_NO': _generateInvoiceNo(),
+      'INVOICE_NO': newInvoiceNo,
       'SHOP_ID': c.shopID.value,
       'PROD_ID': item.prodId.toString(),
       'CUS_ID': item.cusId.toString(),
@@ -153,8 +155,9 @@ class _CreateInvoiceScreenState extends State<CreateInvoiceScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Invoice Summary', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
+            const Text('Invoice Summary', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('Invoice No: $newInvoiceNo'),  
             Text('Customer: ${order.custCd}'),
             Text('PO Number: ${order.poNo}'),
             Text('Date: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}'),
@@ -171,6 +174,15 @@ class _CreateInvoiceScreenState extends State<CreateInvoiceScreen> {
         padding: const EdgeInsets.all(12.0),
         child: Row(
           children: [
+            Container(
+              width: 60,
+              height: 60,
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage('http://14.160.33.94:3010/product_images/${c.shopID.value}_${item.prodCode}_0.jpg'),
+              ),
+            ),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +190,6 @@ class _CreateInvoiceScreenState extends State<CreateInvoiceScreen> {
                   Text(item.prodName ?? 'Unknown Product', style: TextStyle(fontWeight: FontWeight.bold)),
                   Text('Code: ${item.prodCode}'),
                   Text('Price: ${currencyFormatter.format(item.prodPrice)}'),
-                  // Add this line to show the amount
                   Text('Amount: ${currencyFormatter.format(item.poQty * item.prodPrice)}', style: TextStyle(fontWeight: FontWeight.bold)),
                 ],
               ),
