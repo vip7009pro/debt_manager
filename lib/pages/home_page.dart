@@ -147,7 +147,7 @@ class _HomePageState extends State<HomePage> {
     _getShopInfo();
     _getInvoiceData();
     _getPOData(); 
-    c.loadContacts(); // Add this line to load contacts
+    //c.loadContacts(); // Add this line to load contacts
     super.initState();
   }
 
@@ -647,10 +647,34 @@ class _HomePageState extends State<HomePage> {
                         /* const SizedBox(height: 5),
                         bannerWidget, */
                         const SizedBox(height: 16),
+                        const Text(
+                          'Today\'s Statistics',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepPurple, // Added color to match theme
+                          ),
+                        ),
                         statsWidget,
                         const SizedBox(height: 16),
+                        const Text(
+                          'Quick Actions',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepPurple, // Added color to match theme
+                          ),
+                        ),
                         functionWidget,
                         const SizedBox(height: 16),
+                        const Text(
+                          'Order Status',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepPurple, // Added color to match theme
+                          ),
+                        ),
                         orderStatusWidget,
                       ],
                     ),
