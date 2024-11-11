@@ -5,27 +5,56 @@ import 'package:debt_manager/model/DataInterfaceClass.dart';
 import 'package:debt_manager/pages/stocks/warehouse_outputHistory_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
 class WarehouseOutputScreen extends StatefulWidget {
   final Product product;
   final String wh_in_id;
-  const WarehouseOutputScreen({Key? key, required this.product, required this.wh_in_id}) : super(key: key);  
+  const WarehouseOutputScreen(
+      {Key? key, required this.product, required this.wh_in_id})
+      : super(key: key);
 
   @override
   _WarehouseOutputScreenState createState() => _WarehouseOutputScreenState();
 }
+
 class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
   final GlobalController c = Get.put(GlobalController());
   List<Product> products = [];
   List<Customer> customers = [];
   TextEditingController productController = TextEditingController();
-  TextEditingController productCodeController = TextEditingController();  
+  TextEditingController productCodeController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController customerController = TextEditingController();
   TextEditingController customerCodeController = TextEditingController();
-  Product selectedProduct = Product(prodId: 0, prodCode: '', prodName: '', prodImg: '', shopId: 0, prodDescr: '', prodPrice: 0, insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', catId: 0, catCode: '');
-  String wh_in_id = ''; 
-  Future<bool> _outputWareHouse(String prodId, int quantity, String cusId,
-      String prodCode, String custCd, String wHInId) async {
+  TextEditingController invoiceNoController = TextEditingController();
+  String selectedOutType = 'N'; // Default value for Normal
+  Product selectedProduct = Product(
+      prodId: 0,
+      prodCode: '',
+      prodName: '',
+      prodImg: '',
+      shopId: 0,
+      prodDescr: '',
+      prodPrice: 0,
+      insDate: DateTime.now(),
+      insUid: '',
+      updDate: DateTime.now(),
+      updUid: '',
+      catId: 0,
+      catCode: '');
+  String wh_in_id = '';
+  List<Invoice> invoices = [];
+
+  Future<bool> _outputWareHouse(
+      String prodId,
+      int quantity,
+      String cusId,
+      String prodCode,
+      String custCd,
+      String wHInId,
+      String outType,
+      String invoiceNo) async {
     print('wh_in_id' + wHInId);
     bool check = true;
     String shopID = c.shopID.value;
@@ -36,7 +65,9 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
       'CUS_ID': cusId,
       'PROD_CODE': prodCode,
       'CUST_CD': custCd,
-      'WH_IN_ID': wHInId, 
+      'WH_IN_ID': wHInId,
+      'OUT_TYPE': outType,
+      'INVOICE_NO': invoiceNo
     }).then((value) {
       if (value['tk_status'] == 'OK') {
         check = true;
@@ -46,6 +77,7 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
     });
     return check;
   }
+
   Future<List<Product>> _getProducts() async {
     List<dynamic> productList = [];
     await API_Request.api_query('getProductList', {'SHOP_ID': c.shopID.value})
@@ -56,6 +88,7 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
       return Product.fromJson(item);
     }).toList();
   }
+
   Future<List<Customer>> _getCustomers() async {
     List<dynamic> customerList = [];
     await API_Request.api_query('getCustomerList', {'SHOP_ID': c.shopID.value})
@@ -66,18 +99,39 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
       return Customer.fromJson(item);
     }).toList();
   }
+
+  Future<List<Invoice>> _getInvoices(String prodId) async {
+    List<dynamic> invoiceList = [];
+    await API_Request.api_query(
+            'getInvoiceList', {'SHOP_ID': c.shopID.value, 'PROD_ID': prodId})
+        .then((value) {
+      invoiceList = value['data'] ?? [];
+    });
+    return invoiceList.map((dynamic item) {
+      return Invoice.fromJson(item);
+    }).toList();
+  }
+
   @override
   void initState() {
     super.initState();
     Product tempSelectedProduct = widget.product;
     productController.text = tempSelectedProduct.prodId.toString();
-    productCodeController.text = tempSelectedProduct.prodCode;  
-    wh_in_id = widget.wh_in_id; 
+    productCodeController.text = tempSelectedProduct.prodCode;
+    wh_in_id = widget.wh_in_id;
+    _getInvoices(tempSelectedProduct.prodId.toString()).then((invoiceList) {
+      setState(() {
+        invoices = invoiceList;
+        // Initialize with null if there are invoices, '-' if empty
+        invoiceNoController.text = invoices.isEmpty ? '-' : '';
+      });
+    }); 
     _getProducts().then((value) {
       setState(() {
         products = value;
         // set selectedProduct to be the product that has the same prodId as the tempSelectedProduct
-        selectedProduct = products.firstWhere((element) => element.prodId == tempSelectedProduct.prodId); 
+        selectedProduct = products.firstWhere(
+            (element) => element.prodId == tempSelectedProduct.prodId);
       });
     });
     _getCustomers().then((value) {
@@ -85,7 +139,10 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
         customers = value;
       });
     });
+    // Set default value for invoice number
+    invoiceNoController.text = '-';
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,8 +175,17 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    productController.text = value?.prodId.toString() ?? '';
-                    productCodeController.text = value?.prodCode ?? '';
+                    selectedProduct = value!;
+                    productController.text = value.prodId.toString();
+                    productCodeController.text = value.prodCode;
+                    // Load invoices for selected product
+                    _getInvoices(value.prodId.toString()).then((invoiceList) {
+                      setState(() {
+                        invoices = invoiceList;
+                        // Set default invoice number
+                        invoiceNoController.text = invoices.isEmpty ? '-' : '';
+                      });
+                    });
                   });
                 },
               ),
@@ -217,6 +283,59 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
                 ),
                 enabled: false,
               ),
+              SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedOutType,
+                decoration: InputDecoration(
+                  labelText: 'Output Type',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Color(0xFF3F51B5)),
+                  ),
+                ),
+                items: [
+                  DropdownMenuItem(value: 'N', child: Text('Normal')),
+                  DropdownMenuItem(value: 'H', child: Text('Scrab')),
+                  DropdownMenuItem(value: 'S', child: Text('Sample')),
+                  DropdownMenuItem(value: 'L', child: Text('Change LOT')),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    selectedOutType = value!;
+                  });
+                },
+              ),
+              SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: invoiceNoController.text.isEmpty ? '-' : invoiceNoController.text,
+                decoration: InputDecoration(
+                  labelText: 'Invoice No',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Color(0xFF3F51B5)),
+                  ),
+                ),
+                items: [
+                  DropdownMenuItem(value: '-', child: Text('-')),
+                  if (invoices.isNotEmpty)
+                    ...invoices.map((Invoice invoice) {
+                      return DropdownMenuItem<String>(
+                        value: invoice.invoiceNo,
+                        child: Text(
+                            '${invoice.invoiceNo} - ${DateFormat('yyyy-MM-dd').format(invoice.insDate)}'),
+                      );
+                    }).toList(),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    invoiceNoController.text = value ?? '-';
+                  });
+                },
+              ),
               SizedBox(height: 24),
               Row(
                 children: [
@@ -232,14 +351,54 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
                         ),
                       ),
                       onPressed: () async {
-                        
+                        // Add validation
+                        if (quantityController.text.isEmpty) {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            title: 'Validation Error',
+                            desc: 'Please enter quantity',
+                            btnOkColor: Color(0xFFF44336),
+                            btnOkOnPress: () {},
+                          ).show();
+                          return;
+                        }
+
+                        if (customerController.text.isEmpty) {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            title: 'Validation Error',
+                            desc: 'Please select a customer',
+                            btnOkColor: Color(0xFFF44336),
+                            btnOkOnPress: () {},
+                          ).show();
+                          return;
+                        }
+
+                        // Validate quantity is a positive number
+                        int? quantity = int.tryParse(quantityController.text);
+                        if (quantity == null || quantity <= 0) {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            title: 'Validation Error',
+                            desc: 'Please enter a valid positive quantity',
+                            btnOkColor: Color(0xFFF44336),
+                            btnOkOnPress: () {},
+                          ).show();
+                          return;
+                        }
+
                         bool check = await _outputWareHouse(
                             productController.text,
-                            int.parse(quantityController.text),
+                            quantity,
                             customerController.text,
                             productCodeController.text,
                             customerCodeController.text,
-                            wh_in_id);
+                            wh_in_id,
+                            selectedOutType,
+                            invoiceNoController.text);
                         if (check) {
                           AwesomeDialog(
                             context: context,

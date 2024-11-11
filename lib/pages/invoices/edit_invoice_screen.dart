@@ -1,3 +1,4 @@
+import 'package:debt_manager/pages/stocks/warehouse_output_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:debt_manager/model/DataInterfaceClass.dart';
@@ -69,6 +70,7 @@ class _EditInvoiceScreenState extends State<EditInvoiceScreen> {
       }
     }
   }
+
 
   Future<void> _deleteInvoice() async {
     final confirmed = await Get.dialog<bool>(
@@ -187,7 +189,7 @@ class _EditInvoiceScreenState extends State<EditInvoiceScreen> {
                     foregroundColor: Colors.white,
                     backgroundColor: const Color.fromARGB(255, 175, 162, 46),
                   ),
-                ),
+                ),               
               ],
             ),
           ),

@@ -111,13 +111,32 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
   return 'SO-$date-$number';
  }  
 
+  // Add new controller for search
+  final TextEditingController searchController = TextEditingController();
+  // Add filtered customers list
+  List<Customer> filteredCustomers = [];
 
   @override
   void initState() {    
     _getProductList();
     _getCustomerList();
     orderNumberController.text = _generateOrderNumber();
+    // Initialize filtered list
+    filteredCustomers = customers;
     super.initState();
+  }
+
+  // Add search filter method
+  void _filterCustomers(String searchTerm) {
+    setState(() {
+      filteredCustomers = customers
+          .where((customer) =>
+              (customer.cusName?.toLowerCase() ?? '')
+                  .contains(searchTerm.toLowerCase()) ||
+              (customer.custCd?.toLowerCase() ?? '')
+                  .contains(searchTerm.toLowerCase()))
+          .toList();
+    });
   }
 
   @override
@@ -128,6 +147,7 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
     quantityController.dispose();
     priceController.dispose();
     noteController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -210,29 +230,49 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                DropdownButtonFormField<Customer>(
-                  onChanged: (Customer? value) {
-                    setState(() {
-                      customerController.text = value?.cusId.toString() ?? '';
-                      customerCode = value?.custCd ?? '';                      
-                    });
-                  },
-                  items: customers.map((Customer customer) {
-                    return DropdownMenuItem<Customer>(
-                      value: customer,
-                      child: Text(customer.cusName ?? ''),
-                    );
-                  }).toList(),
-                  decoration: InputDecoration(
-                    labelText: 'Khách hàng',
-                    hintText: 'Chọn khách hàng',
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
+                Column(
+                  children: [
+                    TextFormField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Tìm kiếm khách hàng',
+                        hintText: 'Nhập tên hoặc mã khách hàng',
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: _filterCustomers,
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<Customer>(
+                      onChanged: (Customer? value) {
+                        setState(() {
+                          customerController.text = value?.cusId.toString() ?? '';
+                          customerCode = value?.custCd ?? '';                      
+                        });
+                      },
+                      items: filteredCustomers.map((Customer customer) {
+                        return DropdownMenuItem<Customer>(
+                          value: customer,
+                          child: Text(customer.cusName ?? ''),
+                        );
+                      }).toList(),
+                      decoration: InputDecoration(
+                        labelText: 'Khách hàng',
+                        hintText: 'Chọn khách hàng',
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
