@@ -18,6 +18,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   List<Order> orders = [];
   List<Order> filteredOrders = [];
   TextEditingController searchController = TextEditingController();
+  bool showOnlyBalance = false;
 
   final GlobalController c = Get.put(GlobalController());
 
@@ -43,13 +44,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   void _filterOrders(String query) {
     setState(() {
-      filteredOrders = orders
-          .where((order) => GlobalFunction.convertVietnameseString(
-                  order.prodName)
-              .toLowerCase()
-              .contains(
-                  GlobalFunction.convertVietnameseString(query).toLowerCase()))
-          .toList();
+      filteredOrders = orders.where((order) {
+        bool matchesSearch = GlobalFunction.convertVietnameseString(
+                order.prodName)
+            .toLowerCase()
+            .contains(
+                GlobalFunction.convertVietnameseString(query).toLowerCase());
+        bool matchesBalance = !showOnlyBalance || order.balanceQty > 0;
+        return matchesSearch && matchesBalance;
+      }).toList();
     });
   }
 
@@ -64,7 +67,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Orders', style: TextStyle(fontSize: 18)),
-        backgroundColor: const Color.fromARGB(255, 115, 231, 163),
+        backgroundColor: Color(0xFF2196F3),
         actions: [
           IconButton(
               onPressed: () async {
@@ -73,7 +76,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   _getOrderList();
                 }
               },
-              icon: Icon(Icons.add, color: Colors.yellow, size: 22))
+              icon: Icon(Icons.add, color: Colors.white, size: 22))
         ],
       ),
       body: Container(
@@ -81,23 +84,46 @@ class _OrdersScreenState extends State<OrdersScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Colors.blue[100]!, Colors.purple[100]!],
+            colors: [
+              Colors.grey[50]!,
+              Colors.grey[100]!,
+            ],
           ),
         ),
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  labelText: 'Search products',
-                  suffixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search products',
+                        suffixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      onChanged: _filterOrders,
+                    ),
                   ),
-                ),
-                onChanged: _filterOrders,
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: showOnlyBalance,
+                        onChanged: (value) {
+                          setState(() {
+                            showOnlyBalance = value ?? false;
+                            _filterOrders(searchController.text);
+                          });
+                        },
+                      ),
+                      Text('Just Balance', style: TextStyle(fontSize: 14)),
+                    ],
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -108,20 +134,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 child: ListView.builder(
                   itemCount: filteredOrders.length,
                   itemBuilder: (context, index) {
-                    Color cardColor = index % 5 == 0
-                        ? Colors.red[100]!
-                        : index % 5 == 1
-                            ? Colors.green[100]!
-                            : index % 5 == 2
-                                ? Colors.blue[100]!
-                                : index % 5 == 3
-                                    ? Colors.orange[100]!
-                                    : Colors.purple[100]!;
+                    Color cardColor =
+                        index.isEven ? Colors.white : Colors.grey[50]!;
                     return Card(
                       margin: const EdgeInsets.symmetric(
                           vertical: 6, horizontal: 12),
                       color: cardColor,
-                      elevation: 4,
+                      elevation: 2,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -152,7 +171,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             ),
                           ),
                           title: Text(
-                            '#${filteredOrders[index].poNo} \n SP: ${filteredOrders[index].prodName} \n KH: ${filteredOrders[index].cusName} \n QTY: ${filteredOrders[index].poQty} \n Price: ${filteredOrders[index].prodPrice}',
+                            '#${filteredOrders[index].poNo} \n SP: ${filteredOrders[index].prodName} \n KH: ${filteredOrders[index].cusName} \n QTY: ${filteredOrders[index].poQty} \n DEL_QTY: ${filteredOrders[index].deliveredQty} \n BAL_QTY: ${filteredOrders[index].balanceQty} \n Price: ${filteredOrders[index].prodPrice}',
                             style: TextStyle(
                                 color: Colors.black87,
                                 fontWeight: FontWeight.bold,

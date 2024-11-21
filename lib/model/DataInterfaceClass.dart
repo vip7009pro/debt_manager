@@ -245,6 +245,8 @@ class Order {
   late num cusId;
   String poNo;
   late int poQty;
+  late int deliveredQty;
+  late int balanceQty;
   late double prodPrice;
   late String remark;
   DateTime insDate;
@@ -263,6 +265,8 @@ class Order {
     required this.cusId,
     required this.poNo,
     required this.poQty,
+    required this.deliveredQty,
+    required this.balanceQty,
     required this.prodPrice,
     required this.remark,
     required this.insDate,
@@ -283,6 +287,8 @@ class Order {
       cusId: json['CUS_ID'],
       poNo: json['PO_NO'],
       poQty: json['PO_QTY'],
+      deliveredQty: json['DELIVERED_QTY'],
+      balanceQty: json['BALANCE_QTY'],
       prodPrice: json['PROD_PRICE'].toDouble(),
       remark: json['REMARK'],
       insDate: DateTime.parse(json['INS_DATE']),

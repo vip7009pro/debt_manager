@@ -750,7 +750,7 @@ class _HomePageState extends State<HomePage> {
                       title: const Text('Tạo invoice', style: TextStyle(color: Colors.blue)),
                       onTap: () {
                         Navigator.pop(context);
-                        Get.to(() => CreateInvoiceScreen(order: Order(poId: 0, shopId: 0, prodId: 0, cusId: 0, poNo: '', poQty: 0, prodPrice: 0, remark: '', insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: '', custCd: '', cusName: '', prodName: '')));
+                        Get.to(() => CreateInvoiceScreen(order: Order(poId: 0, shopId: 0, prodId: 0, cusId: 0, poNo: '', poQty: 0, prodPrice: 0, remark: '', insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: '', custCd: '', cusName: '', prodName: '', deliveredQty: 0, balanceQty: 0)));
                         // Add logic to create order
                       },
                     ),

@@ -60,17 +60,17 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Invoice', style: TextStyle(fontSize: 16)),
-        backgroundColor: const Color.fromARGB(255, 175, 162, 46),
+        backgroundColor: Colors.blue[800],
         actions: [
           IconButton(
             onPressed: () async {
-              final result = await  Get.to(() => CreateInvoiceScreen(order: Order(poId: 0, shopId: 0, prodId: 0, cusId: 0, poNo: '', poQty: 0, prodPrice: 0, remark: '', insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: '', custCd: '', cusName: '', prodName: '')));
+              final result = await  Get.to(() => CreateInvoiceScreen(order: Order(poId: 0, shopId: 0, prodId: 0, cusId: 0, poNo: '', poQty: 0, prodPrice: 0, remark: '', insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: '', custCd: '', cusName: '', prodName: '', deliveredQty: 0, balanceQty: 0)));
               if (true) {
                 _getInvoiceList();
               }
             },
             icon: Icon(Icons.add, size: 20),
-            color: Colors.yellow,
+            color: Colors.white,
           )
         ],
       ),
@@ -100,7 +100,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 itemBuilder: (context, index) {
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    color: index % 2 == 0 ? Colors.blue[100] : Colors.green[100],
+                    color: Colors.white,
                     child: Container(
                       constraints: const BoxConstraints(maxHeight: 150),
                       child: ListTile(
@@ -125,15 +125,15 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         ),
                         title: Text(
                           'Invoice #${filteredInvoices[index].invoiceNo}\nProduct: ${filteredInvoices[index].prodName}\nCustomer: ${filteredInvoices[index].cusName}',
-                          style: TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold, fontSize: 12),
+                          style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.bold, fontSize: 12),
                         ),
                         subtitle: Text(
                           'Date: ${filteredInvoices[index].insDate.toString().split(' ')[0]}\nQuantity: ${filteredInvoices[index].invoiceQty}\nPrice: \$${filteredInvoices[index].prodPrice.toStringAsFixed(2)}',
-                          style: TextStyle(color: Colors.deepPurple, fontSize: 10),
+                          style: TextStyle(color: Colors.grey[600], fontSize: 10),
                         ),
                         trailing: Text(
                           NumberFormat('\$#,##0.0', 'en_US').format(filteredInvoices[index].invoiceQty * filteredInvoices[index].prodPrice),
-                          style: TextStyle(color: const Color.fromARGB(255, 6, 141, 29), fontWeight: FontWeight.bold, fontSize: 12),
+                          style: TextStyle(color: Colors.blue[700], fontWeight: FontWeight.bold, fontSize: 12),
                         ),
                         onTap: () async {
                           final result = await Get.to(() => EditInvoiceScreen(invoice: filteredInvoices[index]));
