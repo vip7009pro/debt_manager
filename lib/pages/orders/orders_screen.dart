@@ -15,7 +15,7 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  List<Order> orders = [];
+  List<Order> orders = [], originalOrders = [];
   List<Order> filteredOrders = [];
   TextEditingController searchController = TextEditingController();
   bool showOnlyBalance = false;
@@ -24,13 +24,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   Future<List<Order>> _getOrders() async {
     List<dynamic> orderList = [];
-    await API_Request.api_query('getOrderList', {'SHOP_ID': c.shopID.value})
+    await API_Request.api_query('getOrderList', {'SHOP_ID': c.shopID.value, 'JUST_PO_BALANCE': showOnlyBalance})
         .then((value) {
       orderList = value['data'] ?? [];
     });
-    return orderList.map((dynamic item) {
+    originalOrders = orderList.map((dynamic item) {
       return Order.fromJson(item);
     }).toList();
+    return originalOrders;
   }
 
   void _getOrderList() async {
@@ -42,16 +43,16 @@ class _OrdersScreenState extends State<OrdersScreen> {
     });
   }
 
-  void _filterOrders(String query) {
+  void _filterOrders(String query) {    
     setState(() {
+      print(showOnlyBalance.toString());
       filteredOrders = orders.where((order) {
         bool matchesSearch = GlobalFunction.convertVietnameseString(
                 order.prodName)
             .toLowerCase()
             .contains(
                 GlobalFunction.convertVietnameseString(query).toLowerCase());
-        bool matchesBalance = !showOnlyBalance || order.balanceQty > 0;
-        return matchesSearch && matchesBalance;
+        return matchesSearch; 
       }).toList();
     });
   }
@@ -113,10 +114,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     children: [
                       Checkbox(
                         value: showOnlyBalance,
-                        onChanged: (value) {
-                          setState(() {
-                            showOnlyBalance = value ?? false;
-                            _filterOrders(searchController.text);
+                        onChanged: (value) {                          
+                          setState(() { 
+                            showOnlyBalance = value ?? false;                           
                           });
                         },
                       ),
