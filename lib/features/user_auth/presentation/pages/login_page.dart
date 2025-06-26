@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
     bool check = true;
     await API_Request.api_query(
         'login_after_google', {'UID': uid, 'EMAIL': email}).then((value) {
-      if (value['tk_status'] == 'OK') {
+      if (value['tk_status'].toUpperCase() == 'OK') {
         check = true;
         LocalDataAccess.saveVariable('token', value['token_content']);
         LocalDataAccess.saveVariable('userData', jsonEncode(value['data'][0]));
@@ -151,8 +151,8 @@ class _LoginPageState extends State<LoginPage> {
             idToken: googleSignInAuthentication.idToken,
             accessToken: googleSignInAuthentication.accessToken);
         final userDt = await _firebaseAuth.signInWithCredential(credential);
-        bool checkserverLogin =
-            await _login_after_google(userDt.user!.uid, userDt.user!.email!);
+        bool checkserverLogin = await _login_after_google(userDt.user!.uid, userDt.user!.email!);
+            print('checkserverLogin: ' + checkserverLogin.toString());
         if (checkserverLogin) {
           Get.snackbar('Thông báo',
               "Đăng nhập thành công: ${userDt.user?.displayName} ${userDt.user?.uid}  ${userDt.user?.email}",
