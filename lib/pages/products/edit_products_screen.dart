@@ -84,7 +84,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
       double productPrice) async {
     // Add product logic here
     bool check = true;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('editProduct', {
       'PROD_CODE': productCode,
       'CAT_ID': productCategory,
@@ -108,7 +108,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
 
   Future<bool> _updateProductImage(String productCode, String productImg) async {
     bool check = true;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('updateProductImage', {
       'PROD_CODE': productCode,
       'SHOP_ID': shopID,
@@ -126,7 +126,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
   //delete product image
   Future<bool> _deleteProductImage(String productCode, String productImg) async {
     bool check = true;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('deleteProductImage', {
       'PROD_CODE': productCode,
       'SHOP_ID': shopID,
@@ -144,7 +144,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
 
   Future<bool> _deleteProduct(String productCode) async {
     bool check = true;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('deleteProduct', {
       'PROD_CODE': productCode,
       'SHOP_ID': shopID,   

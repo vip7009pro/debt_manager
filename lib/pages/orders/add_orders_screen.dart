@@ -338,7 +338,7 @@ class _AddOrdersScreenState extends State<AddOrdersScreen> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() { 
-                      selectedOrders.add(Order(poId: 0, shopId: int.parse(c.shopID.value), prodId: int.parse(productController.text), cusId: int.parse(customerController.text), poNo: orderNumberController.text, poQty: int.parse(quantityController.text), prodPrice: double.parse(priceController.text), remark: noteController.text, insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: productCode, custCd: customerCode, cusName: '', prodName: products.firstWhere((p) => p.prodId == int.parse(productController.text)).prodName, deliveredQty: 0, balanceQty: 0));
+                      selectedOrders.add(Order(poId: 0, shopId: c.shopID.value, prodId: int.parse(productController.text), cusId: int.parse(customerController.text), poNo: orderNumberController.text, poQty: int.parse(quantityController.text), prodPrice: double.parse(priceController.text), remark: noteController.text, insDate: DateTime.now(), insUid: '', updDate: DateTime.now(), updUid: '', prodCode: productCode, custCd: customerCode, cusName: '', prodName: products.firstWhere((p) => p.prodId == int.parse(productController.text)).prodName, deliveredQty: 0, balanceQty: 0));
                     });
                   },
                   child: Text('Thêm sản phẩm'),

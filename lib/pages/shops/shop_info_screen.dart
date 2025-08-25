@@ -38,7 +38,7 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
   Future<void> _getShopInfo() async {
     List<dynamic> shopList = [];
     await API_Request.api_query('getShopInfo', {
-      'SHOP_ID': c.shopID.value == ''
+      'SHOP_ID': c.shopID.value == 0
           ? await LocalDataAccess.getVariable('shopId')
           : c.shopID.value
     }).then((value) {
@@ -57,7 +57,7 @@ class _ShopInfoScreenState extends State<ShopInfoScreen> {
   Future<void> _updateShopInfo() async {
     
     await API_Request.api_query('updateShopInfo', {
-      'SHOP_ID': c.shopID.value == ''
+      'SHOP_ID': c.shopID.value == 0
           ? await LocalDataAccess.getVariable('shopId')
           : c.shopID.value,
       'SHOP_NAME': shopNameController.text,

@@ -112,7 +112,7 @@ class _DetailStockScreenState extends State<DetailStockScreen> {
                           prodCode: history.prodCode,
                           prodName: history.prodName ?? '',
                           prodImg: history.prodImg ?? '',
-                          shopId: int.parse(c.shopID.value),
+                          shopId: c.shopID.value,
                           prodDescr: history.prodDescr ?? '',                          
                           insDate: history.insDate,
                           insUid: history.insUid,

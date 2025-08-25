@@ -84,7 +84,7 @@ class _CreateInvoiceScreenState extends State<CreateInvoiceScreen> {
 
   String _generateInvoiceNo() {
     DateTime now = DateTime.now();
-    String shopId = c.shopID.value;
+    int shopId = c.shopID.value;
     String random3Number = Random().nextInt(1000).toString().padLeft(3, '0');
     return '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}-$shopId-$random3Number';
   }

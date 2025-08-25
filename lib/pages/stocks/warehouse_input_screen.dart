@@ -21,7 +21,7 @@ class _WarehouseInputScreenState extends State<WarehouseInputScreen> {
   Future<bool> _inputWareHouse(String prodId, int quantity, String prodStatus,
       String prodCode, String vendorCode, double Bep) async {
     bool check = true;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('inputWarehouse', {
       'SHOP_ID': shopID,
       'PROD_ID': prodId,

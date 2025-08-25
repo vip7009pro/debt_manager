@@ -23,7 +23,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   
   Future<List<Invoice>> _getInvoices() async {
     List<dynamic> invoiceList = [];
-    await API_Request.api_query('getInvoiceList', {'SHOP_ID': c.shopID.value}).then((value) {
+    int shopID = c.shopID.value;
+    await API_Request.api_query('getInvoiceList', {'SHOP_ID': shopID}).then((value) {
       invoiceList = value['data'] ?? [];
     });
     return invoiceList.map((dynamic item) {

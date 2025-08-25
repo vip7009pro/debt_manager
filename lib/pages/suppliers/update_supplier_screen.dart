@@ -31,7 +31,7 @@ class _UpdateSupplierScreenState extends State<UpdateSupplierScreen> {
 
   Future<bool> _updateSupplier() async {
     bool check = false;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('updateVendor', {
       'SHOP_ID': shopID,
       'VENDOR_CODE': _supplierCodeController.text,
@@ -47,7 +47,7 @@ class _UpdateSupplierScreenState extends State<UpdateSupplierScreen> {
   }
   Future<bool> _deleteSupplier(String vendorCode) async {
     bool check = false;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('deleteVendor', {
       'SHOP_ID': shopID,
       'VENDOR_CODE': vendorCode

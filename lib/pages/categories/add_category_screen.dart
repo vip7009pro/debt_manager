@@ -22,11 +22,11 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
         .join('');
   }
   Future<bool> _addCategory(
-      String catCode,
+      int catCode,
       String catName) async {
     // Add product logic here
     bool check = true;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('addNewCategory', {
       'CAT_CODE': catCode,
       'CAT_NAME': catName,
@@ -82,7 +82,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  _addCategory(catCodeController.text, catNameController.text).then((value) {
+                  _addCategory(int.parse(catCodeController.text), catNameController.text).then((value) {
                     if (value) {
                       AwesomeDialog(
                         context: context,

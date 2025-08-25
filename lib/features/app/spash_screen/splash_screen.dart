@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
         check = true;
         LocalDataAccess.saveVariable('userData', jsonEncode(value['data']));
         print('shopID: ${c.shopID.value}');
-        if(c.shopID.isNotEmpty){  
+        if(c.shopID.value > 0){  
           Get.off(() => const HomePage());        
         }else{
           Get.off(() => const ShopListScreen());

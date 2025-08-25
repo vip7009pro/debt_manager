@@ -35,7 +35,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
 
   Future<bool> _updateCategory(String catCode, String catName) async {
     bool check = false;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('updateCategory', {
       'CAT_CODE': catCode,
       'CAT_NAME': catName,
@@ -50,7 +50,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
 
   Future<bool> _deleteCategory(String catCode) async {
     bool check = false;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('deleteCategory', {
       'CAT_CODE': catCode,
       'SHOP_ID': shopID,

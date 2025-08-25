@@ -29,7 +29,7 @@ class _AddSuppliersScreenState extends State<AddSuppliersScreen> {
 
   Future<bool> _addSupplier(String VENDOR_CODE, String VENDOR_NAME, String VENDOR_ADD, String VENDOR_PHONE) async {
     bool check = true;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('addvendor', {      
       'SHOP_ID': shopID,
       'VENDOR_CODE': VENDOR_CODE,

@@ -86,7 +86,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
       double productPrice) async {
     // Add product logic here
     bool check = true;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('addNewProduct', {
       'PROD_CODE': productCode,
       'CAT_ID': catId,

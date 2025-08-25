@@ -21,7 +21,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
   
   Future<List<Customer>> _getCustomers() async {
     List<dynamic> customerList = [];
-    await API_Request.api_query('getCustomerList', {'SHOP_ID': c.shopID.value}).then((value) {
+    int shopID = c.shopID.value;
+    await API_Request.api_query('getCustomerList', {'SHOP_ID': shopID}).then((value) {
       customerList = value['data'] ?? [];
     });
     return customerList.map((dynamic item) {

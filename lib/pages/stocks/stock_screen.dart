@@ -103,7 +103,7 @@ class _StockScreenState extends State<StockScreen> {
                         Get.to(() => ProductDetails(
                             product: Product(
                                 prodId: stocks[index].prodId,
-                                shopId: int.parse(c.shopID.value),
+                                shopId: c.shopID.value,
                                 prodName: stocks[index].prodName,
                                 prodDescr: stocks[index].prodDescr,
                                 prodPrice: stocks[index].prodPrice,

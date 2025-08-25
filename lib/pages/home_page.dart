@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _getPOData() async {
     await API_Request.api_query('getTodayPOQtyAndAmount', {
-      'SHOP_ID': c.shopID.value == ''
+      'SHOP_ID': c.shopID.value == 0
           ? await LocalDataAccess.getVariable('shopId')
           : c.shopID.value
     }).then((value) {
@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _getInvoiceData() async {
     await API_Request.api_query('getTodayInvoiceQtyAndAmount', {
-      'SHOP_ID': c.shopID.value == ''
+      'SHOP_ID': c.shopID.value == 0
           ? await LocalDataAccess.getVariable('shopId')
           : c.shopID.value
     }).then((value) {
@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _getShopInfo() async {
     List<dynamic> shopList = [];
     await API_Request.api_query('getShopInfo', {
-      'SHOP_ID': c.shopID.value == ''
+      'SHOP_ID': c.shopID.value == 0
           ? await LocalDataAccess.getVariable('shopId')
           : c.shopID.value
     }).then((value) {
@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> {
 
   void _loadshopidfromlocaldatabse() async {
     String shopId = await LocalDataAccess.getVariable('shopId');
-    c.shopID.value = shopId;
+    c.shopID.value = int.parse(shopId);
     print('c.shopID.value' + shopId);
   }
 

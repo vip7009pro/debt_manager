@@ -77,7 +77,7 @@ class _ShopListScreenState extends State<ShopListScreen> {
                         child: ListTile(
                           onTap: () {
                             LocalDataAccess.saveVariable('shopId', snapshot.data![index].shopId.toString());
-                            c.shopID.value = snapshot.data![index].shopId.toString();
+                            c.shopID.value = int.parse(snapshot.data![index].shopId.toString());
                             Get.offAll(() => const HomePage());
                           },
                           title: Text(

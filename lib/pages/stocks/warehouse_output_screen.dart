@@ -57,7 +57,7 @@ class _WarehouseOutputScreenState extends State<WarehouseOutputScreen> {
       String invoiceNo) async {
     print('wh_in_id' + wHInId);
     bool check = true;
-    String shopID = c.shopID.value;
+    int shopID = c.shopID.value;
     await API_Request.api_query('outputWarehouse', {
       'SHOP_ID': shopID,
       'PROD_ID': prodId,

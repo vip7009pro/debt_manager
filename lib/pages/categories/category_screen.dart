@@ -21,8 +21,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
   final GlobalController c = Get.put(GlobalController());
 
   Future<List<Category>> _getCategories() async {
+    int shopID = c.shopID.value;
     List<dynamic> categoryList = [];
-    await API_Request.api_query('getCategoryList', {'SHOP_ID': c.shopID.value})
+    await API_Request.api_query('getCategoryList', {'SHOP_ID': shopID})
         .then((value) {
       categoryList = value['data'] ?? [];
     });
@@ -115,7 +116,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(
-                          'http://14.160.33.94:3010/category_images/${c.shopID.value}_${category.catCode}.jpg',
+                          'http://14.160.33.94:3010/category_images/${c.shopID.value.toString()}_${category.catCode}.jpg',
                           width: 50,
                           height: 50,
                           fit: BoxFit.cover,

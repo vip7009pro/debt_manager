@@ -6,7 +6,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 class GlobalController extends GetxController {
   var googleSignIn = GoogleSignIn(signInOption: SignInOption.standard).obs;
   var count = 0.obs;
-  var shopID = ''.obs;
+  var shopID = 0.obs;
 
   increment() {
     count++;
