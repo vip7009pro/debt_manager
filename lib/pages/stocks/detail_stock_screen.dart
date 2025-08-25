@@ -43,8 +43,8 @@ class _DetailStockScreenState extends State<DetailStockScreen> {
     setState(() {
       filteredHistory = inputHistory
           .where((history) =>
-              GlobalFunction.convertVietnameseString(history.prodName ?? '').contains(GlobalFunction.convertVietnameseString(query)) ||
-              GlobalFunction.convertVietnameseString(history.prodCode).contains(GlobalFunction.convertVietnameseString(query)))
+              GlobalFunction.convertVietnameseString((history.prodName ?? '').toLowerCase()).contains(GlobalFunction.convertVietnameseString(query).toLowerCase()) ||
+              GlobalFunction.convertVietnameseString(history.prodCode).toLowerCase().contains(GlobalFunction.convertVietnameseString(query).toLowerCase()))
           .toList();
     });
   }

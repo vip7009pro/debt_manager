@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "171888820198",
     "project_id": "fbapptest1-e43aa",
-    "storage_bucket": "fbapptest1-e43aa.appspot.com"
+    "storage_bucket": "fbapptest1-e43aa.firebasestorage.app"
   },
   "client": [
     {
@@ -14,11 +14,35 @@
       },
       "oauth_client": [
         {
+          "client_id": "171888820198-28u3j6hvktcrvo3u8j0r1vvr7vcqqbal.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hnp.app.debtmanager",
+            "certificate_hash": "0bf417c5d9fb42cbf5fa7f02187477794dd9aded"
+          }
+        },
+        {
+          "client_id": "171888820198-7bbipn181pj927im6r8n159msmh2285n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hnp.app.debtmanager",
+            "certificate_hash": "a1f17b2a96a1c3787aae7c98cc1c94c87a161e0e"
+          }
+        },
+        {
           "client_id": "171888820198-gbr4f9uudnvt8427sm6cfg2l4b9eptak.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "hnp.app.debtmanager",
             "certificate_hash": "5cd4bc243cd763b17632e394a968da5871b4aa5e"
+          }
+        },
+        {
+          "client_id": "171888820198-jkicffe80vvldf5cb7c63gtlo4j7jqml.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hnp.app.debtmanager",
+            "certificate_hash": "06afff9f286ef0a4a0df936f903f7622edbf584c"
           }
         },
         {
