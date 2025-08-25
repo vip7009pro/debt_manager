@@ -61,11 +61,19 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile file("D:/NODEJS/storemanager.jks")
+            storePassword "Anhtaday_87"
+            keyAlias "storemanager"
+            keyPassword "Anhtaday_87"
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            // Signing with the debug keys for now, so `flutter run --release` works.            
+            signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'androidx.multidex-proguard.pro'

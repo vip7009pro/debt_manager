@@ -70,7 +70,7 @@ class _AddShopPageState extends State<AddShopPage> {
                     title: 'Shop Added',
                     desc: 'Shop has been added successfully',
                     btnOkOnPress: () {                     
-                      Get.back();
+                      Get.back(result: true);
                     },
                   ).show();
                   } else {

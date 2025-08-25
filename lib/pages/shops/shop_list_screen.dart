@@ -19,6 +19,7 @@ class ShopListScreen extends StatefulWidget {
 
 class _ShopListScreenState extends State<ShopListScreen> {
   final GlobalController c = Get.put(GlobalController());
+  late Future<List<Shop>> _shopsFuture;
   Future<List<Shop>> _getShopList() async {
     List<dynamic> shopList = [];
     await API_Request.api_query('getShopList', {}).then((value) {
@@ -31,8 +32,8 @@ class _ShopListScreenState extends State<ShopListScreen> {
 
   @override
   void initState() {
-    _getShopList();
     super.initState();
+    _shopsFuture = _getShopList();
   }
 
   @override
@@ -54,11 +55,12 @@ class _ShopListScreenState extends State<ShopListScreen> {
           child: RefreshIndicator(
             onRefresh: () async {
               setState(() {
-                _getShopList();
+                _shopsFuture = _getShopList();
               });
+              await _shopsFuture;
             },
             child: FutureBuilder<List<Shop>>(
-              future: _getShopList(),
+              future: _shopsFuture,
               initialData: const [],
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -116,8 +118,13 @@ class _ShopListScreenState extends State<ShopListScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.to(() => const AddShopPage());
+        onPressed: () async {
+          final result = await Get.to(() => const AddShopPage());
+          if (result == true) {
+            setState(() {
+              _shopsFuture = _getShopList();
+            });
+          }
         },
         child: const Icon(Icons.add),
         backgroundColor: Colors.orange,

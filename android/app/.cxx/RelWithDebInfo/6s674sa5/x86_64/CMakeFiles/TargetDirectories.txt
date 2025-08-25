@@ -1,0 +1,2 @@
+D:/NODEJS/debt_manager/android/app/.cxx/RelWithDebInfo/6s674sa5/x86_64/CMakeFiles/edit_cache.dir
+D:/NODEJS/debt_manager/android/app/.cxx/RelWithDebInfo/6s674sa5/x86_64/CMakeFiles/rebuild_cache.dir
